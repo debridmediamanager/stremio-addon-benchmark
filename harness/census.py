@@ -31,6 +31,7 @@ import json
 import os
 import re
 import sys
+import subprocess
 import time
 import urllib.error
 import urllib.parse
@@ -43,6 +44,12 @@ CONFIG = os.path.join(ROOT, "config", "indexers.json")
 CANDIDATES = os.path.join(ROOT, "corpus", "candidates.json")
 RAW_DIR = os.path.join(ROOT, "corpus", "raw")
 OUT = os.path.join(ROOT, "corpus", "availability.json")
+# what actually gets published. The plain json carries several hundred release
+# names, and this repository keeps those out of search indexes and automated
+# scrapers the same way its sibling keeps the NZB corpus out. The password is
+# published in the README: it is not access control
+ARCHIVE = os.path.join(ROOT, "corpus", "availability.7z")
+ARCHIVE_PASSWORD = "dmmbench"
 
 # how many results to keep per (title, indexer). Enough to see what a ranker
 # would have to choose between; not so many that the file becomes a mirror of
@@ -232,6 +239,23 @@ def scrub(text, secrets):
     return text
 
 
+def archive():
+    """Re-cut the published archive so it can never lag the census."""
+    if os.path.exists(ARCHIVE):
+        os.remove(ARCHIVE)
+    # run from the corpus directory and pass basenames, so the archive stores
+    # "availability.json" and not "corpus/availability.json". A stored path
+    # extracts relative to the output directory and buries the file one level
+    # deeper than anything looks for it
+    directory = os.path.dirname(OUT)
+    result = subprocess.run(
+        ["7z", "a", f"-p{ARCHIVE_PASSWORD}", "-mhe=on",
+         os.path.basename(ARCHIVE), os.path.basename(OUT)],
+        cwd=directory, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise SystemExit(f"7z failed, the published archive is now stale:\n{result.stdout[-400:]}")
+
+
 def main():
     global USER_AGENT
     parser = argparse.ArgumentParser(description=__doc__)
@@ -368,7 +392,8 @@ def main():
         raise SystemExit("refusing to write: an api key survived into the census")
     with open(OUT, "w") as handle:
         json.dump(document, handle, indent=1)
-    print(f"\nwrote {OUT}\nraw (gitignored) {raw_path}")
+    archive()
+    print(f"\nwrote {OUT}\n      {ARCHIVE} (this is the published one)\nraw (gitignored) {raw_path}")
 
 
 if __name__ == "__main__":

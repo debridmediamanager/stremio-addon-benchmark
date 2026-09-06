@@ -17,6 +17,7 @@ whole population with `n`, and coverage as its own column.
 import json
 import os
 import re
+import subprocess
 import sys
 from datetime import datetime, timezone
 
@@ -24,6 +25,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CANDIDATES = os.path.join(ROOT, "corpus", "candidates.json")
 AVAILABILITY = os.path.join(ROOT, "corpus", "availability.json")
 CAPABILITIES = os.path.join(ROOT, "corpus", "indexer-capabilities.json")
+ARCHIVE = os.path.join(ROOT, "corpus", "availability.7z")
+ARCHIVE_PASSWORD = "dmmbench"
 OUT = os.path.join(ROOT, "corpus", "titles.json")
 
 # Indexers every target in the field can actually reach, taken from the
@@ -131,7 +134,33 @@ def counting_indexers(capabilities):
     return table
 
 
+def unpack_census():
+    """A fresh clone has the archive and not the json. Extract it once.
+
+    The password is published in the README. It keeps several hundred release
+    names out of search indexes, which is the only thing it is for.
+    """
+    if os.path.exists(AVAILABILITY):
+        return
+    if not os.path.exists(ARCHIVE):
+        raise SystemExit(f"no census: neither {AVAILABILITY} nor {ARCHIVE} exists. "
+                         "Run harness/census.py first.")
+    # basenames, from the corpus directory: see the matching note in census.py
+    directory = os.path.dirname(ARCHIVE)
+    result = subprocess.run(
+        ["7z", "x", f"-p{ARCHIVE_PASSWORD}", "-y", os.path.basename(ARCHIVE)],
+        cwd=directory, capture_output=True, text=True)
+    if not os.path.exists(AVAILABILITY):
+        raise SystemExit(f"7z reported success but {AVAILABILITY} is not there. "
+                         "The archive probably stores a nested path; re-cut it "
+                         "with harness/census.py.")
+    if result.returncode != 0:
+        raise SystemExit(f"could not extract {ARCHIVE}:\n{result.stdout[-400:]}")
+    print(f"extracted {os.path.basename(AVAILABILITY)} from the published archive")
+
+
 def build():
+    unpack_census()
     with open(CANDIDATES) as handle:
         candidates = json.load(handle)["candidates"]
     with open(AVAILABILITY) as handle:

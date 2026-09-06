@@ -18,3 +18,4 @@ __pycache__/
 *.db
 *.sqlite
 *.log
+corpus/availability.json

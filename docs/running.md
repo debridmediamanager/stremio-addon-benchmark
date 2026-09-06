@@ -89,6 +89,11 @@ python3 harness/census.py --limit 2        # smoke test
 python3 harness/census.py --retry-failed   # resume whatever rate limited
 ```
 
+The census writes two files. `corpus/availability.json` is the working copy and
+is gitignored. `corpus/availability.7z` is the published one, re-cut on every
+run so it cannot lag, encrypted headers, password `dmmbench`, which keeps
+several hundred release names out of search indexes and is not access control.
+
 `--retry-failed` merges into the existing `corpus/availability.json` and only
 re-queries the pairs that errored, so a rate limited indexer is resumable rather
 than a reason to spend the whole quota again. It also picks up an indexer added
@@ -104,6 +109,9 @@ call buys nothing.
 python3 harness/titles.py build
 python3 harness/titles.py show
 ```
+
+On a fresh clone there is no `availability.json`, only the archive. `build`
+extracts it first and says so. Nothing has to be unpacked by hand.
 
 Read the table before going further. Four tiers mean stop and fix something
 rather than continue:

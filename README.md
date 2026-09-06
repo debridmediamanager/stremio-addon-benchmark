@@ -25,7 +25,7 @@ no results to quote.
 | How to run it | [`docs/running.md`](docs/running.md) |
 | Candidate pool | [`corpus/candidates.json`](corpus/candidates.json), 31 entries |
 | Indexer capability matrix | [`corpus/indexer-capabilities.json`](corpus/indexer-capabilities.json), measured 6 September 2026 |
-| Indexer census | [`corpus/availability.json`](corpus/availability.json), 31 candidates across 6 indexers |
+| Indexer census | [`corpus/availability.7z`](corpus/availability.7z), 31 candidates across 6 indexers |
 | Pinned title set | [`corpus/titles.json`](corpus/titles.json), 23 entries, built from the census |
 | Protocol-plane harness | not written |
 | Client-plane harness | not written |
@@ -176,6 +176,22 @@ account, so an addon reporting nothing playable is correct and one handing the
 player a zero fill is not. **Carmencita (1894)** is a real IMDb id for a real
 film with certainly nothing posted, so a legitimate title has to resolve to an
 empty list rather than an error.
+
+## The census archive
+
+`corpus/availability.7z` is a 7-Zip archive with encrypted headers. The password
+is `dmmbench`.
+
+The password is not access control. It is published right here. The archive
+exists so that several hundred release names stay out of search indexes and
+automated scrapers, the same reason the sibling repository ships its NZB corpus
+that way. No message ids are stored at all, and a result's guid is kept only as
+a truncated sha1, because a newznab guid is usually a download URL carrying the
+api key.
+
+Nothing needs to be unpacked by hand. `harness/titles.py build` extracts it when
+the plain json is not there, and `harness/census.py` re-cuts it on every run so
+the published copy can never lag the census.
 
 ## Before quoting anything from here
 
