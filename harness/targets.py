@@ -45,6 +45,10 @@ TARGETS = {
         "role": "target",
         "language": "Go",
         "repo": "debridmediamanager/zurg",
+        # the only target in the field that is a binary rather than a container,
+        # so the round starts it from a command instead of a compose file
+        "launch": "command",
+        "start": "./zurg --config config.yml",
         "port": 9998,
         "manifest": "http://127.0.0.1:9998/stremio/{token}/manifest.json",
         "stream": "http://127.0.0.1:9998/stremio/{token}/stream/{type}/{id}.json",
@@ -163,6 +167,26 @@ TARGETS = {
         "serve_mode": INGEST,
         "verified": "live",
         "standup": "harness/standup/comet.py",
+        # Registered, configured, and not in the round. Its own usenet engine
+        # will not run here in either mode, so there is no honest Comet row to
+        # publish -- see `excluded_reason`
+        "excluded": True,
+        "excluded_reason": (
+            "its native usenet engine does not start. With "
+            "USENET_ENGINE_ENABLED=true the supervisor gives up after 30s with "
+            "`native.startup.failed | initialization_failure` and "
+            "`EngineUnavailable`; with it unset the app boots but every stream "
+            "request answers `[⚠️] Comet setup: Comet Native Usenet: native "
+            "engine is unavailable`. The engine binary exits 78 (EX_CONFIG) run "
+            "directly, emitting one line -- `Native runtime bootstrap failed` -- "
+            "with no diagnostics at RUST_BACKTRACE=full or RUST_LOG=debug. "
+            "Everything above it works: the configuration document validates, "
+            "the news account passes its own validator, and the newznab sources "
+            "are accepted. Measured 2026-09-06 on the bench host. Comet can play "
+            "through another project's reader instead, and a row measured that "
+            "way would be that reader's number wearing Comet's name, so the "
+            "round publishes no Comet row at all"
+        ),
         "note": (
             "fits this benchmark better than it fitted the mount one. Round 10 "
             "had to register it as a discovery-only target with no import API, "
@@ -197,11 +221,25 @@ DEFAULT = ["zurg", "aiostreams", "stremthru", "streamnzb", "comet"]
 DEFAULT_BUDGET_S = 3600
 
 
-def enabled(only=None, disable=None):
+def excluded(names=None):
+    """Registered targets a round will not measure, and why.
+
+    Kept in the field rather than deleted: a reader comparing rounds needs to
+    see that a target was set up, was measured against, and produced no row --
+    which is a finding about that target -- rather than quietly not appearing.
+    """
+    return {name: TARGETS[name]["excluded_reason"]
+            for name in (names or TARGETS)
+            if TARGETS[name].get("excluded")}
+
+
+def enabled(only=None, disable=None, include_excluded=False):
     """Resolve the field for one run. An unknown name is a hard error.
 
     A round that quietly measured four targets because the fifth was misspelled
-    would publish a field that never existed.
+    would publish a field that never existed. A target carrying `excluded` is
+    dropped unless it is named explicitly in `only`, so an exclusion cannot be
+    forgotten and cannot be undone by accident.
     """
     names = list(DEFAULT)
     if only:
@@ -213,6 +251,11 @@ def enabled(only=None, disable=None):
         if name not in TARGETS:
             raise SystemExit(f"--disable names a target that is not registered: {name}")
         names = [n for n in names if n != name]
+    if not include_excluded:
+        asked = set(only or [])
+        for name in list(names):
+            if TARGETS[name].get("excluded") and name not in asked:
+                names.remove(name)
     if not names:
         raise SystemExit("the field is empty")
     return names
