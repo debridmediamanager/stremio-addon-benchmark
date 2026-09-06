@@ -1,0 +1,20 @@
+# never commit a filled-in credential. config/indexers.json carries live
+# newznab api keys and the indexer->label mapping the published census hides
+config/indexers.json
+config/*.local.yml
+config/*.local.json
+.env
+
+# a target's own working directory: its config carries the news account
+run/
+
+# raw census output before the sanitizer has run over it. Only
+# corpus/availability.json is publishable; see docs/design.md, trap 1
+corpus/raw/
+
+# runtime state
+__pycache__/
+*.pyc
+*.db
+*.sqlite
+*.log

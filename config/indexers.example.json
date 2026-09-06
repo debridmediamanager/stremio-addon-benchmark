@@ -1,0 +1,31 @@
+{
+  "note": "Copy to config/indexers.json and fill in. That file is gitignored: it carries live api keys and the label->indexer mapping the published census deliberately does not. `label` is what appears in every committed artifact; `kind` is published too, because a public paid indexer and a private tracker are not interchangeable and a reader needs to know the shape of the fleet even when the names are withheld.",
+  "indexers": [
+    {
+      "label": "indexer-a",
+      "name": "your-public-indexer",
+      "kind": "public-paid",
+      "url": "https://api.example-indexer.info",
+      "api_path": "/api",
+      "api_key": "PUT-A-REAL-KEY-HERE"
+    },
+    {
+      "label": "indexer-b",
+      "name": "your-private-tv-indexer",
+      "kind": "private",
+      "url": "https://private-indexer.example",
+      "api_path": "/api",
+      "api_key": "PUT-A-REAL-KEY-HERE",
+      "pace_s": 20
+    },
+    {
+      "label": "indexer-c",
+      "name": "your-other-private-indexer",
+      "kind": "private",
+      "url": "https://other-private.example",
+      "api_path": "/api/v1/api",
+      "api_key": "PUT-A-REAL-KEY-HERE"
+    }
+  ],
+  "pace_note": "pace_s overrides --pace for one indexer. Set it wide for anything that rate limits: the census is not in a hurry and a 429 wall costs more than the wait does."
+}
