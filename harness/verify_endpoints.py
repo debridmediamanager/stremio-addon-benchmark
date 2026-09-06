@@ -53,10 +53,29 @@ def check(name, url):
     missing = [field for field in REQUIRED if field not in manifest]
     if missing:
         raise ValueError(f"answered 200 but is not a Stremio manifest, missing {missing}")
-    if "stream" not in manifest.get("resources", []):
+    if "stream" not in resource_names(manifest):
         # a catalog-only addon cannot be in this field at all
         raise ValueError("manifest declares no `stream` resource")
     return manifest
+
+
+def resource_names(manifest):
+    """The resources a manifest declares, in either legal form.
+
+    Stremio accepts a resource as a bare string (`"stream"`) or as an object
+    carrying its own types and id prefixes (`{"name": "stream", ...}`), and
+    both are in the field: zurg uses the short form and StremThru's Newz addon
+    uses the long one. Checking only for the string rejects a perfectly good
+    addon as unverified, which is what this file did to StremThru until its
+    manifest was read by hand.
+    """
+    names = []
+    for resource in manifest.get("resources") or []:
+        if isinstance(resource, str):
+            names.append(resource)
+        elif isinstance(resource, dict) and resource.get("name"):
+            names.append(resource["name"])
+    return names
 
 
 def main():
