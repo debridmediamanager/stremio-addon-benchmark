@@ -56,6 +56,14 @@ POLL_S = 0.25
 INJECTOR = "angular.element(document).injector()"
 
 
+def fetch_manifest(url):
+    """Read the manifest here rather than in the page, which cannot reach it."""
+    import urllib.request
+    request = urllib.request.Request(url, headers={"User-Agent": protocol.USER_AGENT})
+    with urllib.request.urlopen(request, timeout=30) as response:
+        return json.loads(response.read().decode("utf-8", "replace"))
+
+
 def js(expression):
     """Wrap an expression as an IIFE so `return` works."""
     return "(function(){" + expression + "})()"
@@ -76,11 +84,54 @@ class Stremio:
                      width: p.width, height: p.height}};
         """))
 
-    def install(self, manifest_url):
-        return self.evaluate(js(f"""
+    def install(self, manifest_url, manifest=None):
+        """Add the target to the running client, and clear the modal it opens.
+
+        `settings.addAddon(url)` is what the addon catalogue's own control
+        calls, and it does install -- an earlier reading of `API.addons` as an
+        array said otherwise and was simply wrong, because it is a service. It
+        also opens an "Install Addon" prompt over the app, and that prompt
+        blocks every later navigation until it is dismissed.
+
+        The prompt is closed with `closePrompt()`, never with its Install
+        button: by the time it is on screen the addon is already installed, so
+        that button is a toggle that would uninstall it again.
+
+        The page cannot fetch the manifest itself -- the shell runs from
+        https://app.strem.io and the targets are plain http, so it is blocked
+        as mixed content -- which is why `manifest` is fetched by the harness
+        and kept on the row rather than read here.
+        """
+        self.evaluate(js(f"""
             var s = {INJECTOR}.get('settings');
-            try {{ s.addAddon({json.dumps(manifest_url)}); return 'ok'; }}
+            try {{ s.addAddon({json.dumps(manifest_url)}); return 'called'; }}
             catch (e) {{ return 'ERR ' + e.message; }}
+        """))
+        time.sleep(4)
+        self.dismiss_prompt()
+        return "installed" if manifest_url in (self.installed() or []) else "NOT installed"
+
+    def dismiss_prompt(self):
+        """Close any modal the app has open, without touching its actions."""
+        return self.evaluate(js("""
+            var wrap = document.querySelector('.modalWrap, .modal');
+            if (!wrap) return 'none';
+            var scope = angular.element(wrap).scope();
+            if (scope && typeof scope.closePrompt === 'function') {
+                scope.closePrompt();
+                if (scope.$root && scope.$root.$applyAsync) scope.$root.$applyAsync();
+                return 'closed';
+            }
+            var x = document.querySelector('.modal .close, .modalWrap .close');
+            if (x) { x.click(); return 'clicked close'; }
+            return 'left open';
+        """))
+
+    def installed(self):
+        return self.evaluate(js(f"""
+            var api = {INJECTOR}.get('API');
+            var list = api.addons.getAddons ? api.addons.getAddons() : [];
+            return list.map(function(x) {{ return x.transportUrl || ''; }});
         """))
 
     def go(self, hash_route):
@@ -97,9 +148,17 @@ class Stremio:
             var out = [];
             for (var i = 0; i < nodes.length; i++) {
                 var scope = angular.element(nodes[i]).scope();
-                var item = scope && scope.streamItem ? scope.streamItem : {};
+                var wrapper = (scope && scope.streamItem) ? scope.streamItem : {};
+                // streamItem is a wrapper: {addon, stream, idx}. The stream is
+                // what the addon sent; the addon is who sent it, which is the
+                // only way to tell one target's rows from another addon's in a
+                // client that has more than one installed
+                var item = wrapper.stream || {};
+                var addon = wrapper.addon || {};
                 out.push({
                     index: i,
+                    addon_url: addon.transportUrl || '',
+                    addon_name: (addon.manifest || {}).name || '',
                     name: item.name || '',
                     description: item.description || item.title || '',
                     url: item.url || '',
@@ -131,8 +190,8 @@ class Stremio:
             pass
 
 
-def wait_for_streams(app, budget=LIST_BUDGET_S):
-    """Wait for stream rows that carry a url.
+def wait_for_streams(app, transport_url, budget=LIST_BUDGET_S):
+    """Wait for stream rows that carry a url *and* came from this target.
 
     Two things make the naive version wrong, and both produced a `no-streams`
     row for a title that renders seven of them. The previous title's `.stream`
@@ -143,11 +202,13 @@ def wait_for_streams(app, budget=LIST_BUDGET_S):
     started = time.monotonic()
     deadline = started + budget
     while time.monotonic() < deadline:
-        found = [s for s in app.streams() if s.get("url")]
+        rendered = app.streams()
+        found = [s for s in rendered
+                 if s.get("url") and s.get("addon_url") == transport_url]
         if found:
-            return found, time.monotonic() - started
+            return found, time.monotonic() - started, rendered
         time.sleep(POLL_S)
-    return [], time.monotonic() - started
+    return [], time.monotonic() - started, app.streams()
 
 
 def clear_streams(app, budget=15):
@@ -201,7 +262,7 @@ def pick(streams, cap_bytes):
     return min(sized, key=lambda item: item[1])[0], True
 
 
-def measure_title(app, title, cap_bytes):
+def measure_title(app, title, cap_bytes, transport_url):
     row = {
         "id": title["id"],
         "title": title["title"],
@@ -209,14 +270,20 @@ def measure_title(app, title, cap_bytes):
         "expected_outcome": title.get("expected_outcome"),
         "started_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "stream_list_s": None, "n_streams": None, "chosen": None,
+        "rows_from_other_addons": None,
         "picked_rank": None, "picked_over_cap": None,
         "click_to_play_s": None, "player": None,
         "outcome": None, "detail": None,
     }
+    app.dismiss_prompt()
     clear_streams(app)
     app.go(f"#/detail/{title['type']}/{title['id']}/{title['id']}")
-    streams, listed = wait_for_streams(app)
+    streams, listed, rendered = wait_for_streams(app, transport_url)
     row["stream_list_s"] = round(listed, 3)
+    # what else the client rendered, so a row is readable when the player has
+    # other addons installed. Only this target's rows are ever clicked
+    row["rows_from_other_addons"] = len([s for s in rendered
+                                         if s.get("addon_url") != transport_url])
     playable = [s for s in streams if s.get("url") and not protocol.is_notice(
         {"name": s.get("name"), "description": s.get("description"), "url": s.get("url")})]
     row["n_streams"] = len(playable)
@@ -256,9 +323,18 @@ def main():
     parser.add_argument("--round", default="round1")
     parser.add_argument("--cdp-host", default="127.0.0.1")
     parser.add_argument("--cdp-port", type=int, default=9223)
-    parser.add_argument("--addon-host", default="zen",
-                        help="the address the player can reach the targets on; "
-                             "127.0.0.1 in the endpoint file is rewritten to this")
+    parser.add_argument("--addon-host", default="127.0.0.1",
+                        help="the address the PLAYER reaches the target on. Loopback by "
+                             "default and for a reason: Stremio's shell is served from "
+                             "https://app.strem.io, so a plain-http addon on any other "
+                             "host is blocked as mixed content and silently contributes "
+                             "no streams. Chromium exempts localhost, so the round "
+                             "forwards each target onto the player's loopback "
+                             "(ssh -R <port>:<bench host>:<port>)")
+    parser.add_argument("--fetch-host", default="zen",
+                        help="the address the HARNESS reaches the target on, to read the "
+                             "manifest the page is not allowed to fetch. Different from "
+                             "--addon-host whenever a tunnel is in use")
     parser.add_argument("--only-title")
     parser.add_argument("--sample", type=int)
     args = parser.parse_args()
@@ -267,7 +343,11 @@ def main():
         raise SystemExit(f"{args.target} is not a registered target")
     with open(ENDPOINTS) as handle:
         manifest = json.load(handle)[args.target]["manifest"]
-    manifest = manifest.replace("127.0.0.1", args.addon_host).replace("localhost", args.addon_host)
+    # two URLs for one addon: the one the player installs, and the one the
+    # harness reads the manifest from. They differ whenever the target is
+    # reached through a tunnel, which is the normal case for this plane
+    player_url = manifest.replace("127.0.0.1", args.addon_host).replace("localhost", args.addon_host)
+    fetch_url = manifest.replace("127.0.0.1", args.fetch_host).replace("localhost", args.fetch_host)
 
     data, titles = protocol.load_titles(protocol.TITLES,
                                         args.only_title.split(",") if args.only_title else None,
@@ -281,13 +361,16 @@ def main():
     with Browser(args.cdp_host, args.cdp_port) as browser:
         app = Stremio(browser.first_page())
         # printed by shape only: two of these URLs are credentials
-        shown = manifest.split("//", 1)[-1].split("/")[0]
-        print(f"{args.target}: installing an addon on {shown}")
-        print("  install:", app.install(manifest))
-        time.sleep(6)
+        print(f"{args.target}: player installs {player_url.split('//', 1)[-1].split('/')[0]}, "
+              f"manifest read from {fetch_url.split('//', 1)[-1].split('/')[0]}")
+        descriptor = fetch_manifest(fetch_url)
+        state = app.install(player_url, descriptor)
+        print(f"  install: {state} ({descriptor.get('name', '?')})")
+        if state != "installed":
+            raise SystemExit("the addon did not install; nothing below would be this target")
         rows = []
         for title in titles:
-            row = measure_title(app, title, cap_bytes)
+            row = measure_title(app, title, cap_bytes, player_url)
             rows.append(row)
             print(f"  {row['id']:<14} {row['outcome']:<15}"
                   f" list={row['stream_list_s']}s n={row['n_streams']}"
@@ -298,8 +381,12 @@ def main():
         "target": args.target, "plane": "client", "round": args.round,
         "measured_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "client": "Stremio 4.4 over CDP", "addon_host": args.addon_host,
+        "fetch_host": args.fetch_host,
         "note": ("this plane crosses a LAN hop the protocol plane does not, "
-                 "because the player is not on the bench host"),
+                 "because the player is not on the bench host. Rows are "
+                 "attributed to the addon that produced them, so a client with "
+                 "other addons installed renders their streams and this never "
+                 "clicks or counts one"),
         "population": len(titles), "cap_bytes": cap_bytes,
         "passes": [rows],
     }
