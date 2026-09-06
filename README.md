@@ -22,6 +22,7 @@ no results to quote.
 |---|---|
 | Field of five addons | registered in [`harness/targets.py`](harness/targets.py), four of five still on unverified endpoints |
 | Method, parity rules, traps | [`docs/design.md`](docs/design.md) |
+| How to run it | [`docs/running.md`](docs/running.md) |
 | Candidate pool | [`corpus/candidates.json`](corpus/candidates.json), 31 entries |
 | Indexer capability matrix | [`corpus/indexer-capabilities.json`](corpus/indexer-capabilities.json), measured 6 September 2026 |
 | Indexer census | [`corpus/availability.json`](corpus/availability.json), 31 candidates across 6 indexers |
@@ -132,22 +133,36 @@ landed under the 40-result threshold. Age does not predict scarcity for famous
 films. A genuinely scarce title has to be chosen from a scarce catalogue rather
 than an old one, and that entry is still missing.
 
-## Building the test data
+## Running it
 
-The title set is measured, not chosen.
+Full runbook in [`docs/running.md`](docs/running.md), including target setup,
+the parity rules, the publish check and what each failure mode means.
+
+The setup half works today and is what produced the committed test data. It
+needs nothing but api keys and does not touch the news account, so it runs from
+a laptop.
 
 ```bash
 cp config/indexers.example.json config/indexers.json   # fill in real keys, gitignored
 python3 harness/indexer_caps.py                        # who honours which search, who bans whom
 python3 harness/census.py                              # ask every indexer what it holds
-python3 harness/census.py --retry-failed                # resume anything rate limited
+python3 harness/census.py --retry-failed               # resume anything rate limited
 python3 harness/titles.py build                        # assign tiers, write corpus/titles.json
+python3 harness/scan_leaks.py                          # before any push
 ```
 
-Run `indexer_caps.py` first. It decides which indexers may be counted, and for
-which kind of search, and `titles.py` reads its answer rather than trusting a
-result count. An indexer that drops a filter returns a big number, and counting
-that would make an unbenchmarkable title look like the easiest one in the set.
+Run `indexer_caps.py` first, and re-run it on whichever host will run the round.
+It decides which indexers may be counted and for which kind of search, and
+`titles.py` reads its answer rather than trusting a result count. An indexer that
+drops a filter returns a big number, and counting that would make an
+unbenchmarkable title look like the easiest one in the set.
+
+The measurement half does not exist yet. `docs/running.md` says what the round
+will do and marks those steps as unwritten rather than leaving a command that
+looks runnable.
+
+The harness imports only the Python standard library. There is nothing to
+install.
 
 `corpus/candidates.json` proposes a tier per entry and says why. The census
 measures. `harness/titles.py` assigns the real tier, the size band and the
