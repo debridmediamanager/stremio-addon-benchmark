@@ -46,6 +46,30 @@ SERVED = ("served",)
 # from a clean failure because the diagnosis is different
 PARTIAL = ("truncated",)
 
+# A feature film is not a megabyte. Two targets answer a stream they cannot
+# serve with a small, complete, valid MP4 -- 206, video/mp4, a Content-Range
+# whose total is that size -- which passes every check that stops at the status
+# line. See harness/protocol.py, PLACEHOLDER_MAX_BYTES.
+PLACEHOLDER_MAX_BYTES = 1024 * 1024
+
+
+def outcome_of(row):
+    """The row's outcome under the current rule, not the one it was written under.
+
+    Rows measured before placeholder detection existed carry `truncated` for a
+    complete 19KB error clip. Everything needed to tell those apart -- the
+    bytes read and the declared total -- is on the row, so a round is re-read
+    under the corrected rule rather than re-run under it, and every target in
+    the round is judged by the same rule whenever it was measured.
+    """
+    outcome = row.get("outcome")
+    if outcome not in ("truncated", "served"):
+        return outcome
+    total = row.get("content_bytes_total")
+    if total and total <= PLACEHOLDER_MAX_BYTES:
+        return "placeholder"
+    return outcome
+
 
 def load(round_name, prefix="protocol-"):
     directory = os.path.join(ROOT, "results", round_name)
@@ -101,13 +125,15 @@ def censored_median(values, population):
 def verdict(row):
     """Did the target do the right thing for this entry, per its expectation."""
     expected = row.get("expected_outcome")
-    outcome = row.get("outcome")
+    outcome = outcome_of(row)
     streams = row.get("n_streams") or 0
     if expected == "playable-stream":
         if outcome in SERVED:
             return "correct"
         if outcome in PARTIAL:
             return "partial"
+        # a placeholder is a miss dressed as a success, and counting it as a
+        # partial would credit the target for the dressing
         return "missed"
     if expected == "empty-list":
         # a real title with nothing posted. Promptly nothing is the right
@@ -127,8 +153,8 @@ def verdict(row):
 def summarise(name, document, cap_bytes):
     rows = first_pass(document)
     population = document.get("population") or len(rows)
-    served = [r for r in rows if r["outcome"] in SERVED]
-    partial = [r for r in rows if r["outcome"] in PARTIAL]
+    served = [r for r in rows if outcome_of(r) in SERVED]
+    partial = [r for r in rows if outcome_of(r) in PARTIAL]
 
     c2b = [r["click_to_byte_s"] for r in served if r.get("click_to_byte_s") is not None]
     lists = [r["stream_list_s"] for r in rows if r.get("stream_list_s") is not None]
@@ -149,7 +175,8 @@ def summarise(name, document, cap_bytes):
 
     outcomes = {}
     for row in rows:
-        outcomes[row["outcome"]] = outcomes.get(row["outcome"], 0) + 1
+        name = outcome_of(row)
+        outcomes[name] = outcomes.get(name, 0) + 1
 
     return {
         "target": name,
@@ -362,6 +389,26 @@ def render(documents, round_name, client=None):
     for s in summaries:
         out.append(f"| {s['target']} | " + " | ".join(str(s["verdicts"].get(k, 0)) for k in keys) + " |")
     out.append("")
+
+    placeholders = sum(s["outcomes"].get("placeholder", 0) for s in summaries)
+    if placeholders:
+        out.append("## The error clip")
+        out.append("")
+        out.append(f"**{placeholders} rows across the field are a complete, valid, tiny "
+                   f"MP4 rather than a film.** HTTP 206, `video/mp4`, a `Content-Range` "
+                   f"whose total is the same few kilobytes, and the whole of it delivered. "
+                   f"Nothing about the response is malformed; it is simply not the movie. "
+                   f"A harness that stops at the status line, or that reads a fixed first "
+                   f"chunk, records these as served, and they are the difference between "
+                   f"a target that answers a title and one that appears to.")
+        out.append("")
+        out.append("| Target | error clips | of population |")
+        out.append("|---|---|---|")
+        for s in summaries:
+            n = s["outcomes"].get("placeholder", 0)
+            if n:
+                out.append(f"| {s['target']} | {n} | {s['population']} |")
+        out.append("")
 
     out.append("## Outcomes, and the size cap")
     out.append("")

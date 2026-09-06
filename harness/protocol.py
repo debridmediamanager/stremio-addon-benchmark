@@ -89,10 +89,40 @@ OUTCOMES = (
     "empty-list",       # no playable stream was offered
     "resolve-failed",   # the chosen stream never reached something serving bytes
     "zero-bytes",       # a success status over a body that is entirely zeros
-    "truncated",        # the body started and stopped short of what was asked
+    "placeholder",      # a complete file far too small to be the film
+    "truncated",        # the body started and stopped short of what was declared
     "timeout",          # the title exhausted its budget
     "error",            # the target failed in a way none of the above describes
 )
+
+# A feature film is not 19 kilobytes. Two targets in this field answer a stream
+# they cannot serve with a small, valid, complete MP4 -- 206, `video/mp4`, a
+# Content-Range whose total *is* that size -- and it passes every check that
+# stops at the status line. It is not a truncated stream: the body is whole,
+# and re-reading it returns the same thing. Anything whose entire declared
+# length is under this is an error clip, and saying so is the finding.
+PLACEHOLDER_MAX_BYTES = 1024 * 1024
+
+
+def classify(read_bytes, total_bytes, ended_early, sample, status):
+    """The outcome of a body that started. Shared so a round and a report agree.
+
+    Kept as a function, and applied by the report as well as at write time, so
+    a round measured before this rule existed is read under it rather than
+    quietly carrying the older, wrong label.
+    """
+    if looks_like_a_fill(sample):
+        return "zero-bytes", (f"http {status} over {read_bytes} bytes that are entirely zero")
+    if total_bytes and total_bytes <= PLACEHOLDER_MAX_BYTES:
+        return "placeholder", (
+            f"http {status} served a complete {total_bytes}-byte file, which is an error "
+            f"clip rather than the film. The status, the content type and the "
+            f"Content-Range are all well formed")
+    if ended_early and total_bytes and read_bytes < total_bytes:
+        return "truncated", "the body stopped before the read window closed"
+    if ended_early:
+        return "truncated", "the body stopped before the read window closed"
+    return "served", None
 
 
 # --------------------------------------------------------------------------
@@ -612,16 +642,12 @@ def measure_title(target, base, title, read_s, cap_bytes, do_seeks=True):
             row["throughput_mb_s"] = round(read_bytes / 1e6 / max(read_s, 0.001), 2)
             row["p05_window_mb_s"] = None
             row["sustain_25mbps"] = False
-        if looks_like_a_fill(sample):
-            # design trap 7: the status line is already sent and the length is
-            # right. Only reading the body separates this from a served stream
-            row["outcome"] = "zero-bytes"
-            row["detail"] = f"http {response.status} over {read_bytes} bytes that are entirely zero"
-        elif ended_early:
-            row["outcome"] = "truncated"
-            row["detail"] = "the body stopped before the read window closed"
-        else:
-            row["outcome"] = "served"
+        # design trap 7 and its second half: the status line is already sent,
+        # the length agrees with itself, and the body is still not the film
+        row["outcome"], detail = classify(read_bytes, row["content_bytes_total"],
+                                          ended_early, sample, response.status)
+        if detail:
+            row["detail"] = detail
     finally:
         try:
             conn.close()
