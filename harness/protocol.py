@@ -149,6 +149,42 @@ def content_range_total(value):
 # reading a target's stream list
 # --------------------------------------------------------------------------
 
+def pick(options, cap_bytes):
+    """Choose the stream a capped viewer would land on, and say how.
+
+    Size-cap parity used to be a per-target configuration rule: set the same
+    maximum in five different filters and verify it from the served list. Three
+    of the five honour that. streamnzb 5.17.0 does not honour it through any
+    surface -- a bound filter profile, a `limits` entry and a `reject all` rule
+    all read back saved and none of them changes the served list, measured on
+    titles the instance had never searched -- so a round resting on five
+    filters agreeing rests on something unverifiable.
+
+    So the cap is applied here instead, identically for everyone: the
+    highest-ranked option at or below the cap. Each addon still does its own
+    searching, ranking and picking; the round just declines to play a 36 GB
+    remux the desktop player would refuse. What a target *offered* stays on the
+    row, because offering 129 oversize streams is a finding about the product
+    rather than a detail to smooth over.
+
+    Preference order: within the cap, then unknown size, then the smallest of
+    the oversize ones. The last case is not a failure -- four titles in the set
+    are `oversize-only`, where every release is above the cap and the smallest
+    one is the honest answer.
+    """
+    sized = [(index, option, describe(option)["size_bytes"]) for index, option in enumerate(options)]
+    within = [(i, o, size) for i, o, size in sized if isinstance(size, int) and size <= cap_bytes]
+    if within:
+        index, option, _ = within[0]
+        return option, index, False
+    unknown = [(i, o, size) for i, o, size in sized if not isinstance(size, int)]
+    if unknown:
+        index, option, _ = unknown[0]
+        return option, index, False
+    index, option, _ = min(sized, key=lambda item: item[2])
+    return option, index, True
+
+
 def playable(streams):
     """The options a player could actually open, in the order offered.
 
@@ -426,7 +462,7 @@ def looks_like_a_fill(sample):
 # one title against one target
 # --------------------------------------------------------------------------
 
-def measure_title(target, base, title, read_s, do_seeks=True):
+def measure_title(target, base, title, read_s, cap_bytes, do_seeks=True):
     row = {
         "id": title["id"],
         "title": title["title"],
@@ -436,8 +472,11 @@ def measure_title(target, base, title, read_s, do_seeks=True):
         "started_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "stream_list_s": None,
         "n_streams": None,
+        "n_within_cap": None,
         "max_offered_bytes": None,
         "chosen": None,
+        "picked_rank": None,
+        "picked_over_cap": None,
         "resolve_s": None,
         "resolve_waited_s": None,
         "ttfb_s": None,
@@ -477,8 +516,13 @@ def measure_title(target, base, title, read_s, do_seeks=True):
         row["outcome"] = "empty-list"
         return row
 
-    chosen = options[0]
+    chosen, rank, over_cap = pick(options, cap_bytes)
     row["chosen"] = describe(chosen)
+    row["picked_rank"] = rank
+    row["picked_over_cap"] = over_cap
+    row["n_within_cap"] = sum(1 for option in options
+                              if isinstance(describe(option)["size_bytes"], int)
+                              and describe(option)["size_bytes"] <= cap_bytes)
 
     resolution = resolve(chosen["url"], deadline)
     row["resolve_s"] = None if resolution.resolve_s is None else round(resolution.resolve_s, 3)
@@ -668,11 +712,13 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(out_dir, f"protocol-{args.target}.json")
 
+    cap_bytes = data.get("playable_cap_bytes") or 6 * 1024 ** 3
     budget = target.get("budget_s", registry.DEFAULT_BUDGET_S)
     started = time.monotonic()
     passes = []
     print(f"{args.target}: {len(titles)} title(s) x {args.repeat} pass(es), "
-          f"budget {budget}s, read {args.read_s}s")
+          f"budget {budget}s, read {args.read_s}s, "
+          f"pick capped at {cap_bytes / 1024 ** 3:.0f} GiB")
 
     for index in range(args.repeat):
         rows = []
@@ -680,12 +726,14 @@ def main():
             if time.monotonic() - started > budget:
                 print(f"  ! {args.target} exhausted its {budget}s budget; remaining titles unmeasured")
                 break
-            row = measure_title(target, base, title, args.read_s, not args.no_seeks)
+            row = measure_title(target, base, title, args.read_s, cap_bytes,
+                                not args.no_seeks)
             rows.append(row)
             print(f"  {row['id']:<14} {row['outcome']:<15}"
                   f" list={fmt(row['stream_list_s'])} n={row['n_streams']}"
                   f" ttfb={fmt(row['ttfb_s'])} c2b={fmt(row['click_to_byte_s'])}"
                   f" {fmt(row['throughput_mb_s'])}MB/s"
+                  f" #{row['picked_rank']}{'!' if row['picked_over_cap'] else ''}"
                   f"  {(row['chosen'] or {}).get('release') or ''}"[:200])
         passes.append(rows)
 
@@ -700,6 +748,7 @@ def main():
         "playable_cap_bytes": data.get("playable_cap_bytes"),
         "population": len(titles),
         "read_s": args.read_s,
+        "cap_bytes": cap_bytes,
         "title_budget_s": TITLE_BUDGET_S,
         "target_budget_s": budget,
         "verified": target["verified"],

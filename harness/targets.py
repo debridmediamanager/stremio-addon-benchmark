@@ -117,20 +117,27 @@ TARGETS = {
         "language": "Go",
         "repo": "Gaisberg/streamnzb",
         "port": 7000,
-        "manifest": "http://127.0.0.1:7000/manifest.json",
-        "stream": "http://127.0.0.1:7000/stream/{type}/{id}.json",
+        "manifest": "http://127.0.0.1:7000/{token}/manifest.json",
+        "stream": "http://127.0.0.1:7000/{token}/stream/{type}/{id}.json",
         "play_mode": DIRECT,
         "serve_mode": INGEST,
-        "verified": "shakedown",
+        "verified": "live",
+        "standup": "harness/standup/streamnzb.py",
         "note": (
             "measured once in the 18 August six-way round and dropped before "
             "either repository existed, so it has never appeared in a "
-            "published round. Disable the bundled NNTP proxy or it binds a "
-            "privileged port and dies at boot with a misleading error, and "
-            "raise the playback timeout well above its 5s default or a "
-            "multi-volume RAR fails outright. Stored archives only by design, "
-            "so the compressed negative entry is expected to fail here and "
-            "that is a correct answer, not a defect"
+            "published round. The only target in the field that takes its news "
+            "account and its indexers from the environment, so it comes up "
+            "already pointed at the parity set. Everything else about it has "
+            "to be written through three separate surfaces: PUT /api/config "
+            "silently discards a `streams` key it answers 200 for, "
+            "POST /api/streams ignores every field but the username, and the "
+            "playback timeout is capped at 60s by validation -- its 5s default "
+            "fails a multi-volume RAR outright, so 60 is the round's value and "
+            "is the most the app allows. Its NNTP proxy is off by default and "
+            "stays off. Stored archives only by design, so the compressed "
+            "negative entry is expected to fail here and that is a correct "
+            "answer, not a defect"
         ),
     },
     "comet": {

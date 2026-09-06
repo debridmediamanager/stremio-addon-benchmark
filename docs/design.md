@@ -96,12 +96,32 @@ Anything unequal across targets is what the round actually measured.
    addon actually sends, serving every target in the field, and holding up under
    a round's call volume. Two of the seven fail that on their own behaviour and
    one on quota, which is what makes round 1 movies only.
-2. **Size-cap parity.** Every target is capped at the same maximum release size.
-   Uncapped, the top result for a popular title is a 17-36 GB remux; the player
-   refuses it and the addon with the tightest default filter "wins". zurg needs
-   `stremio.max_size_gb`; the others have their own filter and each one must be
-   set to the same number and verified from the served list, not from the config
-   file.
+2. **Size-cap parity, applied at the pick.** Uncapped, the top result for a
+   popular title is a 17-36 GB remux; the player refuses it and the addon with
+   the tightest default filter "wins". So the round plays the highest-ranked
+   option **at or below 6 GiB**, chosen by the harness, identically for every
+   target. Each addon still searches, ranks and picks for itself; the round
+   only declines to play something the desktop player would refuse.
+
+   This used to be a per-target configuration rule -- set the same maximum in
+   five different filters and verify it from the served list. It was changed
+   because one target cannot honour it. streamnzb 5.17.0 binds a filter
+   profile, reads it back, and applies none of it: a `limits.max_size_gb`
+   entry, and a `reject all` rule, both save and neither changes the served
+   list, measured on titles the instance had never searched (158 offered, 129
+   of them over the cap). A parity rule resting on five filter implementations
+   agreeing rests on something that cannot be verified from outside, and this
+   one silently was not holding.
+
+   What a target offers is still measured and still published -- `n_streams`,
+   `n_within_cap` and `max_offered_bytes` are on every row, and
+   `picked_rank` records how far down its own ranking the cap had to reach.
+   Offering 129 oversize streams is a finding about the product, not a
+   configuration detail to smooth over. Where a filter *can* be set it still
+   is, so the cap is measured twice: once by the target and once at the pick.
+
+   Four titles are `oversize-only`, where every release is above the cap. There
+   the smallest one is played and the row carries `picked_over_cap`.
 3. **Connection parity.** Same NNTP connection count everywhere, verified after
    the servers are up by sampling established sockets, never read off a config.
    In several of these projects the provider pool cap and the per-read budget

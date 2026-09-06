@@ -140,6 +140,8 @@ def summarise(name, document, cap_bytes):
 
     offered = [r["max_offered_bytes"] for r in rows if r.get("max_offered_bytes")]
     over_cap = [r for r in rows if (r.get("max_offered_bytes") or 0) > cap_bytes]
+    ranks = [r["picked_rank"] for r in rows if r.get("picked_rank") is not None]
+    forced = [r for r in rows if r.get("picked_over_cap")]
 
     verdicts = {}
     for row in rows:
@@ -169,6 +171,8 @@ def summarise(name, document, cap_bytes):
         "sustain_25mbps_n": len(sustained),
         "max_offered_bytes": max(offered) if offered else None,
         "over_cap_titles": len(over_cap),
+        "median_pick_rank": median(ranks),
+        "picked_over_cap": len(forced),
         "outcomes": outcomes,
         "verdicts": verdicts,
     }
@@ -295,17 +299,20 @@ def render(documents, round_name):
 
     out.append("## Outcomes, and the size cap")
     out.append("")
-    out.append(f"Size-cap parity is verified from the served stream list, never from a "
-               f"config file: the cap is {human_bytes(cap_bytes)} and a target offering "
-               f"above it did not have the same filter as the rest of the field.")
+    out.append(f"The cap is {human_bytes(cap_bytes)} and it is applied at the pick, "
+               f"identically for every target, because one of them cannot be "
+               f"configured to honour it. What each one *offered* is reported rather "
+               f"than corrected: `over cap` counts titles where the target's own list "
+               f"went above the cap, and `pick rank` is how far down its own ranking "
+               f"the cap had to reach to find something playable.")
     out.append("")
-    out.append("| Target | outcomes | largest offered | titles over cap |")
-    out.append("|---|---|---|---|")
+    out.append("| Target | outcomes | largest offered | titles with oversize offers | median pick rank | oversize-only picks |")
+    out.append("|---|---|---|---|---|---|")
     for s in summaries:
         breakdown = ", ".join(f"{k} {v}" for k, v in sorted(s["outcomes"].items()))
-        flag = "" if not s["over_cap_titles"] else f" **{s['over_cap_titles']}**"
+        rank = "-" if s["median_pick_rank"] is None else f"{s['median_pick_rank']:g}"
         out.append(f"| {s['target']} | {breakdown} | {human_bytes(s['max_offered_bytes'])} "
-                   f"|{flag or ' 0'} |")
+                   f"| {s['over_cap_titles']} | {rank} | {s['picked_over_cap']} |")
     out.append("")
 
     floors = {name: noise_floor(document) for name, document in documents.items()}
