@@ -185,22 +185,61 @@ def pick(options, cap_bytes):
     return option, index, True
 
 
+# A target that cannot serve a title does not always answer with an empty list.
+# Comet answers 200 with one stream whose name is `[⚠️] Comet setup` or
+# `[❌] Comet` and whose description is the problem -- an obsolete
+# configuration, a missing engine, unavailable metadata -- pointing at its own
+# configure page or a placeholder host. Counted as an option, that is a target
+# credited with coverage for every title it cannot serve, and, worse, a `served`
+# row: the placeholder URL answers bytes.
+NOTICE_PREFIXES = ("[⚠️]", "[❌]", "⚠️", "❌")
+NOTICE_HOSTS = ("comet.feels.legal",)
+NOTICE_TEXT = ("obsolete configuration", "please re-configure", "unable to get metadata",
+               "is unavailable", "open the addon configuration")
+
+
+def is_notice(stream):
+    """Is this a status message wearing a stream's shape?"""
+    name = (stream.get("name") or "")
+    if name.strip().startswith(NOTICE_PREFIXES):
+        return True
+    url = stream.get("url") or ""
+    host = urllib.parse.urlsplit(url).hostname or ""
+    if host in NOTICE_HOSTS:
+        return True
+    if url.rstrip("/").endswith("/configure"):
+        return True
+    blob = (name + " " + (stream.get("description") or "")).lower()
+    return any(marker in blob for marker in NOTICE_TEXT)
+
+
 def playable(streams):
     """The options a player could actually open, in the order offered.
 
-    A stream carrying `externalUrl` and no `url` is a control rather than a
-    release -- zurg appends one to a cached list so a viewer can clear the
-    cache -- and counting it as an option would credit a target with coverage
-    it does not have. `infoHash` without a url is a torrent, which nothing in
-    this field should be offering and which this harness cannot play.
+    Three things get filtered out, and each one would otherwise be counted as
+    coverage a target does not have:
+
+      * a stream carrying `externalUrl` and no `url` is a control rather than a
+        release -- zurg appends one to a cached list so a viewer can clear the
+        cache;
+      * `infoHash` without a url is a torrent, which nothing in this field
+        should be offering and which this harness cannot play;
+      * a status notice, which is the one that matters, because it carries a
+        real url and would be measured as a served stream. See `is_notice`.
     """
     out = []
     for stream in streams or []:
         if not isinstance(stream, dict):
             continue
-        if stream.get("url"):
+        if stream.get("url") and not is_notice(stream):
             out.append(stream)
     return out
+
+
+def notices(streams):
+    """The status messages a target answered with, kept for the row."""
+    return [(s.get("name") or "").strip() + ": " + (s.get("description") or "").strip()
+            for s in (streams or []) if isinstance(s, dict) and is_notice(s)]
 
 
 def describe(stream):
@@ -473,6 +512,7 @@ def measure_title(target, base, title, read_s, cap_bytes, do_seeks=True):
         "stream_list_s": None,
         "n_streams": None,
         "n_within_cap": None,
+        "notices": None,
         "max_offered_bytes": None,
         "chosen": None,
         "picked_rank": None,
@@ -508,12 +548,19 @@ def measure_title(target, base, title, read_s, cap_bytes, do_seeks=True):
 
     options = playable(payload.get("streams"))
     row["n_streams"] = len(options)
+    told = notices(payload.get("streams"))
+    if told:
+        row["notices"] = told[:3]
     sizes = [describe(option)["size_bytes"] for option in options]
     sizes = [size for size in sizes if isinstance(size, int)]
     row["max_offered_bytes"] = max(sizes) if sizes else None
 
     if not options:
+        # a notice is not an empty list: the target had something to say about
+        # why, and that is a different finding from "nothing is posted"
         row["outcome"] = "empty-list"
+        if told:
+            row["detail"] = told[0][:200]
         return row
 
     chosen, rank, over_cap = pick(options, cap_bytes)

@@ -155,12 +155,14 @@ TARGETS = {
         "language": "Python + Rust",
         "repo": "g0ldyy/comet",
         "branch": "feat/usenet",
-        "port": 8085,
-        "manifest": "http://127.0.0.1:8085/{config}/manifest.json",
-        "stream": "http://127.0.0.1:8085/{config}/stream/{type}/{id}.json",
+        # 8085 is taken by an unrelated service on the bench host
+        "port": 8091,
+        "manifest": "http://127.0.0.1:8091/{config}/manifest.json",
+        "stream": "http://127.0.0.1:8091/{config}/stream/{type}/{id}.json",
         "play_mode": REDIRECT,
         "serve_mode": INGEST,
-        "verified": "shakedown",
+        "verified": "live",
+        "standup": "harness/standup/comet.py",
         "note": (
             "fits this benchmark better than it fitted the mount one. Round 10 "
             "had to register it as a discovery-only target with no import API, "
@@ -169,7 +171,16 @@ TARGETS = {
             "stream list IS its interface. Its config segment is base64 JSON "
             "minted at configure time. It deadlocked its own SQLite under "
             "sustained load at shipped defaults in round 10 preparation, so it "
-            "keeps a shorter budget here too"
+            "keeps a shorter budget here too. It has no configure API: the "
+            "whole configuration is the URL, base64url of a JSON document, and "
+            "a document it rejects does not error -- every route answers 200 "
+            "with one stream named OBSOLETE CONFIGURATION, which reads as a "
+            "served result to anything that does not check the name. Two "
+            "environment traps cost a boot each: a 70 MB anime-mapping download "
+            "at worker startup outlasts gunicorn's timeout on a small host and "
+            "crashloops with no traceback, and USENET_ENGINE_ENABLED=true is "
+            "what *stops* the native engine starting -- unset, the same build "
+            "reports the engine ready in 295 ms"
         ),
         "budget_s": 1800,
     },
