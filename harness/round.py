@@ -194,6 +194,10 @@ def main():
     parser.add_argument("--noise-floor", type=int, default=0,
                         help="extra passes over N sampled titles on the first target, "
                              "to state the resolution below which two targets are tied")
+    parser.add_argument("--only-title",
+                        help="comma-separated imdb ids. For a dress rehearsal of the "
+                             "orchestration only -- a published round is over the whole "
+                             "fixed population, because that is what its medians mean")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -239,6 +243,8 @@ def main():
             command = [sys.executable, os.path.join(ROOT, "harness", "protocol.py"),
                        "--target", name, "--round", args.round,
                        "--read-s", str(args.read_s), "--repeat", str(max(passes, 1))]
+            if args.only_title:
+                command += ["--only-title", args.only_title]
             subprocess.run(command, cwd=ROOT)
             windows[name] = {"ready_utc": datetime.fromtimestamp(ready, timezone.utc).isoformat(timespec="seconds"),
                              "start": started, "end": time.time()}
