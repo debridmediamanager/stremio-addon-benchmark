@@ -23,9 +23,21 @@ of confusion before it was found:
     rather than slowly, so this raises it to the maximum the app allows and
     that maximum is worth stating in the round.
 
-The size cap is `limits.max_size_gb` on a filter profile, in **decimal** GB
-while the round's cap is 6 GiB, so the number written here is 6.442450944 and
-not 6. A profile is per content kind; `default` is the entry the others inherit.
+**The size cap this writes does not take effect, and that is the finding.**
+`limits.max_size_gb` is set on a filter profile, the profile is bound to the
+stream, and both read back. The served list is unchanged: 158 streams for The
+Godfather with 129 of them over the cap, measured on a title the instance had
+never searched, so it is not a stale cache. A `reject all` rule
+(`when: "true"`, `action: "reject"`) leaves the same 157 streams standing, and
+`results_mode` has no effect either, so no stream-level setting reaches the
+addon's stream list in 5.17.0. It is written anyway -- it costs nothing and a
+later version may honour it -- and the round caps at the pick instead, for
+every target, which is why docs/design.md's parity rule 2 reads the way it
+does.
+
+The cap is in **decimal** GB while the round's cap is 6 GiB, so the number
+written is 6.442450944 and not 6. A profile is per content kind; `default` is
+the entry the others inherit.
 """
 import argparse
 import json
@@ -98,8 +110,8 @@ def bind_stream(base, token, indexers, connections):
     status, body = call(base, token, "/api/streams")
     back = [s for s in json.loads(body) if s["username"] == username][0]
     if back.get("filter_profile_name") != PROFILE:
-        raise SystemExit("the stream did not keep its filter profile, so the size cap is "
-                         "not applied. Do not measure this.")
+        raise SystemExit("the stream did not keep its filter profile. Do not measure this: "
+                         "the indexer selection lives in the same object")
     print(f"stream {username!r} bound to profile {PROFILE!r}, "
           f"indexers {back.get('indexer_selections')}")
     return back["token"]

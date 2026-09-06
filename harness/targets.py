@@ -68,21 +68,31 @@ TARGETS = {
         "role": "target",
         "language": "TypeScript",
         "repo": "Viren070/AIOStreams",
-        "port": 3000,
-        "manifest": "http://127.0.0.1:3000/stremio/{uuid}/{password}/manifest.json",
-        "stream": "http://127.0.0.1:3000/stremio/{uuid}/{password}/stream/{type}/{id}.json",
+        # 3000 is its default and is taken by an unrelated service on the
+        # bench host, so the round runs it on 3010. The port is not part of
+        # what is measured; colliding with production would have been
+        "port": 3010,
+        "manifest": "http://127.0.0.1:3010/stremio/{uuid}/{password}/manifest.json",
+        "stream": "http://127.0.0.1:3010/stremio/{uuid}/{password}/stream/{type}/{id}.json",
         "play_mode": DIRECT,
         "serve_mode": INGEST,
-        "verified": "shakedown",
+        "verified": "live",
+        "standup": "harness/standup/aiostreams.py",
         "note": (
             "the largest project in the field by a wide margin and the author "
             "of the competing benchmark, which is exactly why an independent "
             "number is worth having. Its manifest path embeds a per-user uuid "
-            "and an encrypted password, so the URL is minted at configure time "
-            "and cannot be written from a template -- verify_endpoints.py has "
-            "to read it back from the instance. Not a WebDAV server: no "
-            "PROPFIND anywhere in the tree, which is why it belongs in this "
-            "repository and not in the mount rounds"
+            "and an encrypted password, both minted by POST /api/v1/user, so "
+            "the URL cannot be written from a template. Configured across three "
+            "surfaces: the news account is global and admin-owned behind a "
+            "dashboard session, the indexers are one `newznab` preset each "
+            "inside the user config, and the streaming service is per-user. "
+            "That last choice decides what is being measured -- `stremio_nntp` "
+            "hands NNTP details to the player, a Stremio V5 desktop feature "
+            "that streams nothing through the addon, so the round uses the "
+            "`aiostreams` built-in engine. Not a WebDAV server: no PROPFIND "
+            "anywhere in the tree, which is why it belongs in this repository "
+            "and not in the mount rounds"
         ),
     },
     "stremthru": {
