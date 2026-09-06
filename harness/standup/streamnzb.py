@@ -79,14 +79,16 @@ def set_limits(base, token, cap_bytes, timeout_s):
     config = json.loads(body)
     config["playback_startup_timeout_seconds"] = timeout_s
     profiles = [p for p in (config.get("filter_profiles") or []) if p.get("name") != PROFILE]
-    profiles.append({"name": PROFILE,
-                     "limits": {"default": {"max_size_gb": cap_bytes / 1e9}}})
+    # no size limit: the round caps at the pick for every target alike. This
+    # profile exists only so the stream has one to bind to, and because the
+    # binding is where the indexer selection lives
+    profiles.append({"name": PROFILE, "limits": {}})
     config["filter_profiles"] = profiles
     status, body = call(base, token, "/api/config", "PUT", config)
     if status != 200:
         raise SystemExit(f"cannot save the config: http {status}: {body[:300]}")
-    print(f"filter profile {PROFILE!r}: max_size_gb={cap_bytes / 1e9:.9f} "
-          f"({cap_bytes / 1024 ** 3:.0f} GiB), playback timeout {timeout_s}s")
+    print(f"filter profile {PROFILE!r}: no size limit (the round caps at the pick), "
+          f"playback timeout {timeout_s}s")
 
 
 def bind_stream(base, token, indexers, connections):

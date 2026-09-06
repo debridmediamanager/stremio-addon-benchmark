@@ -114,11 +114,18 @@ Anything unequal across targets is what the round actually measured.
    one silently was not holding.
 
    What a target offers is still measured and still published -- `n_streams`,
-   `n_within_cap` and `max_offered_bytes` are on every row, and
-   `picked_rank` records how far down its own ranking the cap had to reach.
-   Offering 129 oversize streams is a finding about the product, not a
-   configuration detail to smooth over. Where a filter *can* be set it still
-   is, so the cap is measured twice: once by the target and once at the pick.
+   `n_within_cap` and `max_offered_bytes` are on every row, and `picked_rank`
+   records how far down its own ranking the cap had to reach. Offering 129
+   oversize streams is a finding about the product, not a configuration detail
+   to smooth over.
+
+   **No target is given a size filter of its own**, even the three that would
+   accept one. A field where some targets pre-filter and one cannot is a field
+   whose `n_streams`, `max_offered_bytes` and `picked_rank` mean different
+   things per row: zurg filtering to 15 results and streamnzb offering 158 is
+   a difference in configuration, not in product. Uncapped everywhere, those
+   three columns compare each addon's own unfiltered ranking on the same
+   basis, and the cap applies once, in one place, to all of them.
 
    Four titles are `oversize-only`, where every release is above the cap. There
    the smallest one is played and the row carries `picked_over_cap`.

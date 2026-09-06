@@ -96,6 +96,21 @@ def existing_servers(base, cookie):
         return []
 
 
+def filter_expression(max_size_gb):
+    """The stream filter, empty by default.
+
+    The round gives no target a size filter of its own -- it caps at the pick,
+    identically for everyone, so that `n_streams` and `picked_rank` compare
+    unfiltered rankings rather than configurations. `--max-size-gb` is kept
+    because the expression below is the one that works and the one that does
+    not is indistinguishable from it: `File.Size <= "6 GB"` mints a working URL
+    and filters nothing (120 streams, a 71 GB release on top), while
+    `Size <= "6 GB"` returns 18 with a 5.7 GB maximum. Anyone reproducing this
+    with a cap should use the second.
+    """
+    return "" if not max_size_gb else f'Size <= "{max_size_gb} GB"'
+
+
 def configure(base, user, password, indexers, cookie, max_size_gb):
     """Post the addon's own configure form and read the minted URL back."""
     # stores_length 0 is rejected at stream time, not at configure time: the
@@ -106,7 +121,7 @@ def configure(base, user, password, indexers, cookie, max_size_gb):
     fields = [("user", user), ("pass", password), ("mode", "stream"),
               ("indexers_length", str(len(indexers))), ("stores_length", "1"),
               ("stores[0].code", ""), ("stores[0].token", f"{user}:{password}"),
-              ("sort", ""), ("filter", f'Size <= "{max_size_gb} GB"')]
+              ("sort", ""), ("filter", filter_expression(max_size_gb))]
     for index, indexer in enumerate(indexers):
         fields.append((f"indexers[{index}].type", "generic"))
         # the label, never the real name: a target that prints its indexer
@@ -145,8 +160,9 @@ def main():
     parser.add_argument("--password", default=os.environ.get("STREMTHRU_BENCH_PASS", "sabround1pass"))
     parser.add_argument("--connections", type=int, default=15,
                         help="the parity value. Verified from sockets afterwards, not from here")
-    parser.add_argument("--max-size-gb", type=int, default=6,
-                        help="the size-cap parity value. Verified from the served list")
+    parser.add_argument("--max-size-gb", type=int, default=0,
+                        help="0 (default) sets no filter, which is what a round uses: "
+                             "the cap is applied at the pick for every target alike")
     args = parser.parse_args()
 
     account = common.account()
