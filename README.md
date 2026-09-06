@@ -14,21 +14,24 @@ A target can win there and lose here.
 
 ## Status
 
-**Nothing has been measured.** This repository currently holds the field, the
-method and the test data. The round-1 harness is not written yet, and there are
-no results to quote.
+**Round 1 has not been run.** Both harnesses are written and both have been
+exercised end to end against a live target; the field is stood up and verified.
+There are no published numbers yet, and nothing below should be read as one.
 
 | Piece | State |
 |---|---|
-| Field of five addons | registered in [`harness/targets.py`](harness/targets.py), four of five still on unverified endpoints |
+| Field | four measured targets, one excluded — see below |
 | Method, parity rules, traps | [`docs/design.md`](docs/design.md) |
 | How to run it | [`docs/running.md`](docs/running.md) |
 | Candidate pool | [`corpus/candidates.json`](corpus/candidates.json), 31 entries |
 | Indexer capability matrix | [`corpus/indexer-capabilities.json`](corpus/indexer-capabilities.json), measured 6 September 2026 |
 | Indexer census | [`corpus/availability.7z`](corpus/availability.7z), 31 candidates across 6 indexers |
 | Pinned title set | [`corpus/titles.json`](corpus/titles.json), 23 entries, built from the census |
-| Protocol-plane harness | not written |
-| Client-plane harness | not written |
+| Target standup | [`harness/standup/`](harness/standup), one script per target, each recording what it cost |
+| Protocol-plane harness | [`harness/protocol.py`](harness/protocol.py) |
+| Client-plane harness | [`harness/client.py`](harness/client.py), over [`harness/cdp.py`](harness/cdp.py) |
+| Round orchestrator | [`harness/round.sh`](harness/round.sh) |
+| Report | [`harness/report.py`](harness/report.py) |
 
 ## The field
 
@@ -40,7 +43,7 @@ Five Usenet-backed Stremio addons.
 | AIOStreams | TypeScript | the largest project in the field by a wide margin, and the author of a competing benchmark, which is exactly why an independent number is worth having |
 | StremThru | Go | its `newz` store also answers WebDAV, so it is the one target whose number here can be read against a number in the mount rounds |
 | streamnzb | Go | measured once in a six-way round on 18 August and dropped before either repository existed |
-| Comet | Python + Rust | fits an addon round better than it fitted the mount rounds, where it had to be registered as discovery-only because it will not accept a chosen release |
+| Comet | Python + Rust | **excluded from round 1.** Configured and standing, but its own usenet engine will not run: with `USENET_ENGINE_ENABLED=true` the supervisor gives up after 30s with `initialization_failure`, and without it every stream request answers `native engine is unavailable`. The engine binary exits `EX_CONFIG` when run directly and prints one line with no diagnostics at `RUST_BACKTRACE=full`. It can play through another project's reader instead, and a row measured that way would be that reader's number wearing Comet's name, so there is no Comet row |
 
 zurg is the author's own project. Every number here is reproducible from this
 repository against your own account and your own indexers, and you should do
@@ -138,9 +141,15 @@ than an old one, and that entry is still missing.
 Full runbook in [`docs/running.md`](docs/running.md), including target setup,
 the parity rules, the publish check and what each failure mode means.
 
-The setup half works today and is what produced the committed test data. It
-needs nothing but api keys and does not touch the news account, so it runs from
-a laptop.
+```bash
+./harness/round.sh --dry-run          # the field, the order, what is excluded
+./harness/round.sh                    # the protocol plane, every target
+python3 harness/client.py --target zurg
+python3 harness/report.py --round round1
+```
+
+The setup half needs nothing but api keys and does not touch the news account,
+so it runs from a laptop.
 
 ```bash
 cp config/indexers.example.json config/indexers.json   # fill in real keys, gitignored

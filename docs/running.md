@@ -2,8 +2,8 @@
 
 ## What runs today
 
-Round 1 has not been run and the two measurement harnesses are not written.
-Everything in the setup half works and is what produced the committed test data.
+Round 1 has not been run. Every step below is written and has been exercised
+against a live target.
 
 | Step | Command | State |
 |---|---|---|
@@ -11,11 +11,18 @@ Everything in the setup half works and is what produced the committed test data.
 | 2. Indexer capabilities | `python3 harness/indexer_caps.py` | works |
 | 3. Census | `python3 harness/census.py` | works |
 | 4. Title set | `python3 harness/titles.py build` | works |
-| 5. Stand up the targets | per target, below | zurg documented, four unverified |
+| 5. Stand up the targets | `python3 harness/standup/<target>.py` | works, one script per target |
 | 6. Verify endpoints | `python3 harness/verify_endpoints.py` | works, needs targets running |
-| 7. Protocol round | — | **not written** |
-| 8. Client round | — | **not written** |
-| 9. Publish check | `python3 harness/scan_leaks.py` | works |
+| 7. Protocol round | `./harness/round.sh` | works |
+| 8. Client round | `python3 harness/client.py --target <name>` | works, needs the Windows player |
+| 9. Report | `python3 harness/report.py --round round1` | works |
+| 10. Publish check | `python3 harness/scan_leaks.py` | works |
+
+**The field is four, not five.** Comet is registered, configured and excluded:
+its native usenet engine does not start. `harness/targets.py` carries the
+measured reason, and `./harness/round.sh --dry-run` prints it. An excluded
+target is dropped from the field unless it is named in `--only`, so the
+exclusion cannot be forgotten and cannot be undone by accident.
 
 Steps 1 to 4 need nothing but network and api keys. They do not touch the news
 account, so they can be run from a laptop. Steps 5 onward need the bench host.
@@ -168,13 +175,27 @@ rather than three. The addon token is generated on first boot and printed as
 `http://host:9998/stremio/X/manifest.json` unless `stremio.token` pins it.
 And `/version` is not a route, so liveness is probed through the manifest.
 
-**AIOStreams, StremThru, streamnzb and Comet** are registered in
-`harness/targets.py` with endpoints taken from documentation rather than from a
-running instance, and three of them mint a per-install URL segment at configure
-time. Their `verified` field is `shakedown` and a round refuses to start while
-it stays that way. Clearing it means standing each one up by hand once, reading
-the real manifest URL back out, and recording it. `harness/targets.py` carries
-the known traps per target.
+**Every target now has a standup script**, and each one carries what it cost to
+write. Run the container (or the binary) first, then its script:
+
+```bash
+python3 harness/standup/zurg.py        # writes config.yml; needs a built binary
+python3 harness/standup/stremthru.py   # dashboard vault + addon userdata
+python3 harness/standup/streamnzb.py   # filter profile + stream binding
+python3 harness/standup/aiostreams.py  # dashboard provider + user config
+python3 harness/standup/comet.py       # excluded, kept reproducible
+```
+
+Each writes its minted URL into `config/endpoints.local.json`, which is
+gitignored — two of those URLs are credentials, because the whole configuration
+is encoded into the path. Nothing prints one in full.
+
+The traps each script had to be taught are in its docstring, and they are the
+kind that answer 200: StremThru's addon is `/stremio/newz` and not
+`/stremio/store`, and its size filter is `Size` and not `File.Size`; streamnzb
+discards a `streams` key it accepts; Comet answers a rejected configuration
+with a stream named `OBSOLETE CONFIGURATION`; AIOStreams refuses every write as
+a wrong password when what is missing is a field.
 
 ### The four parity rules
 
@@ -221,26 +242,56 @@ A pass means the URL answered 200 with something that is genuinely a Stremio
 manifest declaring a `stream` resource. It does not mean the addon works and it
 is not a measurement.
 
-## 7 and 8. The round itself
-
-**Not written.** The intended interface, so nothing here reads as available:
+## 7. The protocol round
 
 ```bash
-./harness/round.sh                       # every target, both planes
-./harness/round.sh --only zurg,comet
-./harness/round.sh --plane protocol      # skip the Windows half
+./harness/round.sh --dry-run             # the field, the order, the exclusions
+./harness/round.sh                       # every target, one at a time
+./harness/round.sh --only zurg
+./harness/round.sh --noise-floor 2       # extra passes on the first target
 ```
 
-The protocol plane will drive each target's `/stream/{type}/{id}.json`, follow
-the chosen stream to first byte and through a sustained read, and record the
-timing split in `docs/design.md`. The client plane will drive Stremio 4.4 over
-CDP on the Windows box for the same title set.
+It starts one target, waits for a real manifest, runs `harness/protocol.py`
+over the whole title set, stops it, waits for its news sockets to drain, and
+moves on. Order rotates per round name. It samples established sockets to the
+news port for the whole run into `results/<round>/sockets.log`, which is where
+connection parity is read from afterwards — never from a config file.
 
-Two things about the client plane are already known and will not change. Stremio
-video is a multi plane overlay and is invisible to every screen capture path, so
-playback is confirmed by polling player state through CDP rather than by looking
-at pixels. And Stremio 4.4 accepts remote debugging but only raw CDP works
-against its Qt build.
+## 8. The client round
+
+Needs the Windows player, and three pieces of setup that are properties of the
+plane rather than of any target.
+
+**Stremio must be launched detached.** Started over ssh it dies with the
+session. Launch it from a scheduled task with `QTWEBENGINE_REMOTE_DEBUGGING`
+set, and connect to the debugger it leaves behind.
+
+**Each target must be on the player's loopback.** Stremio's shell is served
+from `https://app.strem.io`, so a plain-http addon on any other host is blocked
+as mixed content: the addon installs, renders nothing, and reports no error.
+Chromium exempts localhost, so forward each target onto the player's own
+loopback and install it there.
+
+```bash
+ssh -f -N -R 8484:<bench host>:8484 <user>@<player host>   # per target port
+ssh -f -N -L 9223:127.0.0.1:9223 <user>@<player host>      # the debugger
+python3 harness/client.py --target stremthru --addon-host 127.0.0.1 --fetch-host <bench host>
+```
+
+`--fetch-host` exists because the harness has to read the manifest itself: the
+page is not allowed to fetch it, for the same mixed-content reason.
+
+**Rows are attributed to the addon that produced them.** A real player has
+other addons installed, and their streams render in the same list. Each row
+carries its addon's `transportUrl`, so the round only ever clicks and counts
+the target's own, and records the rest as `rows_from_other_addons`. Nothing in
+the player's profile is added, removed or restored.
+
+Playback is confirmed from the app's own player service through its AngularJS
+injector — `player.time` moving forward while `player.paused` is false — and
+never from pixels: Stremio's video is a multi-plane overlay and is invisible to
+every screen-capture path. Stremio 4.4 accepts remote debugging but only raw
+CDP works against its Qt build, which is why `harness/cdp.py` exists.
 
 ## 9. Before publishing
 
