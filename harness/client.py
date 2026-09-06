@@ -222,8 +222,40 @@ def clear_streams(app, budget=15):
     return False
 
 
+def wait_for_idle_player(app, budget=20):
+    """Wait until the player is not holding the previous title's position.
+
+    Leaving the player does not zero its state at once, so a title measured
+    straight afterwards sees `time` still advanced from the last one and reads
+    as playing in about forty milliseconds. Every row in the first client-plane
+    run said `play=0.04s`, which is what sent me looking. Nothing is measured
+    until the player is back to zero, or uninitialised.
+    """
+    deadline = time.monotonic() + budget
+    while time.monotonic() < deadline:
+        try:
+            state = app.player_state()
+        except Exception:
+            return False
+        if not state:
+            return False
+        if not state.get("initialized") or not state.get("time"):
+            return True
+        time.sleep(POLL_S)
+    return False
+
+
 def wait_for_play(app, budget=PLAY_BUDGET_S):
-    """Playing means time is moving. A paused player at 0 is not playback."""
+    """Playing means time is moving forward, twice, for this title.
+
+    Three things have to hold before a row is called `played`, and the first
+    run of this harness checked only the weakest of them:
+
+      * the player is initialised for something new;
+      * `time` is greater than zero and the player is not paused;
+      * `time` is still greater a poll later, so a stuck position left over
+        from the previous title cannot pass as playback.
+    """
     started = time.monotonic()
     deadline = started + budget
     first_seen = None
@@ -232,9 +264,17 @@ def wait_for_play(app, budget=PLAY_BUDGET_S):
             state = app.player_state()
         except Exception:
             state = None
-        if state and isinstance(state.get("time"), (int, float)) and state["time"] > 0:
-            if not state.get("paused"):
-                return time.monotonic() - started, state
+        if state and isinstance(state.get("time"), (int, float)) and state["time"] > 0 \
+                and not state.get("paused"):
+            when = time.monotonic() - started
+            time.sleep(max(POLL_S, 0.5))
+            try:
+                again = app.player_state()
+            except Exception:
+                again = None
+            if again and isinstance(again.get("time"), (int, float)) \
+                    and again["time"] > state["time"]:
+                return when, again
             first_seen = first_seen or state
         time.sleep(POLL_S)
     return None, first_seen
@@ -270,13 +310,15 @@ def measure_title(app, title, cap_bytes, transport_url):
         "expected_outcome": title.get("expected_outcome"),
         "started_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "stream_list_s": None, "n_streams": None, "chosen": None,
-        "rows_from_other_addons": None,
+        "rows_from_other_addons": None, "player_was_idle": None,
         "picked_rank": None, "picked_over_cap": None,
         "click_to_play_s": None, "player": None,
         "outcome": None, "detail": None,
     }
     app.dismiss_prompt()
     clear_streams(app)
+    # never measure against the last title's player position
+    row["player_was_idle"] = wait_for_idle_player(app)
     app.go(f"#/detail/{title['type']}/{title['id']}/{title['id']}")
     streams, listed, rendered = wait_for_streams(app, transport_url)
     row["stream_list_s"] = round(listed, 3)
