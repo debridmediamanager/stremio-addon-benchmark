@@ -175,8 +175,11 @@ def summarise(name, document, cap_bytes):
 
     outcomes = {}
     for row in rows:
-        name = outcome_of(row)
-        outcomes[name] = outcomes.get(name, 0) + 1
+        # not `name`: that is this function's target-name parameter, and
+        # shadowing it made every row in the report claim the last outcome as
+        # its target
+        label = outcome_of(row)
+        outcomes[label] = outcomes.get(label, 0) + 1
 
     return {
         "target": name,
