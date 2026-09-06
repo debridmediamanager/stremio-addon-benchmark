@@ -149,7 +149,7 @@ def content_range_total(value):
 # reading a target's stream list
 # --------------------------------------------------------------------------
 
-def pick(options, cap_bytes):
+def pick(options, cap_bytes, described=None):
     """Choose the stream a capped viewer would land on, and say how.
 
     Size-cap parity used to be a per-target configuration rule: set the same
@@ -172,7 +172,9 @@ def pick(options, cap_bytes):
     are `oversize-only`, where every release is above the cap and the smallest
     one is the honest answer.
     """
-    sized = [(index, option, describe(option)["size_bytes"]) for index, option in enumerate(options)]
+    described = described or [describe(option) for option in options]
+    sized = [(index, option, described[index]["size_bytes"])
+             for index, option in enumerate(options)]
     within = [(i, o, size) for i, o, size in sized if isinstance(size, int) and size <= cap_bytes]
     if within:
         index, option, _ = within[0]
@@ -551,8 +553,10 @@ def measure_title(target, base, title, read_s, cap_bytes, do_seeks=True):
     told = notices(payload.get("streams"))
     if told:
         row["notices"] = told[:3]
-    sizes = [describe(option)["size_bytes"] for option in options]
-    sizes = [size for size in sizes if isinstance(size, int)]
+    # described once: one target answers a popular title with 220 streams, and
+    # every size, indexer and release name below is read out of these
+    described = [describe(option) for option in options]
+    sizes = [d["size_bytes"] for d in described if isinstance(d["size_bytes"], int)]
     row["max_offered_bytes"] = max(sizes) if sizes else None
 
     if not options:
@@ -563,13 +567,13 @@ def measure_title(target, base, title, read_s, cap_bytes, do_seeks=True):
             row["detail"] = told[0][:200]
         return row
 
-    chosen, rank, over_cap = pick(options, cap_bytes)
-    row["chosen"] = describe(chosen)
+    chosen, rank, over_cap = pick(options, cap_bytes, described)
+    row["chosen"] = described[rank]
     row["picked_rank"] = rank
     row["picked_over_cap"] = over_cap
-    row["n_within_cap"] = sum(1 for option in options
-                              if isinstance(describe(option)["size_bytes"], int)
-                              and describe(option)["size_bytes"] <= cap_bytes)
+    row["n_within_cap"] = sum(1 for d in described
+                              if isinstance(d["size_bytes"], int)
+                              and d["size_bytes"] <= cap_bytes)
 
     resolution = resolve(chosen["url"], deadline)
     row["resolve_s"] = None if resolution.resolve_s is None else round(resolution.resolve_s, 3)
