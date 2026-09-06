@@ -208,21 +208,49 @@ def parse_size(text):
 
 
 def parse_indexer(text):
-    """The indexer credit, when a target prints one. zurg writes ` · name`."""
-    for line in text.splitlines():
-        if "·" in line:
-            tail = line.rsplit("·", 1)[1].strip()
-            if tail and len(tail) < 40:
-                return tail
+    """The indexer credit, when a target prints one.
+
+    Every target writes this differently -- zurg uses ` · name`, StremThru a
+    `🔍 name` field, and others not at all -- so the first thing looked for is
+    the label itself. Each target in this round is configured with the parity
+    labels as its indexer names, so `indexer-a` appears verbatim in whatever
+    prose that target happens to use, and no per-target format needs guessing.
+    """
+    labelled = re.search(r"\bindexer-[a-g]\b", text)
+    if labelled:
+        return labelled.group(0)
+    for marker in ("🔍", "·"):
+        for line in text.splitlines():
+            if marker in line:
+                tail = line.rsplit(marker, 1)[1].strip()
+                # a marker can be followed by another field on the same line
+                tail = tail.split("  ")[0].strip()
+                if tail and len(tail) < 40:
+                    return tail
     return None
 
 
 def first_release_line(text):
-    """The line that looks like a release name rather than a label."""
-    for line in text.splitlines():
-        line = line.strip()
-        if len(line) > 12 and ("." in line or "-" in line) and not line.endswith(":"):
-            return line
+    """The release name out of a stream's prose.
+
+    Scene names have no spaces and plenty of separators, which is the only
+    property they share across every target's formatting: zurg puts the name
+    on its own first line, StremThru puts it last behind a folder emoji and
+    three other emoji-labelled fields above it. Picking the first line that
+    "looks like a name" gave `📺 DV 🎧 DTS Lossless | 5.1` for StremThru, so
+    the longest space-free candidate is taken instead.
+    """
+    best = None
+    for token in re.split(r"[\s]+", text):
+        token = token.strip("()[]|,")
+        if len(token) < 20 or "." not in token and "-" not in token:
+            continue
+        if token.startswith(("http://", "https://")):
+            continue
+        if best is None or len(token) > len(best):
+            best = token
+    if best:
+        return best
     return next((line.strip() for line in text.splitlines() if line.strip()), None)
 
 

@@ -24,6 +24,7 @@ Three classes of hazard, and the second is the one that gets missed:
     catches a key this script was never told about.
 """
 import argparse
+import base64
 import json
 import os
 import re
@@ -50,6 +51,22 @@ GENERIC_LABELS = {"feed", "api", "www", "nzb", "usenet", "news", "index", "cdn",
                   "search", "public", "cloud", "mail", "http", "https"}
 
 
+def base64_variants(secret):
+    """The three ways a secret can appear inside base64 of a longer string.
+
+    base64 packs three bytes into four characters, so the rendering depends on
+    the secret's offset within the blob. The outer four characters of each are
+    dropped because they mix with neighbouring bytes.
+    """
+    out = []
+    for offset in (0, 1, 2):
+        encoded = base64.b64encode(b"x" * offset + secret.encode()).decode()
+        middle = encoded[4:-4]
+        if len(middle) >= 12:
+            out.append(middle)
+    return out
+
+
 def known_secrets():
     """What to look for, gathered from the places that legitimately hold it."""
     values, hosts = [], []
@@ -58,6 +75,11 @@ def known_secrets():
             for indexer in json.load(handle)["indexers"]:
                 if indexer.get("api_key"):
                     values.append(indexer["api_key"])
+                    # a key inside a base64 blob is still a key. StremThru's
+                    # addon URL is base64 of a JSON config with the keys in
+                    # it, so the literal string never appears and a scan that
+                    # looks only for that reports a clean file
+                    values.extend(base64_variants(indexer["api_key"]))
                 if indexer.get("name"):
                     hosts.append(indexer["name"])
                 host = re.sub(r"^https?://", "", indexer.get("url", "")).strip("/")

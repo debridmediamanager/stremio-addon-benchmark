@@ -21,6 +21,8 @@ Two consequences that shape everything here:
 
 `verified` records where each endpoint below came from:
 
+  live       read back off a running instance by harness/standup/<target>.py,
+             which is the only state a published round may measure
   upstream   read out of that project's own source tree
   documented from its README or docs, not yet confirmed against a live instance
   shakedown  written from a reasonable guess; MUST be confirmed by
@@ -88,18 +90,26 @@ TARGETS = {
         "language": "Go",
         "repo": "MunifTanjim/stremthru",
         "port": 8484,
-        "manifest": "http://127.0.0.1:8484/stremio/store/{userdata}/manifest.json",
-        "stream": "http://127.0.0.1:8484/stremio/store/{userdata}/stream/{type}/{id}.json",
+        "manifest": "http://127.0.0.1:8484/stremio/newz/{userdata}/manifest.json",
+        "stream": "http://127.0.0.1:8484/stremio/newz/{userdata}/stream/{type}/{id}.json",
         "play_mode": REDIRECT,
         "serve_mode": INGEST,
-        "verified": "shakedown",
+        "verified": "live",
+        "standup": "harness/standup/stremthru.py",
         "note": (
-            "its `newz` store is its own usenet engine. It is the only target "
+            "its `newz` engine is its own usenet reader. It is the only target "
             "in this field that also appears in the mount field, so it is the "
             "one place a number here can be read against a number there -- "
             "same engine, one measured through WebDAV and one through the "
-            "addon protocol. Build with the sqlite_fts5 tag or a migration "
-            "creates an fts5 table the binary cannot open"
+            "addon protocol. Three things this cost before it ran: the addon "
+            "is /stremio/newz and NOT /stremio/store, which exposes usenet only "
+            "behind a debrid-shaped store token and is not what a Newz user "
+            "installs; the news account lives in the vault behind an admin "
+            "dashboard session while the indexers live in the addon's own "
+            "userdata, so standing it up needs both surfaces; and its userdata "
+            "segment is base64 of that config with the api keys inside it, so "
+            "the minted URL is a credential and never leaves "
+            "config/endpoints.local.json"
         ),
     },
     "streamnzb": {
