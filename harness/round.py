@@ -142,17 +142,57 @@ def stop_everything():
             stop_target(name)
 
 
-def drain(seconds=45):
-    """Wait for the previous target's news sockets to close."""
+def drain(name=None, seconds=45):
+    """Wait for the target that just stopped to release its news sockets.
+
+    Scoped to that target, because the host is not quiet: production zurg holds
+    a handful of connections to the same port at all times, and another
+    session's test build may hold more. A drain that waits for the *host* to
+    reach zero never reaches it, so every gap between targets silently became
+    the full timeout instead of the moment the sockets actually closed.
+
+    With no target named -- before the first one -- there is nothing of the
+    round's own to wait for, so this returns at once.
+    """
+    if not name:
+        return
     deadline = time.time() + seconds
     while time.time() < deadline:
-        if count_nntp_sockets() == 0:
+        if count_nntp_sockets(name) == 0:
             return
         time.sleep(3)
 
 
-def count_nntp_sockets():
-    result = subprocess.run(["ss", "-tn", "state", "established"],
+def count_nntp_sockets(name):
+    """Established news connections held by one target, wherever it runs.
+
+    A container's sockets are only visible from inside its own namespace, so
+    the count is taken there; a target that is a bare process is counted from
+    the host table by its own pid, never by name, because several unrelated
+    zurg processes run on this box.
+    """
+    target = registry.TARGETS.get(name) or {}
+    if target.get("launch") == "command":
+        pidfile = os.path.join(RUN, name, "target.pid")
+        if not os.path.exists(pidfile):
+            return 0
+        with open(pidfile) as handle:
+            pid = handle.read().strip()
+        if not pid.isdigit():
+            return 0
+        result = subprocess.run(["ss", "-tnp", "state", "established"],
+                                capture_output=True, text=True)
+        return sum(1 for line in result.stdout.splitlines()
+                   if f":{NNTP_PORT}" in line and f"pid={pid}," in line)
+
+    container = f"sab-{name}"
+    inspect = subprocess.run(["docker", "inspect", "-f", "{{.State.Pid}}", container],
+                             capture_output=True, text=True)
+    pid = inspect.stdout.strip()
+    if inspect.returncode != 0 or not pid.isdigit() or pid == "0":
+        return 0
+    result = subprocess.run(["sudo", "-n", "nsenter", "-t", pid, "-n",
+                             "ss", "-tn", "state", "established"],
                             capture_output=True, text=True)
     return sum(1 for line in result.stdout.splitlines() if f":{NNTP_PORT}" in line)
 
@@ -256,7 +296,6 @@ def main():
 
     try:
         stop_everything()
-        drain()
         for name in order:
             print(f"\n=== {name} ===")
             result = start_target(name)
@@ -275,7 +314,7 @@ def main():
             windows[name] = {"ready_utc": datetime.fromtimestamp(ready, timezone.utc).isoformat(timespec="seconds"),
                              "start": started, "end": time.time()}
             stop_target(name)
-            drain()
+            drain(name)
     finally:
         sampler.terminate()
         handle.close()
