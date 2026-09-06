@@ -215,10 +215,16 @@ TARGETS = {
 # be the same target
 DEFAULT = ["zurg", "aiostreams", "stremthru", "streamnzb", "comet"]
 
-# one target may spend this long on the whole title set before the round gives
-# up on it. Everything is enabled by default, so a target that wedges has to
-# cost its own rows and not the round
-DEFAULT_BUDGET_S = 3600
+# One target may spend this long on the whole title set before the round gives
+# up on it. A target that wedges has to cost its own rows and not the round.
+#
+# The number has to clear the worst case the title set can produce, or the
+# budget truncates a slow-but-working target and its unmeasured entries are
+# counted as coverage it does not have. 23 in-round titles at the protocol
+# plane's 180s per-title ceiling is 4140s, so this sits above that with room
+# for the ingest waits that make a title slow in the first place. Comet's own
+# shorter budget is deliberate and is set on its entry.
+DEFAULT_BUDGET_S = 5400
 
 
 def excluded(names=None):

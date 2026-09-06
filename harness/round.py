@@ -211,12 +211,23 @@ def main():
             f"instance. Stand each one up (harness/standup/<target>.py), run "
             f"harness/verify_endpoints.py, and clear the flag. A round must not start here.")
 
+    # a budget that cannot cover the set truncates a slow target and reads as
+    # missing coverage, so say so before hours are spent rather than after
+    import protocol
+    worst_case = len(protocol.load_titles(protocol.TITLES)[1]) * protocol.TITLE_BUDGET_S
+    tight = [n for n in names
+             if registry.TARGETS[n].get("budget_s", registry.DEFAULT_BUDGET_S) < worst_case]
+
     order = rotation(names, args.round)
     skipped = registry.excluded()
     print(f"round {args.round}: {len(order)} target(s), order {order}")
     if skipped:
         for name, why in skipped.items():
             print(f"  excluded: {name} — {why[:120]}...")
+    if tight:
+        print(f"  ! {tight} have a budget below the set's worst case ({worst_case}s). "
+              f"If one is slow throughout, its remaining titles go unmeasured and read "
+              f"as coverage it does not have.")
     if args.plane != "protocol":
         print("  note: the client plane is driven separately by harness/client.py")
     if args.dry_run:
