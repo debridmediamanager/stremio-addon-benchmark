@@ -1,0 +1,352 @@
+#!/usr/bin/env python3
+"""Turn result files into the tables a round publishes, with the rules enforced.
+
+    python3 harness/report.py --round round1
+    python3 harness/report.py --round round1 --out docs/round1.md
+
+Three rules from docs/design.md are implemented here rather than left to
+whoever writes the prose, because each one is a way to publish a number that
+flatters a target:
+
+**Coverage outranks speed, and no table prints one without the other.** Every
+speed column in this file is emitted next to the coverage that produced it. An
+addon that serves four titles in 900 ms is worse than one that serves eighteen
+in four seconds, and a table sorted on time alone says the opposite.
+
+**Medians are over the fixed population.** A target is asked for every
+in-round title including the ones nothing can serve, so two medians are
+reported and they mean different things:
+
+  * `median_served` is over the rows that produced a number, with `n`. It is
+    the honest answer to "when it works, how fast is it", and on its own it
+    pays a target for failing early.
+  * `median_population` treats a failure as slower than any success -- a
+    censored median over all `N` entries. It is the ranking number. When a
+    target serves less than half the population it has no median at all and
+    this prints `>budget` rather than inventing one.
+
+**An expectation is not always success.** Part of the set is negative: an
+empty stream list is the correct answer for two entries, and forwarding an
+indexer's unrelated feed is a failure even though bytes arrive. Verdicts come
+from `expected_outcome` in the title set, not from whether the read worked.
+"""
+import argparse
+import json
+import os
+import sys
+from datetime import datetime, timezone
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import targets as registry  # noqa: E402
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+SERVED = ("served",)
+# a truncated body is not a served stream: the player stops. It is kept apart
+# from a clean failure because the diagnosis is different
+PARTIAL = ("truncated",)
+
+
+def load(round_name):
+    directory = os.path.join(ROOT, "results", round_name)
+    if not os.path.isdir(directory):
+        raise SystemExit(f"no results at {os.path.relpath(directory, ROOT)}")
+    documents = {}
+    for name in sorted(os.listdir(directory)):
+        if name.startswith("protocol-") and name.endswith(".json"):
+            with open(os.path.join(directory, name)) as handle:
+                document = json.load(handle)
+            documents[document["target"]] = document
+    if not documents:
+        raise SystemExit(f"no protocol-*.json in {os.path.relpath(directory, ROOT)}")
+    return documents
+
+
+def first_pass(document):
+    """The measured pass. Later passes exist to give the noise floor."""
+    return document["passes"][0] if document.get("passes") else []
+
+
+def median(values):
+    ordered = sorted(values)
+    if not ordered:
+        return None
+    middle = len(ordered) // 2
+    if len(ordered) % 2:
+        return ordered[middle]
+    return (ordered[middle - 1] + ordered[middle]) / 2
+
+
+def censored_median(values, population):
+    """The median over the whole population, failures counted as unbounded.
+
+    `values` are the successes. Anything the target did not serve is worse
+    than every one of them, so it sorts to the end without needing a number.
+    If the successes are not more than half the population the median falls
+    inside the failures and there is no number to print.
+    """
+    if population == 0:
+        return None
+    ordered = sorted(values)
+    if len(ordered) * 2 <= population:
+        return None
+    index = (population - 1) // 2
+    if population % 2:
+        return ordered[index]
+    lower = ordered[index]
+    upper = ordered[index + 1] if index + 1 < len(ordered) else None
+    return None if upper is None else (lower + upper) / 2
+
+
+def verdict(row):
+    """Did the target do the right thing for this entry, per its expectation."""
+    expected = row.get("expected_outcome")
+    outcome = row.get("outcome")
+    streams = row.get("n_streams") or 0
+    if expected == "playable-stream":
+        if outcome in SERVED:
+            return "correct"
+        if outcome in PARTIAL:
+            return "partial"
+        return "missed"
+    if expected == "empty-list":
+        # a real title with nothing posted. Promptly nothing is the right
+        # answer; an error, a hang, or a stream that cannot exist is not
+        if outcome == "empty-list":
+            return "correct"
+        if streams:
+            return "fabricated"
+        return "missed"
+    if expected == "no-unrelated-streams":
+        # the indexer answers this id with thousands of unrelated releases.
+        # The addon is judged on whether it forwards that to the viewer
+        return "correct" if streams == 0 else "forwarded-garbage"
+    return "unclassified"
+
+
+def summarise(name, document, cap_bytes):
+    rows = first_pass(document)
+    population = document.get("population") or len(rows)
+    served = [r for r in rows if r["outcome"] in SERVED]
+    partial = [r for r in rows if r["outcome"] in PARTIAL]
+
+    c2b = [r["click_to_byte_s"] for r in served if r.get("click_to_byte_s") is not None]
+    lists = [r["stream_list_s"] for r in rows if r.get("stream_list_s") is not None]
+    ttfb = [r["ttfb_s"] for r in served if r.get("ttfb_s") is not None]
+    resolve = [r["resolve_s"] for r in served if r.get("resolve_s") is not None]
+    throughput = [r["throughput_mb_s"] for r in served if r.get("throughput_mb_s")]
+    p05 = [r["p05_window_mb_s"] for r in served if r.get("p05_window_mb_s") is not None]
+    sustained = [r for r in served if r.get("sustain_25mbps")]
+
+    offered = [r["max_offered_bytes"] for r in rows if r.get("max_offered_bytes")]
+    over_cap = [r for r in rows if (r.get("max_offered_bytes") or 0) > cap_bytes]
+
+    verdicts = {}
+    for row in rows:
+        verdicts[verdict(row)] = verdicts.get(verdict(row), 0) + 1
+
+    outcomes = {}
+    for row in rows:
+        outcomes[row["outcome"]] = outcomes.get(row["outcome"], 0) + 1
+
+    return {
+        "target": name,
+        "language": registry.TARGETS[name]["language"],
+        "verified": document.get("verified"),
+        "population": population,
+        "measured": len(rows),
+        "served": len(served),
+        "partial": len(partial),
+        "coverage_pct": round(100.0 * len(served) / population, 1) if population else None,
+        "median_served_c2b_s": median(c2b),
+        "n_c2b": len(c2b),
+        "median_population_c2b_s": censored_median(c2b, population),
+        "median_stream_list_s": median(lists),
+        "median_resolve_s": median(resolve),
+        "median_ttfb_s": median(ttfb),
+        "median_throughput_mb_s": median(throughput),
+        "median_p05_window_mb_s": median(p05),
+        "sustain_25mbps_n": len(sustained),
+        "max_offered_bytes": max(offered) if offered else None,
+        "over_cap_titles": len(over_cap),
+        "outcomes": outcomes,
+        "verdicts": verdicts,
+    }
+
+
+def noise_floor(document):
+    """Spread across repeat passes on the same target, per title.
+
+    "Provider throughput drifts over an evening" is true and it is not a
+    number. This is the number: the resolution below which two targets are
+    tied, taken from the same target measured twice.
+    """
+    passes = document.get("passes") or []
+    if len(passes) < 2:
+        return None
+    by_id = {}
+    for rows in passes:
+        for row in rows:
+            if row.get("click_to_byte_s") is not None:
+                by_id.setdefault(row["id"], []).append(row["click_to_byte_s"])
+    spreads = []
+    for values in by_id.values():
+        if len(values) > 1:
+            spreads.append(max(values) - min(values))
+    if not spreads:
+        return None
+    return {"titles": len(spreads), "passes": len(passes),
+            "median_spread_s": round(median(spreads), 3),
+            "max_spread_s": round(max(spreads), 3)}
+
+
+def human_bytes(value):
+    if not value:
+        return "-"
+    return f"{value / 1024**3:.2f} GB"
+
+
+def seconds(value):
+    return "-" if value is None else f"{value:.2f}s"
+
+
+def render(documents, round_name):
+    caps = {d.get("playable_cap_bytes") for d in documents.values() if d.get("playable_cap_bytes")}
+    cap_bytes = max(caps) if caps else 6 * 1024**3
+    summaries = [summarise(name, document, cap_bytes) for name, document in documents.items()]
+    # ranked by the censored median, which is the only ordering that cannot be
+    # won by failing early. A target with no median sorts last, not first
+    summaries.sort(key=lambda s: (s["median_population_c2b_s"] is None,
+                                  s["median_population_c2b_s"] or 0))
+
+    populations = {s["population"] for s in summaries}
+    out = []
+    out.append(f"# Round: {round_name}")
+    out.append("")
+    out.append(f"Generated {datetime.now(timezone.utc).isoformat(timespec='seconds')} "
+               f"by `harness/report.py`.")
+    out.append("")
+    if len(populations) > 1:
+        out.append(f"**The targets were not asked the same set** ({sorted(populations)}). "
+                   f"Medians below are not comparable until they are.")
+        out.append("")
+
+    out.append("## Coverage and click to byte")
+    out.append("")
+    out.append("Coverage first, and no speed column appears without it. "
+               "`median (population)` counts every entry the target was asked for, "
+               "with a failure treated as slower than any success; `median (served)` "
+               "is over the rows that produced a number and is the one that pays a "
+               "target for failing early.")
+    out.append("")
+    out.append("| Target | Lang | Served | Coverage | median c2b (population) | median c2b (served) | n |")
+    out.append("|---|---|---|---|---|---|---|")
+    for s in summaries:
+        out.append(f"| {s['target']} | {s['language']} | {s['served']}/{s['population']} "
+                   f"| {s['coverage_pct']}% "
+                   f"| {seconds(s['median_population_c2b_s']) if s['median_population_c2b_s'] is not None else '>budget'} "
+                   f"| {seconds(s['median_served_c2b_s'])} | {s['n_c2b']} |")
+    out.append("")
+
+    out.append("## Where the time goes")
+    out.append("")
+    out.append("`click_to_byte` decomposed. A target losing on `stream_list` has a "
+               "different product problem from one losing on `resolve`, and the "
+               "composite alone cannot tell them apart. `resolve` nests inside "
+               "`ttfb`, which nests inside `click_to_byte`.")
+    out.append("")
+    out.append("| Target | stream_list | resolve | ttfb | click_to_byte | Served |")
+    out.append("|---|---|---|---|---|---|")
+    for s in summaries:
+        out.append(f"| {s['target']} | {seconds(s['median_stream_list_s'])} "
+                   f"| {seconds(s['median_resolve_s'])} | {seconds(s['median_ttfb_s'])} "
+                   f"| {seconds(s['median_served_c2b_s'])} | {s['served']}/{s['population']} |")
+    out.append("")
+
+    out.append("## Reading, once it is playing")
+    out.append("")
+    out.append("`p05` is the fifth percentile of one-second windows. A mean that "
+               "looks fine can contain a second at zero, and that second is where "
+               "the player stops. `sustain` counts titles that held 25 Mbps in "
+               "every window of the read, not on average.")
+    out.append("")
+    out.append("| Target | median MB/s | median p05 MB/s | sustain 25 Mbps | Served |")
+    out.append("|---|---|---|---|---|")
+    for s in summaries:
+        mb = "-" if s["median_throughput_mb_s"] is None else f"{s['median_throughput_mb_s']:.2f}"
+        p05 = "-" if s["median_p05_window_mb_s"] is None else f"{s['median_p05_window_mb_s']:.2f}"
+        out.append(f"| {s['target']} | {mb} | {p05} | {s['sustain_25mbps_n']}/{s['served']} "
+                   f"| {s['served']}/{s['population']} |")
+    out.append("")
+
+    out.append("## Did it do the right thing")
+    out.append("")
+    out.append("Part of the set is negative. Two entries are real titles with "
+               "nothing posted, where an empty list is correct and a stream is a "
+               "fabrication; one is an id whose indexer answers with an unrelated "
+               "feed, where the question is whether the addon forwards it.")
+    out.append("")
+    keys = ["correct", "partial", "missed", "fabricated", "forwarded-garbage", "unclassified"]
+    out.append("| Target | " + " | ".join(keys) + " |")
+    out.append("|---|" + "---|" * len(keys))
+    for s in summaries:
+        out.append(f"| {s['target']} | " + " | ".join(str(s["verdicts"].get(k, 0)) for k in keys) + " |")
+    out.append("")
+
+    out.append("## Outcomes, and the size cap")
+    out.append("")
+    out.append(f"Size-cap parity is verified from the served stream list, never from a "
+               f"config file: the cap is {human_bytes(cap_bytes)} and a target offering "
+               f"above it did not have the same filter as the rest of the field.")
+    out.append("")
+    out.append("| Target | outcomes | largest offered | titles over cap |")
+    out.append("|---|---|---|---|")
+    for s in summaries:
+        breakdown = ", ".join(f"{k} {v}" for k, v in sorted(s["outcomes"].items()))
+        flag = "" if not s["over_cap_titles"] else f" **{s['over_cap_titles']}**"
+        out.append(f"| {s['target']} | {breakdown} | {human_bytes(s['max_offered_bytes'])} "
+                   f"|{flag or ' 0'} |")
+    out.append("")
+
+    floors = {name: noise_floor(document) for name, document in documents.items()}
+    floors = {name: floor for name, floor in floors.items() if floor}
+    out.append("## Noise floor")
+    out.append("")
+    if not floors:
+        out.append("**Not measured.** No target was run with `--repeat`, so this round "
+                   "states no resolution below which two targets are tied. Any "
+                   "difference read off the tables above is unqualified.")
+    else:
+        out.append("Repeat passes on one target, same set, same evening. Two targets "
+                   "closer together than this are tied.")
+        out.append("")
+        out.append("| Target | passes | titles | median spread | max spread |")
+        out.append("|---|---|---|---|---|")
+        for name, floor in floors.items():
+            out.append(f"| {name} | {floor['passes']} | {floor['titles']} "
+                       f"| {floor['median_spread_s']}s | {floor['max_spread_s']}s |")
+    out.append("")
+    return "\n".join(out)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--round", default="round1")
+    parser.add_argument("--out", help="write markdown here instead of stdout")
+    args = parser.parse_args()
+
+    documents = load(args.round)
+    text = render(documents, args.round)
+    if args.out:
+        path = args.out if os.path.isabs(args.out) else os.path.join(ROOT, args.out)
+        with open(path, "w") as handle:
+            handle.write(text + "\n")
+        print(f"wrote {os.path.relpath(path, ROOT)}")
+    else:
+        print(text)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
