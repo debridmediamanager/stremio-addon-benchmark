@@ -153,7 +153,10 @@ def summarise(name, document, cap_bytes):
 
     return {
         "target": name,
-        "language": registry.TARGETS[name]["language"],
+        # a results file can name a target this checkout does not register --
+        # a renamed target, or a round pulled from elsewhere. Report it rather
+        # than crashing on it
+        "language": (registry.TARGETS.get(name) or {}).get("language", "?"),
         "verified": document.get("verified"),
         "population": population,
         "measured": len(rows),
@@ -285,6 +288,17 @@ def render(documents, round_name, client=None):
     if len(populations) > 1:
         out.append(f"**The targets were not asked the same set** ({sorted(populations)}). "
                    f"Medians below are not comparable until they are.")
+        out.append("")
+    cut = [s for s in summaries if s["measured"] < s["population"]]
+    if cut:
+        out.append("**A target ran out of its budget before the set was finished**, so some "
+                   "of its entries were never asked rather than answered badly:")
+        out.append("")
+        for s in cut:
+            out.append(f"- `{s['target']}` measured {s['measured']} of {s['population']}. "
+                       f"Its coverage and its population median count the "
+                       f"{s['population'] - s['measured']} unmeasured entries as not served, "
+                       f"which is a claim about the budget as much as about the target.")
         out.append("")
 
     out.append("## Coverage and click to byte")
