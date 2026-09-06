@@ -34,8 +34,12 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG = os.path.join(ROOT, "config", "indexers.json")
 
-# a file whose whole purpose is to show the shape of a credential
-ALLOWED = {"config/indexers.example.json", "harness/scan_leaks.py"}
+# Files whose whole purpose is to name what must not be published: an example
+# credential, this scanner's own hostname list, and the scrubber's copy of it.
+# Without harness/sanitize.py here the gate flags the one file whose job is to
+# remove those names, and blocks every push on its own definition.
+ALLOWED = {"config/indexers.example.json", "harness/scan_leaks.py",
+           "harness/sanitize.py"}
 
 SHAPES = [
     (re.compile(r"apikey=[A-Za-z0-9]{8,}", re.I), "an api key inside a URL"),

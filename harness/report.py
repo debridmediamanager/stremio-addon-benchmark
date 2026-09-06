@@ -205,9 +205,16 @@ def noise_floor(document):
 
 
 def human_bytes(value):
+    """Binary units, labelled as such.
+
+    The cap is 6 GiB and the title set stores it as 6442450944 bytes. Printing
+    that as "6.00 GB" invites a reader to compare it against a target whose own
+    setting is in decimal GB -- streamnzb's is -- and they are not the same
+    number. Saying GiB costs one character and removes the ambiguity.
+    """
     if not value:
         return "-"
-    return f"{value / 1024**3:.2f} GB"
+    return f"{value / 1024**3:.2f} GiB"
 
 
 def seconds(value):
