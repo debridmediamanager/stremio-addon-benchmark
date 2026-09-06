@@ -19,3 +19,6 @@ __pycache__/
 *.sqlite
 *.log
 corpus/availability.json
+
+# a shakedown run of the harness, not a round
+results/smoke/
