@@ -40,7 +40,20 @@ TIMESTAMP = re.compile(r"^\d{9,}$")
 
 
 def samples(path):
-    """(epoch, [(process, pid)]) per sampled line, in order."""
+    """(epoch, source) per sampled socket, in order.
+
+    Two line shapes, because a container's sockets are only visible from inside
+    its own namespace:
+
+        host ESTAB ... users:(("zurg",pid=1234,fd=7))
+        sab-stremthru ESTAB ...
+
+    The first carries process detail and comes from the host table; the second
+    is tagged with the container it was sampled in and carries none, because
+    `nsenter -n` enters the network namespace and not the pid namespace. Both
+    are one established connection to the news port, which is what is being
+    counted.
+    """
     if not os.path.exists(path):
         raise SystemExit(f"no {os.path.relpath(path, ROOT)}; was the round run by "
                          f"harness/round.sh?")
@@ -55,7 +68,18 @@ def samples(path):
                 continue
             if now is None:
                 continue
-            for process, pid in PROCESS.findall(line):
+            tag, _, rest = line.partition(" ")
+            if tag != "host":
+                # a container's own namespace: one line, one connection, and
+                # the container name is the only attribution available
+                yield now, tag, None
+                continue
+            found = PROCESS.findall(rest)
+            if not found:
+                # a host socket with no process attribution: still a connection
+                yield now, "host", None
+                continue
+            for process, pid in found:
                 yield now, process, int(pid)
 
 
@@ -77,6 +101,9 @@ def main():
                 counts[target][when][(process, pid)] += 1
 
     print(f"round {args.round}: connection parity, sampled\n")
+    print("`sab-<target>` is that target's own network namespace. Anything else is a "
+          "host process sharing the news account -- production, usually -- and is "
+          "listed because the budget is shared, not because it is the target.\n")
     print(f"{'target':<12} {'samples':>8} {'peak':>6}  processes at peak")
     print("-" * 68)
     for target in windows:
@@ -89,7 +116,7 @@ def main():
             total = sum(per_pid.values())
             if total > peak_total:
                 peak_at, peak_total = when, total
-        detail = ", ".join(f"{name}[{pid}]={n}"
+        detail = ", ".join((f"{name}[{pid}]={n}" if pid else f"{name}={n}")
                            for (name, pid), n in sorted(instants[peak_at].items(),
                                                         key=lambda item: -item[1]))
         print(f"{target:<12} {len(instants):>8} {peak_total:>6}  {detail}")

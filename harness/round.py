@@ -160,14 +160,29 @@ def count_nntp_sockets():
 def start_sampler(path):
     """Sample established news sockets for the whole run, into one file.
 
-    Per-pid maxima inside each target's window are what parity is read from
-    afterwards. Counting sockets is not the same as counting readers -- a
-    target can hold an idle connection outside its own pool accounting -- so
-    the raw samples are kept rather than a summary.
+    **Host `ss` cannot see a container's sockets.** Four of the five targets in
+    this field run in containers, so their connections live in another network
+    namespace and never appear in the host's socket table. The first rehearsal
+    of this round sampled the host only and reported that not one target held a
+    single news connection, while production zurg -- a bare process on the same
+    box -- showed eight. That is not parity evidence; it is an empty
+    measurement that looks like one.
+
+    So each sample walks the host table and then every running target's own
+    namespace, with `nsenter` borrowing the host's `ss` rather than needing one
+    inside the image. Lines are tagged with where they came from, because the
+    account is shared: production's sockets show up too and must be
+    distinguishable from the target's.
     """
     script = (
-        "while :; do date +%s; "
-        f"ss -tnp state established 2>/dev/null | grep ':{NNTP_PORT}' || true; "
+        "while :; do "
+        "date +%s; "
+        f"ss -tnp state established 2>/dev/null | grep ':{NNTP_PORT}' | sed 's/^/host /' || true; "
+        "for c in $(docker ps --filter name=sab- --format '{{.Names}}' 2>/dev/null); do "
+        "  pid=$(docker inspect -f '{{.State.Pid}}' \"$c\" 2>/dev/null); "
+        "  [ -n \"$pid\" ] && sudo -n nsenter -t \"$pid\" -n ss -tn state established 2>/dev/null "
+        f"    | grep ':{NNTP_PORT}' | sed \"s|^|$c |\" || true; "
+        "done; "
         "sleep 5; done"
     )
     handle = open(path, "w")
