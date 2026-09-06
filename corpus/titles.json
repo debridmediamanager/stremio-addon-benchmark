@@ -1,0 +1,1702 @@
+{
+ "built_utc": "2026-09-06T08:53:48+00:00",
+ "census_measured_utc": "2026-09-06T08:53:23+00:00",
+ "parity_indexers": [
+  "indexer-a",
+  "indexer-d",
+  "indexer-e"
+ ],
+ "counting_indexers_by_type": {
+  "movie": [
+   "indexer-a",
+   "indexer-d",
+   "indexer-e"
+  ],
+  "series": []
+ },
+ "capabilities_measured_utc": "2026-09-06T08:38:37+00:00",
+ "playable_cap_bytes": 6442450944,
+ "tier_thresholds": {
+  "thin": "1-5",
+  "catalog": "6-40",
+  "abundant": ">40"
+ },
+ "rules": [
+  "Every target is asked for every entry with in_round true, including the ones nothing can serve. Medians are over that fixed population.",
+  "measured_tier comes from the parity indexers only. A title the excluded indexer holds is still absent for the round if the parity pair does not have it.",
+  "expected_outcome empty-list means an empty stream list is the correct answer. An error, a hang or a fabricated stream is not.",
+  "expected_outcome no-unrelated-streams marks an entry whose indexer answers an unfiltered feed instead of nothing. The addon is judged on whether it passes that through to the player.",
+  "tier incomplete means a parity indexer errored on this entry and it has not been measured. Re-run census.py --retry-failed. A failed call is not a zero.",
+  "tier no-capable-indexer means no indexer in the parity set honours this kind of search. The entry is excluded because it would measure the indexer fleet and not the addon."
+ ],
+ "titles": [
+  {
+   "id": "tt15239678",
+   "type": "movie",
+   "title": "Dune: Part Two",
+   "year": 2024,
+   "proposed_tier": "blockbuster-recent",
+   "measured_tier": "abundant",
+   "reachable_results": 605,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 295,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": 292,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-c": {
+     "total": 82,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 88,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 222,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt15398776",
+   "type": "movie",
+   "title": "Oppenheimer",
+   "year": 2023,
+   "proposed_tier": "blockbuster-recent",
+   "measured_tier": "abundant",
+   "reachable_results": 355,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 154,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": 155,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-c": {
+     "total": 53,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 38,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 163,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt1517268",
+   "type": "movie",
+   "title": "Barbie",
+   "year": 2023,
+   "proposed_tier": "blockbuster-recent",
+   "measured_tier": "abundant",
+   "reachable_results": 376,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 195,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": 142,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-c": {
+     "total": 54,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 65,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 116,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt9362722",
+   "type": "movie",
+   "title": "Spider-Man: Across the Spider-Verse",
+   "year": 2023,
+   "proposed_tier": "blockbuster-recent",
+   "measured_tier": "abundant",
+   "reachable_results": 402,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 155,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": 130,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-c": {
+     "total": 22,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 92,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 155,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt1375666",
+   "type": "movie",
+   "title": "Inception",
+   "year": 2010,
+   "proposed_tier": "catalog-modern",
+   "measured_tier": "abundant",
+   "reachable_results": 407,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 158,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": 296,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-c": {
+     "total": 23,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 65,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 184,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0816692",
+   "type": "movie",
+   "title": "Interstellar",
+   "year": 2014,
+   "proposed_tier": "catalog-modern",
+   "measured_tier": "abundant",
+   "reachable_results": 426,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 216,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": 299,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-c": {
+     "total": 24,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 30,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 180,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt2380307",
+   "type": "movie",
+   "title": "Coco",
+   "year": 2017,
+   "proposed_tier": "catalog-modern",
+   "measured_tier": "abundant",
+   "reachable_results": 222,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 99,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": 168,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-c": {
+     "total": 2,
+     "error": null,
+     "kept": 2
+    },
+    "indexer-d": {
+     "total": 26,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 97,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0111161",
+   "type": "movie",
+   "title": "The Shawshank Redemption",
+   "year": 1994,
+   "proposed_tier": "catalog-classic",
+   "measured_tier": "abundant",
+   "reachable_results": 324,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 132,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": 237,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-c": {
+     "total": 21,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 20,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 172,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "oversize-only",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0133093",
+   "type": "movie",
+   "title": "The Matrix",
+   "year": 1999,
+   "proposed_tier": "catalog-classic",
+   "measured_tier": "abundant",
+   "reachable_results": 841,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 187,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": 314,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-c": {
+     "total": 33,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 47,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 607,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "oversize-only",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0068646",
+   "type": "movie",
+   "title": "The Godfather",
+   "year": 1972,
+   "proposed_tier": "catalog-classic",
+   "measured_tier": "abundant",
+   "reachable_results": 351,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 141,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-d": {
+     "total": 26,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 184,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "oversize-only",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0110912",
+   "type": "movie",
+   "title": "Pulp Fiction",
+   "year": 1994,
+   "proposed_tier": "catalog-classic",
+   "measured_tier": "abundant",
+   "reachable_results": 347,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 148,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 34,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 42,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 157,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt6751668",
+   "type": "movie",
+   "title": "Parasite",
+   "year": 2019,
+   "proposed_tier": "foreign-language",
+   "measured_tier": "abundant",
+   "reachable_results": 198,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 64,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 32,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 29,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 105,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0245429",
+   "type": "movie",
+   "title": "Spirited Away",
+   "year": 2001,
+   "proposed_tier": "anime",
+   "measured_tier": "abundant",
+   "reachable_results": 165,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 86,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-d": {
+     "total": 8,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 71,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt5311514",
+   "type": "movie",
+   "title": "Your Name",
+   "year": 2016,
+   "proposed_tier": "anime",
+   "measured_tier": "abundant",
+   "reachable_results": 155,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 98,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 10,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 8,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 49,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0087544",
+   "type": "movie",
+   "title": "Nausicaa of the Valley of the Wind",
+   "year": 1984,
+   "proposed_tier": "anime-longtail",
+   "measured_tier": "abundant",
+   "reachable_results": 76,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 43,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-d": {
+     "total": 6,
+     "error": null,
+     "kept": 6
+    },
+    "indexer-e": {
+     "total": 27,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0064116",
+   "type": "movie",
+   "title": "Once Upon a Time in the West",
+   "year": 1968,
+   "proposed_tier": "long-tail-old",
+   "measured_tier": "abundant",
+   "reachable_results": 209,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 88,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 4,
+     "error": null,
+     "kept": 4
+    },
+    "indexer-d": {
+     "total": 16,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 105,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0050083",
+   "type": "movie",
+   "title": "12 Angry Men",
+   "year": 1957,
+   "proposed_tier": "long-tail-old",
+   "measured_tier": "abundant",
+   "reachable_results": 136,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 56,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 7,
+     "error": null,
+     "kept": 7
+    },
+    "indexer-d": {
+     "total": 13,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 67,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "oversize-only",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0032138",
+   "type": "movie",
+   "title": "The Wizard of Oz",
+   "year": 1939,
+   "proposed_tier": "long-tail-old",
+   "measured_tier": "abundant",
+   "reachable_results": 202,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 83,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 1,
+     "error": null,
+     "kept": 1
+    },
+    "indexer-d": {
+     "total": 14,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 105,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0021749",
+   "type": "movie",
+   "title": "City Lights",
+   "year": 1931,
+   "proposed_tier": "long-tail-old",
+   "measured_tier": "abundant",
+   "reachable_results": 59,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 26,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 1,
+     "error": null,
+     "kept": 1
+    },
+    "indexer-d": {
+     "total": 5,
+     "error": null,
+     "kept": 5
+    },
+    "indexer-e": {
+     "total": 28,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0017136",
+   "type": "movie",
+   "title": "Metropolis",
+   "year": 1927,
+   "proposed_tier": "long-tail-old",
+   "measured_tier": "abundant",
+   "reachable_results": 62,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 31,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 4,
+     "error": null,
+     "kept": 4
+    },
+    "indexer-d": {
+     "total": 3,
+     "error": null,
+     "kept": 3
+    },
+    "indexer-e": {
+     "total": 28,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "ok",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "playable-stream",
+   "in_round": true
+  },
+  {
+   "id": "tt0903747:1:1",
+   "type": "series",
+   "title": "Breaking Bad S01E01",
+   "year": null,
+   "proposed_tier": "series-flagship",
+   "measured_tier": "no-capable-indexer",
+   "reachable_results": 0,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 7,
+     "error": null,
+     "kept": 7
+    },
+    "indexer-d": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-e": {
+     "total": 370617,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "unknown",
+   "title_match": "no-results",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [],
+   "expected_outcome": null,
+   "in_round": false,
+   "imdb": "tt0903747",
+   "season": 1,
+   "episode": 1,
+   "tv_by_imdbid": {
+    "indexer-a": false,
+    "indexer-b": false,
+    "indexer-c": true,
+    "indexer-d": false,
+    "indexer-e": true,
+    "indexer-f": false
+   }
+  },
+  {
+   "id": "tt0944947:1:1",
+   "type": "series",
+   "title": "Game of Thrones S01E01",
+   "year": null,
+   "proposed_tier": "series-flagship",
+   "measured_tier": "no-capable-indexer",
+   "reachable_results": 0,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 14,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-e": {
+     "total": 370617,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "unknown",
+   "title_match": "no-results",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [],
+   "expected_outcome": null,
+   "in_round": false,
+   "imdb": "tt0944947",
+   "season": 1,
+   "episode": 1,
+   "tv_by_imdbid": {
+    "indexer-a": false,
+    "indexer-b": false,
+    "indexer-c": true,
+    "indexer-d": false,
+    "indexer-e": true,
+    "indexer-f": false
+   }
+  },
+  {
+   "id": "tt3581920:1:1",
+   "type": "series",
+   "title": "The Last of Us S01E01",
+   "year": null,
+   "proposed_tier": "series-recent",
+   "measured_tier": "no-capable-indexer",
+   "reachable_results": 0,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 40,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-d": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-e": {
+     "total": 370617,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "unknown",
+   "title_match": "no-results",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [],
+   "expected_outcome": null,
+   "in_round": false,
+   "imdb": "tt3581920",
+   "season": 1,
+   "episode": 1,
+   "tv_by_imdbid": {
+    "indexer-a": false,
+    "indexer-b": false,
+    "indexer-c": true,
+    "indexer-d": false,
+    "indexer-e": true,
+    "indexer-f": false
+   }
+  },
+  {
+   "id": "tt11280740:1:1",
+   "type": "series",
+   "title": "Severance S01E01",
+   "year": null,
+   "proposed_tier": "series-recent",
+   "measured_tier": "no-capable-indexer",
+   "reachable_results": 0,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 1,
+     "error": null,
+     "kept": 1
+    },
+    "indexer-d": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-e": {
+     "total": 370617,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "unknown",
+   "title_match": "no-results",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [],
+   "expected_outcome": null,
+   "in_round": false,
+   "imdb": "tt11280740",
+   "season": 1,
+   "episode": 1,
+   "tv_by_imdbid": {
+    "indexer-a": false,
+    "indexer-b": false,
+    "indexer-c": true,
+    "indexer-d": false,
+    "indexer-e": true,
+    "indexer-f": false
+   }
+  },
+  {
+   "id": "tt2861424:1:1",
+   "type": "series",
+   "title": "Rick and Morty S01E01",
+   "year": null,
+   "proposed_tier": "series-animation",
+   "measured_tier": "no-capable-indexer",
+   "reachable_results": 0,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 6,
+     "error": null,
+     "kept": 6
+    },
+    "indexer-d": {
+     "total": 20,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-e": {
+     "total": 370617,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "unknown",
+   "title_match": "no-results",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [],
+   "expected_outcome": null,
+   "in_round": false,
+   "imdb": "tt2861424",
+   "season": 1,
+   "episode": 1,
+   "tv_by_imdbid": {
+    "indexer-a": false,
+    "indexer-b": false,
+    "indexer-c": true,
+    "indexer-d": true,
+    "indexer-e": true,
+    "indexer-f": false
+   }
+  },
+  {
+   "id": "tt5491994:1:1",
+   "type": "series",
+   "title": "Planet Earth II S01E01",
+   "year": null,
+   "proposed_tier": "documentary-large",
+   "measured_tier": "no-capable-indexer",
+   "reachable_results": 0,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-d": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-e": {
+     "total": 370617,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "unknown",
+   "title_match": "no-results",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [],
+   "expected_outcome": null,
+   "in_round": false,
+   "imdb": "tt5491994",
+   "season": 1,
+   "episode": 1,
+   "tv_by_imdbid": {
+    "indexer-a": false,
+    "indexer-b": false,
+    "indexer-c": false,
+    "indexer-d": false,
+    "indexer-e": true,
+    "indexer-f": false
+   }
+  },
+  {
+   "id": "tt0417299:1:1",
+   "type": "series",
+   "title": "Avatar: The Last Airbender S01E01",
+   "year": null,
+   "proposed_tier": "series-longtail",
+   "measured_tier": "no-capable-indexer",
+   "reachable_results": 0,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-d": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-e": {
+     "total": 370617,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "unknown",
+   "title_match": "no-results",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [],
+   "expected_outcome": null,
+   "in_round": false,
+   "imdb": "tt0417299",
+   "season": 1,
+   "episode": 1,
+   "tv_by_imdbid": {
+    "indexer-a": false,
+    "indexer-b": false,
+    "indexer-c": false,
+    "indexer-d": false,
+    "indexer-e": true,
+    "indexer-f": false
+   }
+  },
+  {
+   "id": "tt0098904:1:1",
+   "type": "series",
+   "title": "Seinfeld S01E01",
+   "year": null,
+   "proposed_tier": "series-longtail",
+   "measured_tier": "no-capable-indexer",
+   "reachable_results": 0,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 2,
+     "error": null,
+     "kept": 2
+    },
+    "indexer-d": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-e": {
+     "total": 370617,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "unknown",
+   "title_match": "no-results",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [],
+   "expected_outcome": null,
+   "in_round": false,
+   "imdb": "tt0098904",
+   "season": 1,
+   "episode": 1,
+   "tv_by_imdbid": {
+    "indexer-a": false,
+    "indexer-b": false,
+    "indexer-c": true,
+    "indexer-d": false,
+    "indexer-e": true,
+    "indexer-f": false
+   }
+  },
+  {
+   "id": "tt0000001",
+   "type": "movie",
+   "title": "Carmencita",
+   "year": 1894,
+   "proposed_tier": "negative-real-title",
+   "measured_tier": "poisoned-index",
+   "reachable_results": 2971,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 2971,
+     "error": null,
+     "kept": 8
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-d": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-e": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "has-playable",
+   "title_match": "MISMATCH",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "no-unrelated-streams",
+   "in_round": true
+  },
+  {
+   "id": "tt0000009",
+   "type": "movie",
+   "title": "Miss Jerry",
+   "year": 1894,
+   "proposed_tier": "negative-real-title",
+   "measured_tier": "absent",
+   "reachable_results": 0,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-d": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-e": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "unknown",
+   "title_match": "no-results",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "empty-list",
+   "in_round": true
+  },
+  {
+   "id": "tt9999999",
+   "type": "movie",
+   "title": "(unallocated id)",
+   "year": null,
+   "proposed_tier": "negative-unallocated",
+   "measured_tier": "absent",
+   "reachable_results": 0,
+   "per_indexer": {
+    "indexer-a": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-b": {
+     "total": null,
+     "error": "HTTPError: HTTP Error 429: Too Many Requests",
+     "kept": 0
+    },
+    "indexer-c": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-d": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-e": {
+     "total": 0,
+     "error": null,
+     "kept": 0
+    },
+    "indexer-f": {
+     "total": null,
+     "error": "http 203",
+     "kept": 0
+    }
+   },
+   "size_band": "unknown",
+   "title_match": "no-results",
+   "census_complete": true,
+   "parity_errors": [],
+   "counting_indexers": [
+    "indexer-a",
+    "indexer-d",
+    "indexer-e"
+   ],
+   "expected_outcome": "empty-list",
+   "in_round": true
+  }
+ ]
+}

@@ -1,0 +1,167 @@
+{
+ "measured_utc": "2026-09-06T08:38:37+00:00",
+ "method": {
+  "movie_imdbid": "t=movie for tt1375666 and tt0111161, answers compared",
+  "tv_imdbid": "t=tvsearch s01e01 for tt0903747 and tt0944947. Identical pages mean the imdbid filter was dropped",
+  "ua_policy": "one t=caps sent as 'Stremio/4.4.181'"
+ },
+ "indexers": {
+  "indexer-a": {
+   "kind": "public-paid",
+   "keyless": false,
+   "caps": "ok",
+   "movie_imdbid": {
+    "state": "honoured",
+    "why": "20 and 20 results, both on-title",
+    "n": [
+     20,
+     20
+    ]
+   },
+   "tv_imdbid": {
+    "state": "unsupported",
+    "why": "answers nothing for either id",
+    "n": [
+     0,
+     0
+    ]
+   },
+   "ua_policy": {
+    "stremio_ua": "http 200",
+    "blocked": false
+   },
+   "parity_eligible": true
+  },
+  "indexer-c": {
+   "kind": "private",
+   "keyless": false,
+   "caps": "ok",
+   "movie_imdbid": {
+    "state": "honoured",
+    "why": "20 and 20 results, both on-title",
+    "n": [
+     20,
+     20
+    ]
+   },
+   "tv_imdbid": {
+    "state": "honoured",
+    "why": "7 and 14 results, both on-title",
+    "n": [
+     7,
+     14
+    ]
+   },
+   "ua_policy": {
+    "stremio_ua": "http 403",
+    "blocked": true,
+    "detail": "{\"error\":true,\"message\":\"Access denied: Streaming services are not allowed.\"}"
+   },
+   "parity_eligible": false
+  },
+  "indexer-d": {
+   "kind": "private",
+   "keyless": false,
+   "caps": "ok",
+   "movie_imdbid": {
+    "state": "honoured",
+    "why": "20 and 20 results, both on-title",
+    "n": [
+     20,
+     20
+    ]
+   },
+   "tv_imdbid": {
+    "state": "unsupported",
+    "why": "answers nothing for either id",
+    "n": [
+     0,
+     0
+    ]
+   },
+   "ua_policy": {
+    "stremio_ua": "http 200",
+    "blocked": false
+   },
+   "parity_eligible": true
+  },
+  "indexer-e": {
+   "kind": "private",
+   "keyless": false,
+   "caps": "ok",
+   "movie_imdbid": {
+    "state": "honoured",
+    "why": "20 and 20 results, both on-title",
+    "n": [
+     20,
+     20
+    ]
+   },
+   "tv_imdbid": {
+    "state": "filter-ignored",
+    "why": "two different ids returned an identical page of 20 results, so imdbid was dropped",
+    "n": [
+     20,
+     20
+    ]
+   },
+   "ua_policy": {
+    "stremio_ua": "http 200",
+    "blocked": false
+   },
+   "parity_eligible": true
+  },
+  "indexer-f": {
+   "kind": "public-keyless",
+   "keyless": true,
+   "caps": "ok",
+   "movie_imdbid": {
+    "state": "unmeasured",
+    "why": "http 203",
+    "n": [
+     null,
+     null
+    ]
+   },
+   "tv_imdbid": {
+    "state": "unmeasured",
+    "why": "http 203",
+    "n": [
+     null,
+     null
+    ]
+   },
+   "ua_policy": {
+    "stremio_ua": "http 200",
+    "blocked": false
+   },
+   "parity_eligible": false
+  },
+  "indexer-g": {
+   "kind": "private",
+   "keyless": false,
+   "caps": "ok",
+   "movie_imdbid": {
+    "state": "unmeasured",
+    "why": "http 429",
+    "n": [
+     null,
+     null
+    ]
+   },
+   "tv_imdbid": {
+    "state": "unmeasured",
+    "why": "http 429",
+    "n": [
+     null,
+     null
+    ]
+   },
+   "ua_policy": {
+    "stremio_ua": "http 200",
+    "blocked": false
+   },
+   "parity_eligible": false
+  }
+ }
+}
