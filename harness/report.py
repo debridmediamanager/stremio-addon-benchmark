@@ -254,6 +254,21 @@ def seconds(value):
     return "-" if value is None else f"{value:.2f}s"
 
 
+# the same rule the protocol plane applies to a 19KB body, applied to a played
+# duration: the player starting is not evidence the viewer got the title
+MIN_FEATURE_MS = 5 * 60 * 1000
+
+
+def client_outcome(row):
+    """Re-read a client row under the placeholder rule, whenever it was measured."""
+    if row.get("outcome") != "played":
+        return row.get("outcome")
+    length = (row.get("player") or {}).get("length")
+    if isinstance(length, (int, float)) and 0 < length < MIN_FEATURE_MS:
+        return "placeholder"
+    return "played"
+
+
 def render_client(documents):
     """The client plane, beside the protocol plane and never averaged with it.
 
@@ -274,19 +289,23 @@ def render_client(documents):
            "that a screenshot looked right. `player-refused` is a stream the addon "
            "served and the player would not open, which is the whole reason this "
            "plane exists. Rows other addons contributed are rendered by the client "
-           "and never counted.", ""]
-    out.append("| Target | Played | Coverage | median click to play | refused | other addons' rows |")
-    out.append("|---|---|---|---|---|---|")
+           "and never counted. `clips the player accepted` is the row that matters "
+           "most here: a short placeholder the addon served instead of the film, "
+           "which Stremio starts and plays without complaint. Counting those as "
+           "playback is how a target that serves almost nothing scores well.", ""]
+    out.append("| Target | Played | Coverage | median click to play | refused | clips the player accepted | other addons' rows |")
+    out.append("|---|---|---|---|---|---|---|")
     for name, document in sorted(documents.items()):
         rows = first_pass(document)
         population = document.get("population") or len(rows)
-        played = [r for r in rows if r["outcome"] == "played"]
-        refused = [r for r in rows if r["outcome"] == "player-refused"]
+        played = [r for r in rows if client_outcome(r) == "played"]
+        refused = [r for r in rows if client_outcome(r) == "player-refused"]
+        clips = [r for r in rows if client_outcome(r) == "placeholder"]
         times = [r["click_to_play_s"] for r in played if r.get("click_to_play_s") is not None]
         noise = [r.get("rows_from_other_addons") or 0 for r in rows]
         coverage = round(100.0 * len(played) / population, 1) if population else None
         out.append(f"| {name} | {len(played)}/{population} | {coverage}% "
-                   f"| {seconds(median(times))} | {len(refused)} "
+                   f"| {seconds(median(times))} | {len(refused)} | {len(clips)} "
                    f"| {max(noise) if noise else 0} max |")
     out.append("")
     hop = {d.get("addon_host") for d in documents.values()}

@@ -233,6 +233,14 @@ def clear_streams(app, budget=15):
 STATE_PLAYING = 3
 STATE_STOPPED = 0
 
+# A feature film is not thirty seconds. One target answers a stream it cannot
+# serve with a short placeholder clip, and Stremio plays it: 14 of its 23 rows
+# reported playback with a duration of exactly 30000 ms, against 87 to 166
+# minutes for the ones that were really the film. The player starting is
+# therefore not evidence that the viewer got the title, which is the opposite
+# of the failure this plane was built to catch and just as invisible.
+MIN_FEATURE_MS = 5 * 60 * 1000
+
 
 def wait_for_stopped(app, budget=20):
     """Wait for the previous title to actually stop before timing the next.
@@ -363,6 +371,15 @@ def measure_title(app, title, cap_bytes, transport_url):
 
     elapsed, state = wait_for_play(app, before)
     row["player"] = state
+    length = (state or {}).get("length")
+    if elapsed is not None and isinstance(length, (int, float)) and 0 < length < MIN_FEATURE_MS:
+        # the player accepted it, and it is not the film
+        row["click_to_play_s"] = round(elapsed, 3)
+        row["outcome"] = "placeholder"
+        row["detail"] = (f"the player started and reported a {int(length)}ms file, which is "
+                         f"a placeholder clip rather than the title")
+        app.stop()
+        return row
     if elapsed is None:
         # the addon served it and the player would not play it. This is the
         # one outcome the protocol plane cannot produce, and the reason this
