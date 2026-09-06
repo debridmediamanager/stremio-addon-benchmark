@@ -240,7 +240,7 @@ def main():
             ready = wait_ready(name)
             started = time.time()
             passes = args.repeat + (args.noise_floor if name == order[0] else 0)
-            command = [sys.executable, os.path.join(ROOT, "harness", "protocol.py"),
+            command = [sys.executable, "-u", os.path.join(ROOT, "harness", "protocol.py"),
                        "--target", name, "--round", args.round,
                        "--read-s", str(args.read_s), "--repeat", str(max(passes, 1))]
             if args.only_title:

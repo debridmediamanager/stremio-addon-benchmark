@@ -47,17 +47,17 @@ SERVED = ("served",)
 PARTIAL = ("truncated",)
 
 
-def load(round_name):
+def load(round_name, prefix="protocol-"):
     directory = os.path.join(ROOT, "results", round_name)
     if not os.path.isdir(directory):
         raise SystemExit(f"no results at {os.path.relpath(directory, ROOT)}")
     documents = {}
     for name in sorted(os.listdir(directory)):
-        if name.startswith("protocol-") and name.endswith(".json"):
+        if name.startswith(prefix) and name.endswith(".json"):
             with open(os.path.join(directory, name)) as handle:
                 document = json.load(handle)
             documents[document["target"]] = document
-    if not documents:
+    if not documents and prefix == "protocol-":
         raise SystemExit(f"no protocol-*.json in {os.path.relpath(directory, ROOT)}")
     return documents
 
@@ -214,7 +214,52 @@ def seconds(value):
     return "-" if value is None else f"{value:.2f}s"
 
 
-def render(documents, round_name):
+def render_client(documents):
+    """The client plane, beside the protocol plane and never averaged with it.
+
+    The two answer different questions. The protocol plane isolates the addon
+    from the player and measures over loopback on the bench host; this one is
+    the real player on a different machine, so it carries a LAN hop and the
+    player's own startup. What only this plane can say is whether a stream the
+    addon served correctly is one the player will actually open.
+    """
+    if not documents:
+        return ["## The client plane", "",
+                "**Not run.** No `client-*.json` in this round, so nothing here says "
+                "whether a player would accept what each addon served. The protocol "
+                "plane cannot answer that.", ""]
+    out = ["## The client plane", "",
+           "Stremio 4.4, driven over CDP, clicking the row the addon produced. "
+           "`played` means the app's own player reported time moving forward, not "
+           "that a screenshot looked right. `player-refused` is a stream the addon "
+           "served and the player would not open, which is the whole reason this "
+           "plane exists. Rows other addons contributed are rendered by the client "
+           "and never counted.", ""]
+    out.append("| Target | Played | Coverage | median click to play | refused | other addons' rows |")
+    out.append("|---|---|---|---|---|---|")
+    for name, document in sorted(documents.items()):
+        rows = first_pass(document)
+        population = document.get("population") or len(rows)
+        played = [r for r in rows if r["outcome"] == "played"]
+        refused = [r for r in rows if r["outcome"] == "player-refused"]
+        times = [r["click_to_play_s"] for r in played if r.get("click_to_play_s") is not None]
+        noise = [r.get("rows_from_other_addons") or 0 for r in rows]
+        coverage = round(100.0 * len(played) / population, 1) if population else None
+        out.append(f"| {name} | {len(played)}/{population} | {coverage}% "
+                   f"| {seconds(median(times))} | {len(refused)} "
+                   f"| {max(noise) if noise else 0} max |")
+    out.append("")
+    hop = {d.get("addon_host") for d in documents.values()}
+    out.append(f"Measured through the player's loopback ({', '.join(sorted(str(h) for h in hop))}), "
+               f"which is what makes a plain-http addon a secure context for the shell. "
+               f"These numbers include a network hop and a player start that the "
+               f"protocol plane's do not, so the two tables are read side by side and "
+               f"never averaged.")
+    out.append("")
+    return out
+
+
+def render(documents, round_name, client=None):
     caps = {d.get("playable_cap_bytes") for d in documents.values() if d.get("playable_cap_bytes")}
     cap_bytes = max(caps) if caps else 6 * 1024**3
     summaries = [summarise(name, document, cap_bytes) for name, document in documents.items()]
@@ -315,6 +360,8 @@ def render(documents, round_name):
                    f"| {s['over_cap_titles']} | {rank} | {s['picked_over_cap']} |")
     out.append("")
 
+    out.extend(render_client(client or {}))
+
     floors = {name: noise_floor(document) for name, document in documents.items()}
     floors = {name: floor for name, floor in floors.items() if floor}
     out.append("## Noise floor")
@@ -344,7 +391,8 @@ def main():
     args = parser.parse_args()
 
     documents = load(args.round)
-    text = render(documents, args.round)
+    client = load(args.round, prefix="client-")
+    text = render(documents, args.round, client)
     if args.out:
         path = args.out if os.path.isabs(args.out) else os.path.join(ROOT, args.out)
         with open(path, "w") as handle:
