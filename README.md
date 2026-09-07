@@ -14,24 +14,102 @@ A target can win there and lose here.
 
 ## Status
 
-**Round 1 has not been run.** Both harnesses are written and both have been
-exercised end to end against a live target; the field is stood up and verified.
-There are no published numbers yet, and nothing below should be read as one.
+**Round 1 is measured and published.** Four targets over a fixed set of 23
+titles, both planes, on 6 September 2026. The full generated tables are in
+[`docs/round1.md`](docs/round1.md); the raw rows are in
+[`results/round1/`](results/round1). Read
+[what round 1 got wrong](#what-round-1-got-wrong) before quoting any of it.
 
-| Piece | State |
-|---|---|
-| Field | four measured targets, one excluded — see below |
-| Method, parity rules, traps | [`docs/design.md`](docs/design.md) |
-| How to run it | [`docs/running.md`](docs/running.md) |
-| Candidate pool | [`corpus/candidates.json`](corpus/candidates.json), 31 entries |
-| Indexer capability matrix | [`corpus/indexer-capabilities.json`](corpus/indexer-capabilities.json), measured 6 September 2026 |
-| Indexer census | [`corpus/availability.7z`](corpus/availability.7z), 31 candidates across 6 indexers |
-| Pinned title set | [`corpus/titles.json`](corpus/titles.json), 23 entries, built from the census |
-| Target standup | [`harness/standup/`](harness/standup), one script per target, each recording what it cost |
-| Protocol-plane harness | [`harness/protocol.py`](harness/protocol.py) |
-| Client-plane harness | [`harness/client.py`](harness/client.py), over [`harness/cdp.py`](harness/cdp.py) |
-| Round orchestrator | [`harness/round.sh`](harness/round.sh) |
-| Report | [`harness/report.py`](harness/report.py) |
+### Protocol plane
+
+The addon's own HTTP interface, driven over loopback on the bench host.
+`click_to_byte` is the request for a stream list to the first body byte.
+
+| Target | Served | Coverage | median click to byte | error clips |
+|---|---|---|---|---|
+| streamnzb | 19/23 | 82.6% | 14.33s | 0 |
+| AIOStreams | 18/23 | 78.3% | 5.09s | 3 |
+| zurg | 14/23 | 60.9% | 22.51s | 0 |
+| StremThru | 0/23 | 0% | none served | 14 |
+
+### Client plane
+
+Stremio 4.4, driven over CDP, clicking the row the addon produced. These
+numbers carry a LAN hop and a player start that the protocol numbers do not,
+so the two are read side by side and never averaged.
+
+| Target | Played | Coverage | median click to play | player refused | clips the player accepted |
+|---|---|---|---|---|---|
+| streamnzb | 21/23 | 91.3% | 8.99s | 0 | 0 |
+| AIOStreams | 19/23 | 82.6% | 1.68s | 0 | 2 |
+| zurg | 14/23 | 60.9% | 7.70s | 5 | 2 |
+| StremThru | 6/23 | 26.1% | 29.10s | 0 | 14 |
+
+Noise floor 2.87s median spread over three passes, so two targets closer
+together than that are tied. Connection parity verified by sampling each
+target's own network namespace: every one peaked at exactly 15.
+
+### What the round found
+
+**A complete, valid, tiny MP4 is not a film, and every check short of its size
+passes it.** HTTP 206, `video/mp4`, a `Content-Range` whose total is the same
+few kilobytes, and the whole of it delivered. StremThru answers 14 of 23 titles
+this way and its log says why: `nzb is not streamable`. Stremio then plays the
+clip for 30 seconds and reports success, so a benchmark asking "did it 206" or
+"did the player start" scores StremThru 20 of 23. It serves about 6.
+
+**Coverage and speed point in opposite directions.** AIOStreams is roughly
+three times faster than streamnzb on the protocol plane and serves one title
+fewer. Ranking on time alone puts it first, which is why no table here prints a
+speed without the coverage beside it.
+
+**zurg comes third on its own benchmark, and a default is why.** It answers
+with exactly 15 streams per title, its `max_results` default, against a field
+median of 120 to 203. Its ranking leads with the largest releases, so for 17 of
+23 titles not one of those 15 was under the 6 GiB the player will direct-play.
+Median options within the cap: AIOStreams 49, streamnzb 37, StremThru 25, zurg
+0. That produces all five of its resolve failures and all five of its player
+refusals, every one on a release between 8 and 27 GiB.
+
+**One target loses an indexer to its own User-Agent.** StremThru sends none on
+indexer queries, and one of the three parity indexers refuses an empty
+User-Agent with newznab code 109. Probing all three with five different strings
+shows only the empty one refused, and only by that indexer. So StremThru ran on
+two indexers where the others ran on three. The round reports that rather than
+spoofing around it.
+
+**The two planes disagree usefully.** They agree on 16 of StremThru's 23
+entries. On five the protocol plane recorded `truncated` and the player played
+the film to a real runtime, which is the difference between a 30 second read
+window and a viewer. Neither plane alone describes that target correctly.
+
+### What round 1 got wrong
+
+Four measurements in this round looked excellent and were artefacts. Each was
+caught by being implausibly good rather than by a test, which is worth stating
+because the same shape of error is easy to publish.
+
+- **Every target held zero news connections.** The socket sampler read the host
+  table, and four of five targets run in containers whose sockets live in
+  another network namespace. Fixed by sampling each target's own namespace.
+- **A 19 KB body counted as a served film.** Fixed by the placeholder rule
+  above. The rule was applied to rows already written, from the bytes read and
+  the declared total that every row records, rather than by re-running the
+  field under it.
+- **Click to play of 0.04s across a whole target.** Leaving Stremio's player
+  does not reset its position, so the next title read as already playing.
+- **And after the first fix, 0.05s.** Requiring the position to advance passes
+  instantly when the previous title is still playing. `player.stop()` had never
+  been called, because of a guard in this harness. Playback is now identified by
+  the player's own state, forward progress, and a changed file duration.
+
+Two client-plane runs were discarded over the last two. **StremThru was also
+re-measured**: its first pass carried a 6 GB filter the other three did not,
+which broke size-cap parity. Unfiltered it served fewer titles, not more, so the
+filter was not what held it back.
+
+The protocol-plane rows were not affected by the playback bugs, which are
+confined to the client plane.
 
 ## The field
 
