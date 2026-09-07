@@ -1,0 +1,46 @@
+{
+ "round": "round1",
+ "reconstructed": true,
+ "note": "Round 1 recorded no build identities. This file was written after the fact, on 7 September 2026, from evidence that still existed: the image digests and creation timestamps the docker daemon on the bench host still held for the images round 1 ran, the sha256 and mtime of the zurg binary it ran, and each project's release history. Every `version` below whose source is `release tag` is that mapping and not a manifest this round read, which is exactly the uncertainty harness/versions.py exists to remove for round 2 onwards.",
+ "targets": {
+  "aiostreams": {
+   "language": "TypeScript",
+   "repo": "Viren070/AIOStreams",
+   "manifest_version": "2.34.0",
+   "version_source": "manifest, read on 7 September off the same image digest, which :latest still points at",
+   "image": "ghcr.io/viren070/aiostreams:latest",
+   "image_digest": "sha256:d25546200337f633b25fd8bd95ee8dc9ef936573fb80e77cc4e2fe1f120c40ae",
+   "image_created": "2026-09-04T23:21:47.642323121Z"
+  },
+  "stremthru": {
+   "language": "Go",
+   "repo": "MunifTanjim/stremthru",
+   "manifest_version": "0.104.0",
+   "version_source": "release tag: 0.104.0 was published 2026-08-28T17:32:28Z and the image was built at 17:38:49Z",
+   "image": "ghcr.io/muniftanjim/stremthru:latest",
+   "image_digest": "sha256:efad6a37c01a1b86e367e57d1912d946eae8a40645302138d812b6738847182b",
+   "image_created": "2026-08-28T17:38:49.875750127Z"
+  },
+  "streamnzb": {
+   "language": "Go",
+   "repo": "Gaisberg/streamnzb",
+   "manifest_version": "5.17.0",
+   "version_source": "release tag: v5.17.0 was published 2026-09-05T08:03:43Z and the image was built at 08:07:55Z",
+   "image": "ghcr.io/gaisberg/streamnzb:latest",
+   "image_digest": "sha256:e0890ea961f1da4d60678e834cd9cb61e891a881afb39b1a1ed167dcdf041633",
+   "image_created": "2026-09-05T08:07:55.662370167Z"
+  },
+  "zurg": {
+   "language": "Go",
+   "repo": "debridmediamanager/zurg",
+   "manifest_version": "0.1.0",
+   "version_source": "manifest; zurg's addon manifest carries a static version and identifies no build",
+   "binary_sha256": "53b7a9009716880a281ede28a66aed49c1148a82a727d643aa4ca7fdb4833cbf",
+   "binary_mtime": 1788728235,
+   "build_version": "docker",
+   "build_commit": null,
+   "build_at": null,
+   "build_commit_note": "built from main on the bench host at 2026-09-06T20:57:15Z and linked without the Makefile's ldflags, so it reported the literal defaults `docker` / `uhm, now?` and carries no commit. main's last commit before that build was 20fd4e2c; nothing narrows it further."
+  }
+ }
+}

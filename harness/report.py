@@ -318,7 +318,112 @@ def render_client(documents):
     return out
 
 
-def render(documents, round_name, client=None, noise_documents=None):
+def builds_document(round_name):
+    path = os.path.join(ROOT, "results", round_name, "versions.json")
+    if not os.path.exists(path):
+        return {}
+    with open(path) as handle:
+        return json.load(handle)
+
+
+def builds(round_name):
+    """What each target was, in the round being reported.
+
+    Written by the round itself (harness/versions.py) while each target was
+    up. Absent for a round that ran before versions were recorded, in which
+    case nothing is printed rather than a guess.
+    """
+    return builds_document(round_name).get("targets") or {}
+
+
+def build_label(record):
+    """One line for a build: what it calls itself, and what pins it."""
+    if not record:
+        return "not recorded"
+    version = record.get("manifest_version") or "?"
+    pin = (record.get("image_digest") or record.get("build_commit")
+           or record.get("binary_sha256") or "")
+    if pin.startswith("sha256:"):
+        pin = pin[7:]
+    return f"v{version}" + (f" `{pin[:12]}`" if pin else "")
+
+
+def render_builds(round_name, out):
+    """The builds table. A round that says `latest` has to say which."""
+    measured = builds(round_name)
+    if not measured:
+        return
+    out.append("## What was measured")
+    out.append("")
+    out.append("`:latest` is a moving tag, so a round records the digest it actually ran "
+               "as well as the version the addon claims. Read this before comparing any "
+               "number here with another round's.")
+    out.append("")
+    document = builds_document(round_name)
+    if document.get("reconstructed"):
+        out.append(f"**Reconstructed after the round, not recorded by it.** "
+                   f"{document.get('note', '')}")
+        out.append("")
+    out.append("| Target | Version | Pinned as | Built |")
+    out.append("|---|---|---|---|")
+    for name, record in measured.items():
+        pin = (record.get("image_digest") or record.get("build_commit")
+               or record.get("binary_sha256") or "-")
+        if pin.startswith("sha256:"):
+            pin = pin[7:]
+        built = record.get("image_created") or record.get("build_at") or ""
+        if not built and record.get("binary_mtime"):
+            built = datetime.fromtimestamp(record["binary_mtime"],
+                                           timezone.utc).isoformat(timespec="seconds")
+        built = built or "-"
+        out.append(f"| {name} | v{record.get('manifest_version') or '?'} "
+                   f"| `{pin[:16]}` | {built[:19]} |")
+    out.append("")
+
+
+def render_against(summaries, round_name, other_round, cap_bytes, out):
+    """This round beside an earlier one, per target, with the builds beside it.
+
+    A version-to-version round answers one question -- did anything change --
+    and the only way to answer it wrongly is to print two numbers without
+    saying whether the build moved between them. A target whose image did not
+    move is a repeatability check, and its delta is this round's own noise
+    rather than a change in the product.
+    """
+    documents = load(other_round)
+    if not documents:
+        return
+    caps = {d.get("playable_cap_bytes") for d in documents.values() if d.get("playable_cap_bytes")}
+    other_cap = max(caps) if caps else cap_bytes
+    before = {name: summarise(name, document, other_cap)
+              for name, document in documents.items()}
+    now_builds, then_builds = builds(round_name), builds(other_round)
+    out.append(f"## Against {other_round}")
+    out.append("")
+    out.append(f"The same fixed set, the same parity rules, measured again on the build each "
+               f"target shipped since. A row whose build did not move is a repeatability "
+               f"check and its deltas are this round's noise, not a change in the product.")
+    out.append("")
+    out.append(f"| Target | Build | Served | Coverage | median c2b (population) | median c2b (served) |")
+    out.append("|---|---|---|---|---|---|")
+    for summary in summaries:
+        name = summary["target"]
+        was = before.get(name)
+        then = then_builds.get(name)
+        moved = build_label(then)
+        out.append(
+            f"| {name} | {moved} → {build_label(now_builds.get(name))} "
+            f"| {was['served'] if was else '-'}/{was['population'] if was else '-'}"
+            f" → {summary['served']}/{summary['population']} "
+            f"| {was['coverage_pct'] if was else '-'}% → {summary['coverage_pct']}% "
+            f"| {seconds(was['median_population_c2b_s']) if was else '-'}"
+            f" → {seconds(summary['median_population_c2b_s'])} "
+            f"| {seconds(was['median_served_c2b_s']) if was else '-'}"
+            f" → {seconds(summary['median_served_c2b_s'])} |")
+    out.append("")
+
+
+def render(documents, round_name, client=None, noise_documents=None, against=None):
     caps = {d.get("playable_cap_bytes") for d in documents.values() if d.get("playable_cap_bytes")}
     cap_bytes = max(caps) if caps else 6 * 1024**3
     summaries = [summarise(name, document, cap_bytes) for name, document in documents.items()]
@@ -350,6 +455,8 @@ def render(documents, round_name, client=None, noise_documents=None):
                        f"which is a claim about the budget as much as about the target.")
         out.append("")
 
+    render_builds(round_name, out)
+
     out.append("## Coverage and click to byte")
     out.append("")
     out.append("Coverage first, and no speed column appears without it. "
@@ -366,6 +473,9 @@ def render(documents, round_name, client=None, noise_documents=None):
                    f"| {seconds(s['median_population_c2b_s']) if s['median_population_c2b_s'] is not None else '>budget'} "
                    f"| {seconds(s['median_served_c2b_s'])} | {s['n_c2b']} |")
     out.append("")
+
+    if against:
+        render_against(summaries, round_name, against, cap_bytes, out)
 
     out.append("## Where the time goes")
     out.append("")
@@ -482,6 +592,10 @@ def main():
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--round", default="round1")
     parser.add_argument("--out", help="write markdown here instead of stdout")
+    parser.add_argument("--against",
+                        help="an earlier round to print this one beside, per target, with "
+                             "the build each one measured. A round that changes versions "
+                             "has to say which moved and which did not")
     parser.add_argument("--noise-round",
                         help="read the noise floor from another round directory. Repeat "
                              "passes are expensive over the whole set, so the floor is "
@@ -491,7 +605,7 @@ def main():
     documents = load(args.round)
     client = load(args.round, prefix="client-")
     floors = load(args.noise_round) if args.noise_round else None
-    text = render(documents, args.round, client, floors)
+    text = render(documents, args.round, client, floors, against=args.against)
     if args.out:
         path = args.out if os.path.isabs(args.out) else os.path.join(ROOT, args.out)
         with open(path, "w") as handle:
