@@ -1,0 +1,1615 @@
+{
+ "target": "zurg",
+ "plane": "protocol",
+ "round": "round2",
+ "measured_utc": "2026-09-07T19:10:15+00:00",
+ "harness": "protocol.py",
+ "title_set_built_utc": "2026-09-06T11:12:42+00:00",
+ "parity_indexers": [
+  "indexer-a",
+  "indexer-d",
+  "indexer-e"
+ ],
+ "playable_cap_bytes": 6442450944,
+ "population": 23,
+ "read_s": 30.0,
+ "cap_bytes": 6442450944,
+ "title_budget_s": 180,
+ "target_budget_s": 5400,
+ "verified": "upstream",
+ "passes": [
+  [
+   {
+    "id": "tt15239678",
+    "title": "Dune: Part Two",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:52:04+00:00",
+    "stream_list_s": 0.258,
+    "n_streams": 14,
+    "n_within_cap": 4,
+    "notices": null,
+    "max_offered_bytes": 40190156472,
+    "chosen": {
+     "release": "Zurg Usenet",
+     "size_bytes": 6324339343,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet",
+     "description": "Dune.Part.Two.2024\n5.89 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 10,
+    "picked_over_cap": false,
+    "resolve_s": null,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "resolve-failed",
+    "detail": "http 404: Release holds nothing playable",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8"
+     }
+    ]
+   },
+   {
+    "id": "tt15398776",
+    "title": "Oppenheimer",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:52:24+00:00",
+    "stream_list_s": 0.417,
+    "n_streams": 16,
+    "n_within_cap": 2,
+    "notices": null,
+    "max_offered_bytes": 42434276884,
+    "chosen": {
+     "release": "Oppenheimer.2023.720p.HDCAM-C1NEM4",
+     "size_bytes": 3038689361,
+     "indexer": "indexer-d",
+     "name": "Zurg Usenet\n720p",
+     "description": "Oppenheimer.2023.720p.HDCAM-C1NEM4\n2.83 GB \u00b7 indexer-d"
+    },
+    "picked_rank": 12,
+    "picked_over_cap": false,
+    "resolve_s": 15.284,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 15.284,
+    "click_to_byte_s": 15.701,
+    "http_status": 206,
+    "content_bytes_total": 2805882764,
+    "read_bytes": 125632459,
+    "read_s": 30.18,
+    "windows_n": 30,
+    "throughput_mb_s": 4.19,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 28058827,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 701470691,
+      "ttfb_s": 2.673,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1402941382,
+      "ttfb_s": 1.905,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 2104412073,
+      "ttfb_s": 1.942,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 2665588625,
+      "ttfb_s": 1.619,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 701470691,
+      "ttfb_s": 0.001,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/mp4"
+     }
+    ]
+   },
+   {
+    "id": "tt1517268",
+    "title": "Barbie",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:53:18+00:00",
+    "stream_list_s": 0.391,
+    "n_streams": 20,
+    "n_within_cap": 7,
+    "notices": null,
+    "max_offered_bytes": 40050570035,
+    "chosen": {
+     "release": "Barbie.2023.720p.BluRay.DD5.1.x264-FuzerHD",
+     "size_bytes": 6238439997,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet\n720p",
+     "description": "Barbie.2023.720p.BluRay.DD5.1.x264-FuzerHD\n5.81 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 10,
+    "picked_over_cap": false,
+    "resolve_s": null,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "resolve-failed",
+    "detail": "http 404: Release holds nothing playable",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8"
+     }
+    ]
+   },
+   {
+    "id": "tt9362722",
+    "title": "Spider-Man: Across the Spider-Verse",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:53:39+00:00",
+    "stream_list_s": 0.219,
+    "n_streams": 18,
+    "n_within_cap": 3,
+    "notices": null,
+    "max_offered_bytes": 36990405836,
+    "chosen": {
+     "release": "Spider-Man.Across.The.Spider-Verse.2023.PLDUB.BDRip.x264-FLAME-xpost",
+     "size_bytes": 2050846883,
+     "indexer": "indexer-e",
+     "name": "Zurg Usenet",
+     "description": "Spider-Man.Across.The.Spider-Verse.2023.PLDUB.BDRip.x264-FLAME-xpost\n1.91 GB \u00b7 indexer-e"
+    },
+    "picked_rank": 15,
+    "picked_over_cap": false,
+    "resolve_s": 5.095,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 5.095,
+    "click_to_byte_s": 5.314,
+    "http_status": 206,
+    "content_bytes_total": 18099249,
+    "read_bytes": 18099249,
+    "read_s": 6.44,
+    "windows_n": 6,
+    "throughput_mb_s": 2.69,
+    "p05_window_mb_s": 0.44,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 180992,
+      "ttfb_s": 0.009,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 4524812,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 9049624,
+      "ttfb_s": 0.001,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 13574436,
+      "ttfb_s": 0.005,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 17194286,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 4524812,
+      "ttfb_s": 0.001,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "truncated",
+    "detail": "the body stopped before the read window closed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/mp4"
+     }
+    ]
+   },
+   {
+    "id": "tt1375666",
+    "title": "Inception",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:53:51+00:00",
+    "stream_list_s": 0.394,
+    "n_streams": 15,
+    "n_within_cap": 3,
+    "notices": null,
+    "max_offered_bytes": 40909563494,
+    "chosen": {
+     "release": "inception.2010.720p.web.h264-jff",
+     "size_bytes": 5153960755,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet\n720p",
+     "description": "inception.2010.720p.web.h264-jff\n4.80 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 11,
+    "picked_over_cap": false,
+    "resolve_s": 1.523,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 1.523,
+    "click_to_byte_s": 1.917,
+    "http_status": 206,
+    "content_bytes_total": 4892577392,
+    "read_bytes": 159449035,
+    "read_s": 30.57,
+    "windows_n": 30,
+    "throughput_mb_s": 5.31,
+    "p05_window_mb_s": 0.29,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 48925773,
+      "ttfb_s": 0.001,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1223144348,
+      "ttfb_s": 1.23,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2446288696,
+      "ttfb_s": 2.013,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 3669433044,
+      "ttfb_s": 0.863,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 4647948522,
+      "ttfb_s": 1.072,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1223144348,
+      "ttfb_s": 0.001,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0816692",
+    "title": "Interstellar",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:54:29+00:00",
+    "stream_list_s": 0.187,
+    "n_streams": 12,
+    "n_within_cap": 1,
+    "notices": null,
+    "max_offered_bytes": 41811506626,
+    "chosen": {
+     "release": "interstellar.2014.720p.nf.web-dl.ddp5.1.av1-vista",
+     "size_bytes": 2168958484,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet\n720p",
+     "description": "interstellar.2014.720p.nf.web-dl.ddp5.1.av1-vista\n2.02 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 11,
+    "picked_over_cap": false,
+    "resolve_s": 1.874,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 1.874,
+    "click_to_byte_s": 2.061,
+    "http_status": 206,
+    "content_bytes_total": 2055788605,
+    "read_bytes": 101187584,
+    "read_s": 33.35,
+    "windows_n": 33,
+    "throughput_mb_s": 3.07,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 20557886,
+      "ttfb_s": 0.003,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 513947151,
+      "ttfb_s": 1.047,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1027894302,
+      "ttfb_s": 1.305,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 1541841453,
+      "ttfb_s": 0.963,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 1952999174,
+      "ttfb_s": 1.548,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 513947151,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt2380307",
+    "title": "Coco",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:55:09+00:00",
+    "stream_list_s": 0.406,
+    "n_streams": 19,
+    "n_within_cap": 3,
+    "notices": null,
+    "max_offered_bytes": 33243046871,
+    "chosen": {
+     "release": "Coco.2017.720p.BluRay.DTS.x264.1-FuzerHD",
+     "size_bytes": 6410238689,
+     "indexer": "indexer-e",
+     "name": "Zurg Usenet\n720p",
+     "description": "Coco.2017.720p.BluRay.DTS.x264.1-FuzerHD\n5.97 GB \u00b7 indexer-e"
+    },
+    "picked_rank": 14,
+    "picked_over_cap": false,
+    "resolve_s": null,
+    "resolve_waited_s": 30.0,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "resolve-failed",
+    "detail": "still 503 when the title budget ran out",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 503,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 503,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 503,
+      "content_type": "text/plain; charset=utf-8"
+     }
+    ]
+   },
+   {
+    "id": "tt0111161",
+    "title": "The Shawshank Redemption",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:57:56+00:00",
+    "stream_list_s": 0.513,
+    "n_streams": 15,
+    "n_within_cap": 3,
+    "notices": null,
+    "max_offered_bytes": 38751342428,
+    "chosen": {
+     "release": "Soul.of.a.Nation.Xonerated.The.Murder.of.Malcolm.X.and.55.Years.to.Justice.2022.720p.ENGLISH.MONO.WEB.H264.AAC-MiDWEEK-xpost",
+     "size_bytes": 1014811852,
+     "indexer": "indexer-e",
+     "name": "Zurg Usenet\n720p",
+     "description": "Soul.of.a.Nation.Xonerated.The.Murder.of.Malcolm.X.and.55.Years.to.Justice.2022.720p.ENGLISH.MONO.WEB.H264.AAC-MiDWEEK-xpost\n967.8 MB \u00b7 indexer-e"
+    },
+    "picked_rank": 10,
+    "picked_over_cap": false,
+    "resolve_s": null,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "resolve-failed",
+    "detail": "http 404: File is not available",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8"
+     }
+    ]
+   },
+   {
+    "id": "tt0133093",
+    "title": "The Matrix",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:58:16+00:00",
+    "stream_list_s": 0.427,
+    "n_streams": 13,
+    "n_within_cap": 0,
+    "notices": null,
+    "max_offered_bytes": 41886668554,
+    "chosen": {
+     "release": "The.Matrix.1999.720p.UHD.BluRay.DD5.1.x264-VietHD-Rakuv",
+     "size_bytes": 11682311045,
+     "indexer": "indexer-e",
+     "name": "Zurg Usenet\n720p",
+     "description": "The.Matrix.1999.720p.UHD.BluRay.DD5.1.x264-VietHD-Rakuv\n10.88 GB \u00b7 indexer-e"
+    },
+    "picked_rank": 10,
+    "picked_over_cap": true,
+    "resolve_s": null,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "resolve-failed",
+    "detail": "http 404: Release holds nothing playable",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8"
+     }
+    ]
+   },
+   {
+    "id": "tt0068646",
+    "title": "The Godfather",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:58:47+00:00",
+    "stream_list_s": 0.176,
+    "n_streams": 18,
+    "n_within_cap": 6,
+    "notices": null,
+    "max_offered_bytes": 42691974922,
+    "chosen": {
+     "release": "the.godfather.1972.720p.web.h264-jff",
+     "size_bytes": 3027951943,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet\n720p",
+     "description": "the.godfather.1972.720p.web.h264-jff\n2.82 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 11,
+    "picked_over_cap": false,
+    "resolve_s": null,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "resolve-failed",
+    "detail": "http 404: File is not available",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8"
+     }
+    ]
+   },
+   {
+    "id": "tt0110912",
+    "title": "Pulp Fiction",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:58:57+00:00",
+    "stream_list_s": 0.395,
+    "n_streams": 14,
+    "n_within_cap": 2,
+    "notices": null,
+    "max_offered_bytes": 40877351239,
+    "chosen": {
+     "release": "Pulp.Fiction.1994.720p.TUBI.WEB-DL.AAC.2.0.H.264-PiRaTeS",
+     "size_bytes": 2254857830,
+     "indexer": "indexer-d",
+     "name": "Zurg Usenet\n720p",
+     "description": "Pulp.Fiction.1994.720p.TUBI.WEB-DL.AAC.2.0.H.264-PiRaTeS\n2.10 GB \u00b7 indexer-d"
+    },
+    "picked_rank": 11,
+    "picked_over_cap": false,
+    "resolve_s": 10.619,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 10.619,
+    "click_to_byte_s": 11.014,
+    "http_status": 206,
+    "content_bytes_total": 2105023233,
+    "read_bytes": 71106507,
+    "read_s": 32.38,
+    "windows_n": 32,
+    "throughput_mb_s": 2.22,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 21050232,
+      "ttfb_s": 0.001,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 526255808,
+      "ttfb_s": 0.001,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1052511616,
+      "ttfb_s": 3.195,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 1578767424,
+      "ttfb_s": 3.274,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 1999772071,
+      "ttfb_s": 2.482,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 526255808,
+      "ttfb_s": 0.004,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt6751668",
+    "title": "Parasite",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T18:59:49+00:00",
+    "stream_list_s": 0.401,
+    "n_streams": 19,
+    "n_within_cap": 4,
+    "notices": null,
+    "max_offered_bytes": 42713449758,
+    "chosen": {
+     "release": "Parasite.2019.BW.720p.BluRay.x264-REGRET",
+     "size_bytes": 4584877588,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet\n720p",
+     "description": "Parasite.2019.BW.720p.BluRay.x264-REGRET\n4.27 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 13,
+    "picked_over_cap": false,
+    "resolve_s": 25.766,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 25.766,
+    "click_to_byte_s": 26.167,
+    "http_status": 206,
+    "content_bytes_total": 4162308418,
+    "read_bytes": 56688587,
+    "read_s": 30.5,
+    "windows_n": 30,
+    "throughput_mb_s": 1.89,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 41623084,
+      "ttfb_s": 0.005,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1040577104,
+      "ttfb_s": 6.523,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2081154209,
+      "ttfb_s": 3.913,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 3121731313,
+      "ttfb_s": 1.953,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 3954192997,
+      "ttfb_s": 3.012,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1040577104,
+      "ttfb_s": 0.011,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0245429",
+    "title": "Spirited Away",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T19:01:01+00:00",
+    "stream_list_s": 0.18,
+    "n_streams": 14,
+    "n_within_cap": 6,
+    "notices": null,
+    "max_offered_bytes": 38622493409,
+    "chosen": {
+     "release": "Spirited.Away.2001.ViE.720p.NF.WEB-DL.DDP5.1.x264-ExREN-xpost",
+     "size_bytes": 5089536245,
+     "indexer": "indexer-e",
+     "name": "Zurg Usenet\n720p",
+     "description": "Spirited.Away.2001.ViE.720p.NF.WEB-DL.DDP5.1.x264-ExREN-xpost\n4.74 GB \u00b7 indexer-e"
+    },
+    "picked_rank": 8,
+    "picked_over_cap": false,
+    "resolve_s": null,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "resolve-failed",
+    "detail": "TimeoutError: timed out",
+    "hops": []
+   },
+   {
+    "id": "tt5311514",
+    "title": "Your Name",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T19:02:02+00:00",
+    "stream_list_s": 0.2,
+    "n_streams": 20,
+    "n_within_cap": 5,
+    "notices": null,
+    "max_offered_bytes": 33232309452,
+    "chosen": {
+     "release": "Your.Name.2016.DKSUBS.720p.BluRay.x264-WDK",
+     "size_bytes": 5862630359,
+     "indexer": "indexer-e",
+     "name": "Zurg Usenet\n720p",
+     "description": "Your.Name.2016.DKSUBS.720p.BluRay.x264-WDK\n5.46 GB \u00b7 indexer-e"
+    },
+    "picked_rank": 10,
+    "picked_over_cap": false,
+    "resolve_s": 42.211,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 42.211,
+    "click_to_byte_s": 42.411,
+    "http_status": 206,
+    "content_bytes_total": 5194713148,
+    "read_bytes": 31969065,
+    "read_s": 0.58,
+    "windows_n": 0,
+    "throughput_mb_s": 1.07,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 51947131,
+      "ttfb_s": 1.813,
+      "status": 500,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1298678287,
+      "ttfb_s": 1.769,
+      "status": 500,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2597356574,
+      "ttfb_s": 1.959,
+      "status": 500,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 3896034861,
+      "ttfb_s": 2.316,
+      "status": 500,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 4934977490,
+      "ttfb_s": 2.474,
+      "status": 500,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1298678287,
+      "ttfb_s": 2.292,
+      "status": 500,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "truncated",
+    "detail": "the body stopped before the read window closed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0087544",
+    "title": "Nausicaa of the Valley of the Wind",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T19:02:57+00:00",
+    "stream_list_s": 0.429,
+    "n_streams": 15,
+    "n_within_cap": 5,
+    "notices": null,
+    "max_offered_bytes": 42681237504,
+    "chosen": {
+     "release": "Zurg Usenet",
+     "size_bytes": 6281389670,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet",
+     "description": "Nausica of the Valley of the Wind (1984) - Animage LD Custom\n5.85 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 10,
+    "picked_over_cap": false,
+    "resolve_s": 2.6,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 2.6,
+    "click_to_byte_s": 3.029,
+    "http_status": 206,
+    "content_bytes_total": 5573150918,
+    "read_bytes": 37355414,
+    "read_s": 33.23,
+    "windows_n": 33,
+    "throughput_mb_s": 1.13,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 55731509,
+      "ttfb_s": 9.076,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1393287729,
+      "ttfb_s": 3.339,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2786575459,
+      "ttfb_s": 2.766,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 4179863188,
+      "ttfb_s": 12.943,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 5294493372,
+      "ttfb_s": 2.384,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1393287729,
+      "ttfb_s": 0.003,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0064116",
+    "title": "Once Upon a Time in the West",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T19:04:04+00:00",
+    "stream_list_s": 0.18,
+    "n_streams": 20,
+    "n_within_cap": 2,
+    "notices": null,
+    "max_offered_bytes": 39835821670,
+    "chosen": {
+     "release": "Once.Upon.a.Time.in.the.West.1968.REMASTERED.iNTERNAL.CZECH.DUAL.BDRip.x264-iCZi-xpost",
+     "size_bytes": 1921997864,
+     "indexer": "indexer-e",
+     "name": "Zurg Usenet",
+     "description": "Once.Upon.a.Time.in.the.West.1968.REMASTERED.iNTERNAL.CZECH.DUAL.BDRip.x264-iCZi-xpost\n1.79 GB \u00b7 indexer-e"
+    },
+    "picked_rank": 18,
+    "picked_over_cap": false,
+    "resolve_s": 9.607,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 9.607,
+    "click_to_byte_s": 9.787,
+    "http_status": 206,
+    "content_bytes_total": 10554748,
+    "read_bytes": 10554748,
+    "read_s": 8.5,
+    "windows_n": 8,
+    "throughput_mb_s": 1.28,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 105547,
+      "ttfb_s": 0.006,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 2638687,
+      "ttfb_s": 0.012,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 5277374,
+      "ttfb_s": 0.012,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 7916061,
+      "ttfb_s": 0.001,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 10027010,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 2638687,
+      "ttfb_s": 0.001,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "truncated",
+    "detail": "the body stopped before the read window closed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0050083",
+    "title": "12 Angry Men",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T19:04:22+00:00",
+    "stream_list_s": 0.416,
+    "n_streams": 20,
+    "n_within_cap": 5,
+    "notices": null,
+    "max_offered_bytes": 42122891755,
+    "chosen": {
+     "release": "12.Angry.Men.1957.720p.BluRay.x264-Obfuscated",
+     "size_bytes": 4015794421,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet\n720p",
+     "description": "12.Angry.Men.1957.720p.BluRay.x264-Obfuscated\n3.74 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 12,
+    "picked_over_cap": false,
+    "resolve_s": 48.128,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 48.128,
+    "click_to_byte_s": 48.544,
+    "http_status": 206,
+    "content_bytes_total": 3518206237,
+    "read_bytes": 3157338,
+    "read_s": 0.04,
+    "windows_n": 0,
+    "throughput_mb_s": 0.11,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 35182062,
+      "ttfb_s": 0.116,
+      "status": 500,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 879551559,
+      "ttfb_s": 0.128,
+      "status": 500,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1759103118,
+      "ttfb_s": 0.127,
+      "status": 500,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 2638654677,
+      "ttfb_s": 0.12,
+      "status": 500,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 3342295925,
+      "ttfb_s": 0.126,
+      "status": 500,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 879551559,
+      "ttfb_s": 0.146,
+      "status": 500,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "truncated",
+    "detail": "the body stopped before the read window closed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0032138",
+    "title": "The Wizard of Oz",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T19:05:12+00:00",
+    "stream_list_s": 0.179,
+    "n_streams": 20,
+    "n_within_cap": 6,
+    "notices": null,
+    "max_offered_bytes": 38912403701,
+    "chosen": {
+     "release": "The.Wizard.Of.Oz.1939.720p.BRRip.XviD.AC3-FLAWL3SS",
+     "size_bytes": 2630667468,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet\n720p",
+     "description": "The.Wizard.Of.Oz.1939.720p.BRRip.XviD.AC3-FLAWL3SS\n2.45 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 10,
+    "picked_over_cap": false,
+    "resolve_s": 28.881,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 28.881,
+    "click_to_byte_s": 29.06,
+    "http_status": 206,
+    "content_bytes_total": 2388365312,
+    "read_bytes": 58458112,
+    "read_s": 31.09,
+    "windows_n": 31,
+    "throughput_mb_s": 1.89,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 23883653,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 597091328,
+      "ttfb_s": 1.889,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1194182656,
+      "ttfb_s": 2.376,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 1791273984,
+      "ttfb_s": 4.747,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 2268947046,
+      "ttfb_s": 1.833,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 597091328,
+      "ttfb_s": 0.003,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-msvideo"
+     }
+    ]
+   },
+   {
+    "id": "tt0021749",
+    "title": "City Lights",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T19:06:23+00:00",
+    "stream_list_s": 0.198,
+    "n_streams": 15,
+    "n_within_cap": 9,
+    "notices": null,
+    "max_offered_bytes": 24878598062,
+    "chosen": {
+     "release": "City.Lights.1931.SUBFRENCH.720p.BluRay.x264-MUxHD",
+     "size_bytes": 5390183956,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet\n720p",
+     "description": "City.Lights.1931.SUBFRENCH.720p.BluRay.x264-MUxHD\n5.02 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 5,
+    "picked_over_cap": false,
+    "resolve_s": null,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "resolve-failed",
+    "detail": "http 404: File is not available",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8"
+     }
+    ]
+   },
+   {
+    "id": "tt0017136",
+    "title": "Metropolis",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-07T19:06:34+00:00",
+    "stream_list_s": 0.376,
+    "n_streams": 15,
+    "n_within_cap": 4,
+    "notices": null,
+    "max_offered_bytes": 41704132444,
+    "chosen": {
+     "release": "Zurg Usenet",
+     "size_bytes": 3951369912,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet",
+     "description": "Metropolis (1927) Colorized 150 Min. MP4 Metropolis (1927) Colorized 150 Min\n3.68 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 11,
+    "picked_over_cap": false,
+    "resolve_s": null,
+    "resolve_waited_s": 30.0,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "resolve-failed",
+    "detail": "still 503 when the title budget ran out",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 503,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 503,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 503,
+      "content_type": "text/plain; charset=utf-8"
+     }
+    ]
+   },
+   {
+    "id": "tt0000001",
+    "title": "Carmencita",
+    "type": "movie",
+    "measured_tier": "poisoned-index",
+    "expected_outcome": "no-unrelated-streams",
+    "started_utc": "2026-09-07T19:09:21+00:00",
+    "stream_list_s": 0.632,
+    "n_streams": 15,
+    "n_within_cap": 11,
+    "notices": null,
+    "max_offered_bytes": 6839735418,
+    "chosen": {
+     "release": "Zurg Usenet",
+     "size_bytes": 6399501271,
+     "indexer": "indexer-a",
+     "name": "Zurg Usenet\n1080p",
+     "description": "Sevdigim Sensin 08 Blm [02.04.2026] 1080p WEB-DL AAC2.0 H264 TURG\n5.96 GB \u00b7 indexer-a"
+    },
+    "picked_rank": 4,
+    "picked_over_cap": false,
+    "resolve_s": 2.237,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 2.237,
+    "click_to_byte_s": 2.869,
+    "http_status": 206,
+    "content_bytes_total": 5170088276,
+    "read_bytes": 119799808,
+    "read_s": 43.55,
+    "windows_n": 43,
+    "throughput_mb_s": 2.79,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 51700882,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1292522069,
+      "ttfb_s": 1.628,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2585044138,
+      "ttfb_s": 1.498,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 3877566207,
+      "ttfb_s": 1.984,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 4911583862,
+      "ttfb_s": 1.452,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1292522069,
+      "ttfb_s": 0.001,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0000009",
+    "title": "Miss Jerry",
+    "type": "movie",
+    "measured_tier": "absent",
+    "expected_outcome": "empty-list",
+    "started_utc": "2026-09-07T19:10:14+00:00",
+    "stream_list_s": 0.401,
+    "n_streams": 0,
+    "n_within_cap": null,
+    "notices": null,
+    "max_offered_bytes": null,
+    "chosen": null,
+    "picked_rank": null,
+    "picked_over_cap": null,
+    "resolve_s": null,
+    "resolve_waited_s": null,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "empty-list",
+    "detail": null
+   },
+   {
+    "id": "tt9999999",
+    "title": "(unallocated id)",
+    "type": "movie",
+    "measured_tier": "absent",
+    "expected_outcome": "empty-list",
+    "started_utc": "2026-09-07T19:10:15+00:00",
+    "stream_list_s": 0.156,
+    "n_streams": 0,
+    "n_within_cap": null,
+    "notices": null,
+    "max_offered_bytes": null,
+    "chosen": null,
+    "picked_rank": null,
+    "picked_over_cap": null,
+    "resolve_s": null,
+    "resolve_waited_s": null,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "empty-list",
+    "detail": null
+   }
+  ]
+ ]
+}

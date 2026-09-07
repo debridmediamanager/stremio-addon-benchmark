@@ -1,0 +1,35 @@
+{
+ "round": "round2",
+ "order": [
+  "stremthru",
+  "streamnzb",
+  "zurg",
+  "aiostreams"
+ ],
+ "windows": {
+  "stremthru": {
+   "ready_utc": "2026-09-07T18:18:04+00:00",
+   "start": 1788805084.3576584,
+   "end": 1788805401.1986535
+  },
+  "streamnzb": {
+   "ready_utc": "2026-09-07T18:23:27+00:00",
+   "start": 1788805407.6587386,
+   "end": 1788807120.1976807
+  },
+  "zurg": {
+   "ready_utc": "2026-09-07T18:52:04+00:00",
+   "start": 1788807124.49478,
+   "end": 1788808215.61157
+  },
+  "aiostreams": {
+   "ready_utc": "2026-09-07T19:35:32+00:00",
+   "start": 1788809732.6376605,
+   "end": 1788810754.2802322
+  }
+ },
+ "excluded": {
+  "comet": "its native usenet engine does not start. With USENET_ENGINE_ENABLED=true the supervisor gives up after 30s with `native.startup.failed | initialization_failure` and `EngineUnavailable`; with it unset the app boots but every stream request answers `[\u26a0\ufe0f] Comet setup: Comet Native Usenet: native engine is unavailable`. The engine binary exits 78 (EX_CONFIG) run directly, emitting one line -- `Native runtime bootstrap failed` -- with no diagnostics at RUST_BACKTRACE=full or RUST_LOG=debug. Everything above it works: the configuration document validates, the news account passes its own validator, and the newznab sources are accepted. Measured 2026-09-06 on the bench host. Comet can play through another project's reader instead, and a row measured that way would be that reader's number wearing Comet's name, so the round publishes no Comet row at all"
+ },
+ "aiostreams_remeasured": "aiostreams was measured again, on its own, after the round: the round's zurg did not stop (harness/round.py started it through a shell and recorded the shell's pid) and held fifteen news connections through the first aiostreams window. Its window here is therefore not interleaved with the other three, and the socket samples for both passes are in sockets.log."
+}

@@ -1,0 +1,50 @@
+{
+ "round": "round2",
+ "targets": {
+  "stremthru": {
+   "language": "Go",
+   "repo": "MunifTanjim/stremthru",
+   "manifest_version": "0.104.1",
+   "manifest_id": "local.stremthru.newz",
+   "manifest_name": "StremThru Newz",
+   "image": "ghcr.io/muniftanjim/stremthru:latest",
+   "image_id": "sha256:f0ecc6c0aceb775ddb930c4827e9152b68d5f165e2673760fd998eec77bf608e",
+   "image_created": "2026-09-07T11:56:10.692677177Z",
+   "image_digest": "sha256:e7e99159d19c0950c6dfe61c50e6a015c6909ca8ff075a61681b0ad66ddb2025"
+  },
+  "streamnzb": {
+   "language": "Go",
+   "repo": "Gaisberg/streamnzb",
+   "manifest_version": "5.18.0",
+   "manifest_id": "community.streamnzb",
+   "manifest_name": "StreamNZB \u00b7 default",
+   "image": "ghcr.io/gaisberg/streamnzb:latest",
+   "image_id": "sha256:3c7ab96fb6d5c40368b6f764973e2494029fbeffc85dc54be9a81932866f3629",
+   "image_created": "2026-09-07T16:49:21.561627541Z",
+   "image_digest": "sha256:64b213891a6199d7e2803832ba40c292f39d4e4ea4e5be8ff867707b10b51131"
+  },
+  "zurg": {
+   "language": "Go",
+   "repo": "debridmediamanager/zurg",
+   "manifest_version": "0.1.0",
+   "manifest_id": "com.debridmediamanager.zurg.usenet",
+   "manifest_name": "Zurg Usenet",
+   "binary_sha256": "ef2ea07a7f937ea61aca9a95a507f838217d35a33c77a6eeeaeeaeaf50f06e1e",
+   "binary_mtime": 1788800318,
+   "build_version": "round2",
+   "build_commit": "c88ae981156b0b42e79e95884274f378654d141c",
+   "build_at": "2026-09-07T16:55:34Z"
+  },
+  "aiostreams": {
+   "language": "TypeScript",
+   "repo": "Viren070/AIOStreams",
+   "manifest_version": "2.34.0",
+   "manifest_id": "com.aiostreams.viren070.89e542d5-985",
+   "manifest_name": "AIOStreams",
+   "image": "ghcr.io/viren070/aiostreams:latest",
+   "image_id": "sha256:804f13d507b82cda6a74a3d4bc013073904d17d340963ac87e8c71951cd660d3",
+   "image_created": "2026-09-04T23:21:47.642323121Z",
+   "image_digest": "sha256:d25546200337f633b25fd8bd95ee8dc9ef936573fb80e77cc4e2fe1f120c40ae"
+  }
+ }
+}

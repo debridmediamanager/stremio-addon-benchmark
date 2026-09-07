@@ -14,23 +14,45 @@ A target can win there and lose here.
 
 ## Status
 
-**Round 1 is measured and published.** Four targets over a fixed set of 23
-titles, both planes, on 6 September 2026. The full generated tables are in
-[`docs/round1.md`](docs/round1.md), and the raw rows are in
-[`results/round1/`](results/round1). Read
-[what round 1 got wrong](#what-round-1-got-wrong) before quoting any of it.
+**Round 2 is measured and published.** The same four targets over the same
+fixed set of 23 titles, both planes, on 7 September 2026, each one on the build
+it ships today. The full generated tables are in
+[`docs/round2.md`](docs/round2.md) and the raw rows are in
+[`results/round2/`](results/round2); round 1 is in
+[`docs/round1.md`](docs/round1.md). Read
+[what round 2 got wrong](#what-round-2-got-wrong) before quoting any of it.
+
+Every target was reset to an empty data directory and stood up again, so no
+round-2 number is served out of a cache round 1 filled.
+
+### What each round measured
+
+A round that says "the latest version" has to say which one. Round 2 records
+this itself, from each target's own manifest and the digest the daemon actually
+ran; round 1's column is reconstructed from evidence that outlived it and is
+marked as such in [`docs/round1.md`](docs/round1.md).
+
+| Target | Round 1 | Round 2 | Moved |
+|---|---|---|---|
+| StremThru | 0.104.0 | 0.104.1 | yes, but nothing in `newz`: the release is magnet and language fixes |
+| streamnzb | v5.17.0 | v5.18.0 | yes, but nothing on the streaming path: proxy auth, share codes, a health check |
+| zurg | a `main` build whose commit it did not record | `main` at `c88ae981` | yes, 57 commits, most of them on the NNTP read path |
+| AIOStreams | v2.34.0 | v2.34.0 | **no.** Same digest. Its newer tags are nightly prereleases, and mixing one project's prerelease with three projects' releases is not a field |
+
+AIOStreams not moving is what makes the rest of the table readable: it is the
+round's repeatability control, and it came back inside the noise floor.
 
 ### Protocol plane
 
 The addon's own HTTP interface, driven over loopback on the bench host.
 `click_to_byte` is the request for a stream list to the first body byte.
 
-| Target | Served | Coverage | median click to byte | error clips |
-|---|---|---|---|---|
-| streamnzb | 19/23 | 82.6% | 14.33s | 0 |
-| AIOStreams | 18/23 | 78.3% | 5.09s | 3 |
-| zurg | 14/23 | 60.9% | 22.51s | 0 |
-| StremThru | 0/23 | 0% | none served | 14 |
+| Target | Served | Coverage | median click to byte | error clips | vs round 1 |
+|---|---|---|---|---|---|
+| streamnzb | 20/23 | 87.0% | 18.65s | 0 | +1 served, +4.33s |
+| AIOStreams | 18/23 | 78.3% | 5.63s | 3 | unchanged, +0.62s |
+| zurg | 8/23 | 34.8% | 7.02s | 0 | **-6 served, -14.92s** |
+| StremThru | 0/23 | 0% | none served | 20 | unchanged |
 
 ### Client plane
 
@@ -40,16 +62,92 @@ so the two are read side by side and never averaged.
 
 | Target | Played | Coverage | median click to play | player refused | clips the player accepted |
 |---|---|---|---|---|---|
-| streamnzb | 21/23 | 91.3% | 8.99s | 0 | 0 |
-| AIOStreams | 19/23 | 82.6% | 1.68s | 0 | 2 |
-| zurg | 14/23 | 60.9% | 7.70s | 5 | 2 |
-| StremThru | 6/23 | 26.1% | 29.10s | 0 | 14 |
+| streamnzb | 21/23 | 91.3% | 13.28s | 0 | 0 |
+| AIOStreams | 18/23 | 78.3% | 5.05s | 0 | 3 |
+| zurg | 9/23 | 39.1% | 5.91s | 10 | 2 |
+| StremThru | 7/23 | 30.4% | 25.04s | 0 | 13 |
 
-Noise floor 2.87s median spread over three passes, so two targets closer
-together than that are tied. Connection parity verified by sampling each
-target's own network namespace: every one peaked at exactly 15.
+Noise floor 1.44s median spread over three passes, 6.52s at its worst, so two
+targets closer together than that are tied and so are two rounds. Connection
+parity verified by sampling each target's own network namespace: every one
+peaked at exactly 15, with production holding four alongside.
 
-### What the round found
+### What round 2 found
+
+**zurg fixed the thing round 1 said was wrong with it, and got worse.** Round 1
+found that its fifteen results led with the largest releases, so for 17 of 23
+titles not one of them was under the 6 GiB a desktop player will direct-play.
+One commit in this window addresses exactly that -- `a71bafb0`, *cap Stremio
+stream lists per resolution rather than across the list* -- and it worked: on
+the new build 1 of 23 titles has nothing under the cap, and median options
+within the cap went from 0 to 4 out of the same fifteen results. Click to byte
+fell from 21.94s to 7.02s, five times the noise floor. And coverage halved,
+from 14 titles to 8.
+
+Because it now picks different releases, it fails on different ones. Its
+failures moved from "nothing here is playable at this size" to three titles
+answering `404 Release holds nothing playable` and three more `404 File is not
+available`, on 720p rips it never reached in round 1. In the player it is worse
+still: 10 of its streams were refused outright against 5 in round 1. A ranking
+change is not a fix on its own, and this is what the repository means by
+"nobody streams the same bytes" -- the two rounds did not read the same files,
+so the comparison is between two products and not between two builds of one.
+
+**Two targets shipped a release and neither release touched what this measures.**
+StremThru 0.104.1 is magnet handling and language aliases; streamnzb 5.18.0 is
+reverse-proxy auth, profile share codes and a health check. Both are real
+releases and neither is a usenet-streaming change, which is the honest reading
+of streamnzb's +1 title and +4.33s: one is inside the run-to-run spread and the
+other is above the median spread but inside its worst case.
+
+**StremThru still serves the error clip, and one more of them.** 20 of 23
+titles now, against 14 in round 1, and the three it answers correctly are the
+three where an empty list is the right answer. Nothing about 0.104.1 was
+expected to change this and nothing did.
+
+### What round 2 got wrong
+
+**Two full passes were voided before this one, both for the same reason and
+neither caught by anything but the socket sampler.** A round measures one
+target at a time because they share one news account, and both times something
+was still holding fifteen connections when the next target started.
+
+- **An operator's own instance, left running from a version check.** It owned
+  the port, so the round's own zurg could not bind, exited immediately, and
+  `wait_ready` got its manifest from the stranger. That phase measured a
+  process the round never started and could not stop, and it ran on through the
+  three phases after it. The whole pass is kept in
+  [`results/round2-voided/`](results/round2-voided) with the parity table that
+  condemned it, because that table is the evidence.
+- **Then the round's own zurg, which it never stopped.** `round.py` started it
+  through a shell, so the pid it recorded was the shell's, and `/bin/sh` on the
+  bench host forks rather than execs. Stopping the target killed a shell that
+  had already exited; zurg itself received no signal and was still writing to
+  its log 23 minutes after its phase ended. Round 1 never saw this because its
+  rotation put zurg last.
+
+Reading that code turned up two more of the same shape: the drain between
+targets read the pid file that stopping the target had just deleted, so it
+always saw zero sockets and returned instantly, and nothing ever checked that
+the process had actually died. All of it is fixed -- no shell, the stop proves
+the process is gone and hands the pid to the drain, a target surviving SIGKILL
+stops the round, and a bare-process target refuses to start onto a port
+something already answers.
+
+Only AIOStreams was contaminated by the second pass, so it alone was measured
+again, on its own, after the round. **Its window is therefore not interleaved
+with the other three**, which is the one asymmetry in this round's conditions.
+
+**Round 1's client-plane numbers carried an addon it did not know about.** The
+player keeps whatever a round installs, and three of the four targets mint a
+fresh URL every time they are stood up, so round 2 arrived at a player already
+carrying round 1's copy of each target on the same port -- still valid, still
+answering. StremThru was measured in round 1 with two copies of StremThru
+installed, which is where its 71 "other addons' rows" came from. The client
+plane now removes an earlier install of the target it is about to measure, and
+touches nothing else in the profile; every target in round 2 reports 10.
+
+### What round 1 found
 
 **A complete, valid, tiny MP4 is not a film, and every check short of its size
 passes it.** HTTP 206, `video/mp4`, a `Content-Range` whose total is the same
@@ -121,13 +219,13 @@ Five Usenet-backed Stremio addons.
 | AIOStreams | TypeScript | the largest project in the field by a wide margin, and the author of a competing benchmark, which is exactly why an independent number is worth having |
 | StremThru | Go | its `newz` store also answers WebDAV, so it is the one target whose number here can be read against a number in the mount rounds |
 | streamnzb | Go | measured once in a six-way round on 18 August and dropped before either repository existed |
-| Comet | Python + Rust | **excluded from round 1.** Configured and standing, but its own usenet engine will not run: with `USENET_ENGINE_ENABLED=true` the supervisor gives up after 30s with `initialization_failure`, and without it every stream request answers `native engine is unavailable`. The engine binary exits `EX_CONFIG` when run directly and prints one line with no diagnostics at `RUST_BACKTRACE=full`. It can play through another project's reader instead, and a row measured that way would be that reader's number wearing Comet's name, so there is no Comet row |
+| Comet | Python + Rust | **excluded from rounds 1 and 2.** Its `feat/usenet` branch has not moved since it was measured, so the reason below is unchanged. Configured and standing, but its own usenet engine will not run: with `USENET_ENGINE_ENABLED=true` the supervisor gives up after 30s with `initialization_failure`, and without it every stream request answers `native engine is unavailable`. The engine binary exits `EX_CONFIG` when run directly and prints one line with no diagnostics at `RUST_BACKTRACE=full`. It can play through another project's reader instead, and a row measured that way would be that reader's number wearing Comet's name, so there is no Comet row |
 
 zurg is the author's own project. Every number here is reproducible from this
 repository against your own account and your own indexers, and you should do
 that rather than take it at face value.
 
-## Two planes, from round one
+## Two planes
 
 **Protocol.** Drive the addon protocol directly. Manifest, then
 `/stream/{type}/{id}.json`, then follow the chosen stream to first byte and
@@ -220,11 +318,16 @@ Full runbook in [`docs/running.md`](docs/running.md), including target setup,
 the parity rules, the publish check and what each failure mode means.
 
 ```bash
-./harness/round.sh --dry-run          # the field, the order, what is excluded
-./harness/round.sh                    # the protocol plane, every target
-python3 harness/client.py --target zurg
-python3 harness/report.py --round round1
+./harness/round.sh --dry-run                    # the field, the order, what is excluded
+./harness/round.sh --round round2               # the protocol plane, every target
+./harness/client-round.sh round2                # the client plane, from the machine that reaches both
+python3 harness/parity.py --round round2        # what each target actually held, sampled
+python3 harness/report.py --round round2 --against round1 --noise-round round2-noise
 ```
+
+**Read `parity.py` before the report, every time.** Both of the passes this
+round threw away looked perfectly good in the report and were condemned by that
+one table.
 
 The setup half needs nothing but api keys and does not touch the news account,
 so it runs from a laptop.
@@ -243,10 +346,6 @@ It decides which indexers may be counted and for which kind of search, and
 `titles.py` reads its answer rather than trusting a result count. An indexer that
 drops a filter returns a big number, and counting that would make an
 unbenchmarkable title look like the easiest one in the set.
-
-The measurement half does not exist yet. `docs/running.md` says what the round
-will do and marks those steps as unwritten rather than leaving a command that
-looks runnable.
 
 The harness imports only the Python standard library. There is nothing to
 install.

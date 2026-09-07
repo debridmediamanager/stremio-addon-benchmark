@@ -2,8 +2,8 @@
 
 ## What runs today
 
-Round 1 has not been run. Every step below is written and has been exercised
-against a live target.
+Round 1 and round 2 are measured and published. Every step below is written and
+has been exercised against a live target.
 
 | Step | Command | State |
 |---|---|---|
@@ -13,10 +13,20 @@ against a live target.
 | 4. Title set | `python3 harness/titles.py build` | works |
 | 5. Stand up the targets | `python3 harness/standup/<target>.py` | works, one script per target |
 | 6. Verify endpoints | `python3 harness/verify_endpoints.py` | works, needs targets running |
-| 7. Protocol round | `./harness/round.sh` | works |
-| 8. Client round | `python3 harness/client.py --target <name>` | works, needs the Windows player |
-| 9. Report | `python3 harness/report.py --round round1` | works |
-| 10. Publish check | `python3 harness/scan_leaks.py` | works |
+| 7. Protocol round | `./harness/round.sh --round <name>` | works |
+| 8. Client round | `./harness/client-round.sh <name>` | works, needs the Windows player |
+| 9. Connection parity | `python3 harness/parity.py --round <name>` | works, **read it before the report** |
+| 10. Report | `python3 harness/report.py --round <name> --against <earlier>` | works |
+| 11. Publish check | `python3 harness/scan_leaks.py` | works |
+
+The round records what it measured as well as what it measured it at:
+`harness/versions.py` captures each target's manifest version and the digest or
+commit behind it, while that target is up, into `results/<round>/versions.json`.
+Nothing else can tell two rounds of `:latest` apart afterwards.
+
+Step 9 is not optional and it does not belong after the write-up. Round 2 threw
+away two complete passes that the report rendered without complaint; the socket
+samples were the only thing that showed a second target alive on the account.
 
 **The field is four, not five.** Comet is registered, configured and excluded:
 its native usenet engine does not start. `harness/targets.py` carries the

@@ -1,0 +1,12 @@
+round round2: connection parity, sampled
+
+`sab-<target>` is that target's own network namespace. Anything else is a host process sharing the news account -- production, usually -- and is listed because the budget is shared, not because it is the target.
+
+target        samples   peak  processes at peak
+--------------------------------------------------------------------
+stremthru          62     19  sab-stremthru=15, zurg[3049138]=4
+streamnzb         329     23  sab-streamnzb=15, zurg[3049138]=4, host=2, python3[3205259]=2
+zurg              213     21  zurg[3238297]=15, zurg[3049138]=4, qemu-system-x86[2670948]=2
+aiostreams        197     21  sab-aiostreams=15, zurg[3049138]=5, host=1
+
+A count above the configured budget is worth reading before it is worth acting on: a target can hold a connection outside its own pool accounting. A count well below it means the target never filled its allowance, which is a fact about the target rather than a broken parity rule.
