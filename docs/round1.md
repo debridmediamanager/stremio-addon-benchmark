@@ -1,6 +1,6 @@
 # Round: round1
 
-Generated 2026-09-06T22:22:14+00:00 by `harness/report.py`.
+Generated 2026-09-07T02:32:35+00:00 by `harness/report.py`.
 
 ## Coverage and click to byte
 
@@ -68,9 +68,22 @@ The cap is 6.00 GiB and it is applied at the pick, identically for every target,
 
 ## The client plane
 
-**Not run.** No `client-*.json` in this round, so nothing here says whether a player would accept what each addon served. The protocol plane cannot answer that.
+Stremio 4.4, driven over CDP, clicking the row the addon produced. `played` means the app's own player reported time moving forward, not that a screenshot looked right. `player-refused` is a stream the addon served and the player would not open, which is the whole reason this plane exists. Rows other addons contributed are rendered by the client and never counted. `clips the player accepted` is the row that matters most here: a short placeholder the addon served instead of the film, which Stremio starts and plays without complaint. Counting those as playback is how a target that serves almost nothing scores well.
+
+| Target | Played | Coverage | median click to play | refused | clips the player accepted | other addons' rows |
+|---|---|---|---|---|---|---|
+| aiostreams | 19/23 | 82.6% | 1.68s | 0 | 2 | 34 max |
+| streamnzb | 21/23 | 91.3% | 8.99s | 0 | 0 | 10 max |
+| stremthru | 6/23 | 26.1% | 28.60s | 0 | 14 | 71 max |
+| zurg | 14/23 | 60.9% | 7.65s | 5 | 2 | 10 max |
+
+Measured through the player's loopback (127.0.0.1), which is what makes a plain-http addon a secure context for the shell. These numbers include a network hop and a player start that the protocol plane's do not, so the two tables are read side by side and never averaged.
 
 ## Noise floor
 
-**Not measured.** No target was run with `--repeat`, so this round states no resolution below which two targets are tied. Any difference read off the tables above is unqualified.
+Repeat passes on one target, same evening. Two targets closer together than this are tied. Measured on a sampled subset in its own run, because repeat passes over the whole set cost the account more than the number is worth.
+
+| Target | passes | titles | median spread | max spread |
+|---|---|---|---|---|
+| aiostreams | 3 | 6 | 2.867s | 8.48s |
 

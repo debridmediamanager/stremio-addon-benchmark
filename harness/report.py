@@ -318,7 +318,7 @@ def render_client(documents):
     return out
 
 
-def render(documents, round_name, client=None):
+def render(documents, round_name, client=None, noise_documents=None):
     caps = {d.get("playable_cap_bytes") for d in documents.values() if d.get("playable_cap_bytes")}
     cap_bytes = max(caps) if caps else 6 * 1024**3
     summaries = [summarise(name, document, cap_bytes) for name, document in documents.items()]
@@ -452,7 +452,8 @@ def render(documents, round_name, client=None):
 
     out.extend(render_client(client or {}))
 
-    floors = {name: noise_floor(document) for name, document in documents.items()}
+    source = noise_documents if noise_documents else documents
+    floors = {name: noise_floor(document) for name, document in source.items()}
     floors = {name: floor for name, floor in floors.items() if floor}
     out.append("## Noise floor")
     out.append("")
@@ -461,8 +462,11 @@ def render(documents, round_name, client=None):
                    "states no resolution below which two targets are tied. Any "
                    "difference read off the tables above is unqualified.")
     else:
-        out.append("Repeat passes on one target, same set, same evening. Two targets "
-                   "closer together than this are tied.")
+        out.append("Repeat passes on one target, same evening. Two targets closer "
+                   "together than this are tied."
+                   + (" Measured on a sampled subset in its own run, because repeat "
+                      "passes over the whole set cost the account more than the number "
+                      "is worth." if noise_documents else ""))
         out.append("")
         out.append("| Target | passes | titles | median spread | max spread |")
         out.append("|---|---|---|---|---|")
@@ -478,11 +482,16 @@ def main():
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--round", default="round1")
     parser.add_argument("--out", help="write markdown here instead of stdout")
+    parser.add_argument("--noise-round",
+                        help="read the noise floor from another round directory. Repeat "
+                             "passes are expensive over the whole set, so the floor is "
+                             "usually measured on a sample in its own run and quoted here")
     args = parser.parse_args()
 
     documents = load(args.round)
     client = load(args.round, prefix="client-")
-    text = render(documents, args.round, client)
+    floors = load(args.noise_round) if args.noise_round else None
+    text = render(documents, args.round, client, floors)
     if args.out:
         path = args.out if os.path.isabs(args.out) else os.path.join(ROOT, args.out)
         with open(path, "w") as handle:
