@@ -111,6 +111,37 @@ class Stremio:
         self.dismiss_prompt()
         return "installed" if manifest_url in (self.installed() or []) else "NOT installed"
 
+    def drop_earlier_copies(self, manifest_url):
+        """Remove any other install of this same target before measuring it.
+
+        The player keeps what a round installs, and three of the four targets
+        mint a fresh per-install URL every time they are stood up. So a second
+        round arrives at a player that already carries the first round's copy
+        of the same addon on the same port, pointing at a configuration that is
+        still valid. Stremio then asks both for every title: the target does
+        twice the search and twice the ingest, and half the rows it produces
+        are attributed to a `transportUrl` this round does not recognise and
+        counted as another addon's. Round 1 measured StremThru with two copies
+        of StremThru installed, which is the one number in it that should be
+        read with this in mind.
+
+        Only copies on this target's own host and port are touched. Everything
+        else in the profile -- the player's real addons, other people's local
+        ones -- is left exactly as it was found, which is the rule this plane
+        has always followed.
+        """
+        origin = manifest_url.split("//", 1)[-1].split("/")[0]
+        stale = [url for url in (self.installed() or [])
+                 if url.split("//", 1)[-1].split("/")[0] == origin and url != manifest_url]
+        for url in stale:
+            self.evaluate(js(f"""
+                var api = {INJECTOR}.get('API');
+                api.addons.remove({{transportUrl: {json.dumps(url)}}});
+                if (api.pushAddonCollection) api.pushAddonCollection();
+                return 'removed';
+            """))
+        return stale
+
     def dismiss_prompt(self):
         """Close any modal the app has open, without touching its actions."""
         return self.evaluate(js("""
@@ -441,6 +472,9 @@ def main():
         print(f"{args.target}: player installs {player_url.split('//', 1)[-1].split('/')[0]}, "
               f"manifest read from {fetch_url.split('//', 1)[-1].split('/')[0]}")
         descriptor = fetch_manifest(fetch_url)
+        stale = app.drop_earlier_copies(player_url)
+        if stale:
+            print(f"  removed {len(stale)} earlier install(s) of this target")
         state = app.install(player_url, descriptor)
         print(f"  install: {state} ({descriptor.get('name', '?')})")
         if state != "installed":
@@ -465,6 +499,8 @@ def main():
                  "other addons installed renders their streams and this never "
                  "clicks or counts one"),
         "population": len(titles), "cap_bytes": cap_bytes,
+        # an earlier round's copy of this same target, removed before measuring
+        "earlier_installs_removed": len(stale),
         "passes": [rows],
     }
     with open(out_path, "w") as handle:
