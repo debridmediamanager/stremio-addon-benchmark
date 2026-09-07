@@ -16,7 +16,7 @@ A target can win there and lose here.
 
 **Round 1 is measured and published.** Four targets over a fixed set of 23
 titles, both planes, on 6 September 2026. The full generated tables are in
-[`docs/round1.md`](docs/round1.md); the raw rows are in
+[`docs/round1.md`](docs/round1.md), and the raw rows are in
 [`results/round1/`](results/round1). Read
 [what round 1 got wrong](#what-round-1-got-wrong) before quoting any of it.
 
