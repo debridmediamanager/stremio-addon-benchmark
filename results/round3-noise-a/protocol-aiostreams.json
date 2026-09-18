@@ -1,0 +1,241 @@
+{
+ "target": "aiostreams",
+ "plane": "protocol",
+ "round": "round3-noise-a",
+ "measured_utc": "2026-09-18T03:32:26+00:00",
+ "harness": "protocol.py",
+ "title_set_built_utc": "2026-09-18T00:38:04+00:00",
+ "parity_indexers": [
+  "indexer-d",
+  "indexer-e"
+ ],
+ "playable_cap_bytes": 6442450944,
+ "population": 3,
+ "read_s": 10.0,
+ "cap_bytes": 6442450944,
+ "title_budget_s": 180,
+ "target_budget_s": 5400,
+ "verified": "live",
+ "passes": [
+  [
+   {
+    "id": "tt15239678",
+    "title": "Dune: Part Two",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:31:34+00:00",
+    "stream_list_s": 1.328,
+    "n_streams": 192,
+    "n_within_cap": 30,
+    "notices": null,
+    "max_offered_bytes": 113518648398,
+    "chosen": {
+     "release": "Dune.Part.Two.2024.1080p.WEBRip.AAC5.1.10bits.x265-Rapta",
+     "size_bytes": 1464641195,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p",
+     "description": "Dune.Part.Two.2024.1080p.WEBRip.AAC5.1.10bits.x265-Rapta\n\ud83d\udcbe1.36 GiB \ud83d\udcc5137d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 8,
+    "picked_over_cap": false,
+    "resolve_s": 3.593,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 3.593,
+    "click_to_byte_s": 4.921,
+    "http_status": 206,
+    "content_bytes_total": 1179297629,
+    "read_bytes": 41664176,
+    "read_s": 10.05,
+    "windows_n": 10,
+    "throughput_mb_s": 4.17,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 11792976,
+      "ttfb_s": 0.015,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 294824407,
+      "ttfb_s": 2.893,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 589648814,
+      "ttfb_s": 3.74,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 884473221,
+      "ttfb_s": 3.639,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 1120332747,
+      "ttfb_s": 1.473,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 294824407,
+      "ttfb_s": 0.006,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0017136",
+    "title": "Metropolis",
+    "type": "movie",
+    "measured_tier": "catalog",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:32:04+00:00",
+    "stream_list_s": 0.926,
+    "n_streams": 31,
+    "n_within_cap": 9,
+    "notices": null,
+    "max_offered_bytes": 42983297865,
+    "chosen": {
+     "release": "Metropolis.1927.Giorgio.Moroder.Cut.720p.BluRay.x264-HANDJOB",
+     "size_bytes": 5559144699,
+     "indexer": "indexer-e",
+     "name": "[AIO+] indexer-e 720p",
+     "description": "Metropolis.1927.Giorgio.Moroder.Cut.720p.BluRay.x264-HANDJOB\n\ud83d\udcbe5.18 GiB \ud83d\udcc5656d \u2699\ufe0fNZB.su"
+    },
+    "picked_rank": 4,
+    "picked_over_cap": false,
+    "resolve_s": 3.849,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 3.849,
+    "click_to_byte_s": 4.775,
+    "http_status": 206,
+    "content_bytes_total": 5128237598,
+    "read_bytes": 117586064,
+    "read_s": 13.3,
+    "windows_n": 13,
+    "throughput_mb_s": 9.05,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 51282375,
+      "ttfb_s": 0.015,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1282059399,
+      "ttfb_s": 0.518,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2564118799,
+      "ttfb_s": 0.366,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 3846178198,
+      "ttfb_s": 1.302,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 4871825718,
+      "ttfb_s": 1.08,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1282059399,
+      "ttfb_s": 0.004,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt9999999",
+    "title": "(unallocated id)",
+    "type": "movie",
+    "measured_tier": "absent",
+    "expected_outcome": "empty-list",
+    "started_utc": "2026-09-18T03:32:25+00:00",
+    "stream_list_s": 0.621,
+    "n_streams": 0,
+    "n_within_cap": null,
+    "notices": [
+     "[\u274c] indexer-d: Failed to get metadata",
+     "[\u274c] indexer-e: Failed to get metadata"
+    ],
+    "max_offered_bytes": null,
+    "chosen": null,
+    "picked_rank": null,
+    "picked_over_cap": null,
+    "resolve_s": null,
+    "resolve_waited_s": null,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "empty-list",
+    "detail": "[\u274c] indexer-d: Failed to get metadata"
+   }
+  ]
+ ]
+}

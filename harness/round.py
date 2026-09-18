@@ -41,6 +41,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import targets as registry  # noqa: E402
 import versions  # noqa: E402
+import resources  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RUN = os.path.expanduser("~/stremio-addon-bench/run")
@@ -247,7 +248,7 @@ def count_nntp_sockets(name, pid=None):
         result = subprocess.run(["ss", "-tnp", "state", "established"],
                                 capture_output=True, text=True)
         return sum(1 for line in result.stdout.splitlines()
-                   if f":{NNTP_PORT}" in line and f"pid={pid}," in line)
+                   if nntp_peer(line) and f"pid={pid}," in line)
 
     container = f"sab-{name}"
     inspect = subprocess.run(["docker", "inspect", "-f", "{{.State.Pid}}", container],
@@ -258,7 +259,45 @@ def count_nntp_sockets(name, pid=None):
     result = subprocess.run(["sudo", "-n", "nsenter", "-t", pid, "-n",
                              "ss", "-tn", "state", "established"],
                             capture_output=True, text=True)
-    return sum(1 for line in result.stdout.splitlines() if f":{NNTP_PORT}" in line)
+    return sum(1 for line in result.stdout.splitlines() if nntp_peer(line))
+
+
+def nntp_peer(line):
+    """True only when the remote endpoint is the NNTP port.
+
+    Matching `:563` anywhere also matches an unrelated connection whose local
+    ephemeral port happens to end in 563. That produced one phantom sshd socket
+    beside every target in a clean parity run.
+    """
+    fields = line.split()
+    return len(fields) >= 4 and fields[3].endswith(f":{NNTP_PORT}")
+
+
+def activate_connection_budget(name, budget):
+    """Apply the measured pool budget after startup, then enforce its ceiling.
+
+    AIOStreams validates its provider with a transient NNTP connection while
+    its configured pool is already live. Booting at budget-1 and raising the
+    pool here keeps that control connection inside the same total allowance;
+    the measured phase still runs with the requested pool size.
+    """
+    if name == "aiostreams":
+        result = subprocess.run(
+            [sys.executable, os.path.join(ROOT, "harness", "standup", "aiostreams.py"),
+             "--connections", str(budget)],
+            cwd=ROOT, capture_output=True, text=True)
+        if result.returncode != 0:
+            raise SystemExit(f"could not raise AIOStreams to {budget} connections: "
+                             f"{result.stderr.strip()[:300]}")
+
+    deadline = time.time() + 60
+    while time.time() < deadline:
+        sockets = count_nntp_sockets(name)
+        if sockets <= budget:
+            return
+        time.sleep(1)
+    raise SystemExit(f"{name} still holds {count_nntp_sockets(name)} NNTP sockets; "
+                     f"the round budget is {budget}")
 
 
 def start_sampler(path):
@@ -281,11 +320,11 @@ def start_sampler(path):
     script = (
         "while :; do "
         "date +%s; "
-        f"ss -tnp state established 2>/dev/null | grep ':{NNTP_PORT}' | sed 's/^/host /' || true; "
+        f"ss -tnp state established 2>/dev/null | awk '$4 ~ /:{NNTP_PORT}$/ {{print}}' | sed 's/^/host /' || true; "
         "for c in $(docker ps --filter name=sab- --format '{{.Names}}' 2>/dev/null); do "
         "  pid=$(docker inspect -f '{{.State.Pid}}' \"$c\" 2>/dev/null); "
         "  [ -n \"$pid\" ] && sudo -n nsenter -t \"$pid\" -n ss -tn state established 2>/dev/null "
-        f"    | grep ':{NNTP_PORT}' | sed \"s|^|$c |\" || true; "
+        f"    | awk '$4 ~ /:{NNTP_PORT}$/ {{print}}' | sed \"s|^|$c |\" || true; "
         "done; "
         "sleep 5; done"
     )
@@ -309,6 +348,8 @@ def main():
     parser.add_argument("--disable", help="comma-separated target names")
     parser.add_argument("--plane", default="protocol", choices=["protocol", "client", "both"])
     parser.add_argument("--read-s", type=float, default=30)
+    parser.add_argument("--connections", type=int,
+                        default=int(os.environ.get("CONNS", "10")))
     parser.add_argument("--repeat", type=int, default=1)
     parser.add_argument("--noise-floor", type=int, default=0,
                         help="extra passes over N sampled titles on the first target, "
@@ -360,6 +401,7 @@ def main():
     # captured inside the loop, because a target's manifest can only be asked
     # while it is the one running and `:latest` can move between rounds
     builds = {}
+    resource_rows = {}
 
     try:
         stop_everything()
@@ -370,6 +412,7 @@ def main():
                 print(f"  ! could not start {name}: {result.stderr.strip()[:300]}")
                 continue
             ready = wait_ready(name)
+            activate_connection_budget(name, args.connections)
             builds[name] = versions.capture(name)
             started = time.time()
             passes = args.repeat + (args.noise_floor if name == order[0] else 0)
@@ -378,7 +421,15 @@ def main():
                        "--read-s", str(args.read_s), "--repeat", str(max(passes, 1))]
             if args.only_title:
                 command += ["--only-title", args.only_title]
-            subprocess.run(command, cwd=ROOT)
+            state_dir = run_dir(name)
+            disk_before = resources.disk_usage_bytes(state_dir)
+            resource_sampler = resources.Sampler(
+                lambda target=name: resources.target_pids(target, RUN)).start()
+            try:
+                subprocess.run(command, cwd=ROOT)
+            finally:
+                disk_after = resources.disk_usage_bytes(state_dir)
+                resource_rows[name] = resource_sampler.stop(disk_before, disk_after)
             windows[name] = {"ready_utc": datetime.fromtimestamp(ready, timezone.utc).isoformat(timespec="seconds"),
                              "start": started, "end": time.time()}
             drain(name, stop_target(name))
@@ -392,7 +443,10 @@ def main():
     with open(os.path.join(out_dir, "windows.json"), "w") as out:
         json.dump({"round": args.round, "order": order, "windows": windows,
                    "excluded": skipped}, out, indent=1)
-    print(f"\nwrote {os.path.relpath(out_dir, ROOT)}/windows.json, versions.json and sockets.log")
+    with open(os.path.join(out_dir, "resources.json"), "w") as out:
+        json.dump({"round": args.round, "targets": resource_rows}, out, indent=1)
+    print(f"\nwrote {os.path.relpath(out_dir, ROOT)}/windows.json, versions.json, "
+          "resources.json and sockets.log")
     print("next: python3 harness/report.py --round " + args.round)
     print("      python3 harness/scan_leaks.py results/   <- before publishing anything")
     return 0

@@ -423,7 +423,140 @@ def render_against(summaries, round_name, other_round, cap_bytes, out):
     out.append("")
 
 
-def render(documents, round_name, client=None, noise_documents=None, against=None):
+def combine_noise_rounds(round_names):
+    """Combine independent clean-start samples into repeat passes per target.
+
+    Noise samples are intentionally separate rounds so every pass starts from
+    the same empty state.  Treating either directory on its own as a repeat
+    would produce no floor at all, while putting both passes in one invocation
+    would let the second inherit the first pass's cache.
+    """
+    combined = {}
+    for round_name in round_names:
+        for target, document in load(round_name).items():
+            record = combined.setdefault(target, {
+                "target": target,
+                "passes": [],
+            })
+            record["passes"].extend(document.get("passes") or [])
+    return combined
+
+
+def load_resources(round_name):
+    path = os.path.join(ROOT, "results", round_name, "resources.json")
+    if not os.path.exists(path):
+        return {}
+    with open(path) as handle:
+        return json.load(handle).get("targets") or {}
+
+
+def render_resources(measured, summaries):
+    if not measured:
+        return ["## Resources", "", "**Not measured.** This round has no per-target "
+                "CPU, memory or disk sample file.", ""]
+    coverage = {summary["target"]: summary for summary in summaries}
+    rows = []
+    for target, values in measured.items():
+        population = (coverage.get(target) or {}).get("population") or 1
+        rows.append({"target": target, **values,
+                     "cpu_s_per_title": values.get("cpu_s", 0) / population,
+                     "disk_read_MB_per_title": values.get("disk_read_MB", 0) / population,
+                     "disk_write_MB_per_title": values.get("disk_write_MB", 0) / population})
+
+    def order(key):
+        return sorted(rows, key=lambda row: (row.get(key) is None, row.get(key) or 0))
+
+    out = ["## Resources", "",
+           "Sampled once per second from the target's own process tree while its "
+           "protocol phase ran. CPU and block-I/O rankings use the fixed title "
+           "population as the denominator, so a target does not win by failing early. "
+           "State disk is allocated bytes in that target's run directory; source trees "
+           "and container images are outside it.", "",
+           "| Target | CPU s/title | CPU p95 cores | peak RSS MB | disk read MB/title | disk write MB/title | state Δ MB |",
+           "|---|---:|---:|---:|---:|---:|---:|"]
+    for row in sorted(rows, key=lambda item: item["cpu_s_per_title"]):
+        out.append(
+            f"| {row['target']} | {row['cpu_s_per_title']:.2f} "
+            f"| {row.get('cpu_cores_p95', 0):.3f} | {row.get('rss_peak_MB', 0):.2f} "
+            f"| {row['disk_read_MB_per_title']:.2f} | {row['disk_write_MB_per_title']:.2f} "
+            f"| {row.get('state_disk_delta_MB', 0):.2f} |")
+    out.append("")
+    labels = {
+        "cpu_s_per_title": "CPU seconds/title",
+        "cpu_cores_p95": "CPU p95 cores",
+        "rss_peak_MB": "peak RSS",
+        "disk_read_MB_per_title": "disk reads/title",
+        "disk_write_MB_per_title": "disk writes/title",
+        "state_disk_delta_MB": "state growth",
+    }
+    for key, label in labels.items():
+        ranked = order(key)
+        out.append(f"- {label} (lower is better): " + " < ".join(
+            f"{index}. {row['target']}" for index, row in enumerate(ranked, 1)))
+    out.append("")
+    return out
+
+
+def render_metric_rankings(summaries):
+    """Rank every protocol outcome in its own direction.
+
+    The main tables keep related measurements together for diagnosis, but one
+    table's row order cannot simultaneously rank coverage, latency and read
+    rate. This section makes every ordering explicit instead of inviting the
+    reader to treat the click-to-byte order as the order for every column.
+    """
+    metrics = [
+        ("Coverage", lambda row: row.get("coverage_pct"), True, lambda v: f"{v:.1f}%"),
+        ("Population click-to-byte", lambda row: row.get("median_population_c2b_s"), False, seconds),
+        ("Served click-to-byte", lambda row: row.get("median_served_c2b_s"), False, seconds),
+        ("Stream list", lambda row: row.get("median_stream_list_s"), False, seconds),
+        ("Resolve", lambda row: row.get("median_resolve_s"), False, seconds),
+        ("TTFB", lambda row: row.get("median_ttfb_s"), False, seconds),
+        ("Median throughput", lambda row: row.get("median_throughput_mb_s"), True,
+         lambda v: f"{v:.2f} MB/s"),
+        ("Median p05 window", lambda row: row.get("median_p05_window_mb_s"), True,
+         lambda v: f"{v:.2f} MB/s"),
+        ("Titles sustaining 25 Mbps", lambda row: row.get("sustain_25mbps_n"), True,
+         lambda v: str(v)),
+        ("Correct outcomes", lambda row: row.get("verdicts", {}).get("correct", 0), True,
+         lambda v: str(v)),
+        ("Titles offering oversize streams", lambda row: row.get("over_cap_titles"), False,
+         lambda v: str(v)),
+        ("Oversize-only picks", lambda row: row.get("picked_over_cap"), False,
+         lambda v: str(v)),
+    ]
+    out = ["## Metric rankings", "",
+           "Each metric is ordered independently. Missing population medians are "
+           "DNF because fewer than half the fixed population was served.", ""]
+    for label, value_of, higher, format_value in metrics:
+        ranked = sorted(
+            summaries,
+            key=lambda row: (
+                value_of(row) is None,
+                -(value_of(row) or 0) if higher else (value_of(row) or 0),
+                row["target"],
+            ),
+        )
+        direction = "higher is better" if higher else "lower is better"
+        places = []
+        index = 0
+        while index < len(ranked):
+            value = value_of(ranked[index])
+            end = index + 1
+            while end < len(ranked) and value_of(ranked[end]) == value:
+                end += 1
+            names = ", ".join(row["target"] for row in ranked[index:end])
+            tie = " (tie)" if end - index > 1 else ""
+            places.append(f"{index + 1}{tie}. {names} "
+                          f"({format_value(value) if value is not None else 'DNF'})")
+            index = end
+        out.append(f"- {label} ({direction}): " + "; ".join(places))
+    out.append("")
+    return out
+
+
+def render(documents, round_name, client=None, noise_documents=None, against=None,
+           resource_documents=None):
     caps = {d.get("playable_cap_bytes") for d in documents.values() if d.get("playable_cap_bytes")}
     cap_bytes = max(caps) if caps else 6 * 1024**3
     summaries = [summarise(name, document, cap_bytes) for name, document in documents.items()]
@@ -560,6 +693,8 @@ def render(documents, round_name, client=None, noise_documents=None, against=Non
                    f"| {s['over_cap_titles']} | {rank} | {s['picked_over_cap']} |")
     out.append("")
 
+    out.extend(render_metric_rankings(summaries))
+    out.extend(render_resources(resource_documents or {}, summaries))
     out.extend(render_client(client or {}))
 
     source = noise_documents if noise_documents else documents
@@ -596,16 +731,19 @@ def main():
                         help="an earlier round to print this one beside, per target, with "
                              "the build each one measured. A round that changes versions "
                              "has to say which moved and which did not")
-    parser.add_argument("--noise-round",
+    parser.add_argument("--noise-round", action="append",
                         help="read the noise floor from another round directory. Repeat "
                              "passes are expensive over the whole set, so the floor is "
-                             "usually measured on a sample in its own run and quoted here")
+                             "usually measured on a sample in its own run and quoted here. "
+                             "Repeat this option for independent clean-start passes")
     args = parser.parse_args()
 
     documents = load(args.round)
     client = load(args.round, prefix="client-")
-    floors = load(args.noise_round) if args.noise_round else None
-    text = render(documents, args.round, client, floors, against=args.against)
+    floors = combine_noise_rounds(args.noise_round) if args.noise_round else None
+    measured_resources = load_resources(args.round)
+    text = render(documents, args.round, client, floors, against=args.against,
+                  resource_documents=measured_resources)
     if args.out:
         path = args.out if os.path.isabs(args.out) else os.path.join(ROOT, args.out)
         with open(path, "w") as handle:

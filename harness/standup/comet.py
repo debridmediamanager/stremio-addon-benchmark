@@ -41,6 +41,7 @@ import base64
 import json
 import os
 import sys
+import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common  # noqa: E402
@@ -49,7 +50,10 @@ import common  # noqa: E402
 def build_config(indexers, access_token):
     accounts, sources = {}, []
     for indexer in indexers:
-        account_id = f"acct-{indexer['label']}"
+        account_id = str(uuid.uuid5(uuid.NAMESPACE_URL,
+                                    f"dmm-benchmark:account:{indexer['label']}"))
+        source_id = str(uuid.uuid5(uuid.NAMESPACE_URL,
+                                   f"dmm-benchmark:source:{indexer['label']}"))
         url = common.api_url(indexer)
         # the account kind is the *binding* kind, not the source kind: a
         # `newznab` source binds to an `indexer` account. Getting this wrong
@@ -57,7 +61,7 @@ def build_config(indexers, access_token):
         # binding", which arrives as the obsolete-configuration stream
         accounts[account_id] = {"kind": "indexer", "apiKey": indexer["api_key"], "url": url}
         sources.append({
-            "configurationId": indexer["label"],
+            "configurationId": source_id,
             # the label, never the real name: it reaches stream descriptions
             "displayName": indexer["label"],
             "kind": "newznab",
@@ -74,9 +78,11 @@ def build_config(indexers, access_token):
         # 2, not 1: a v1 document validates and then finds nothing, because the
         # discovery sources this builds are only consulted on the current schema
         "schemaVersion": 2,
+        "enabledTransports": ["usenet"],
         "discoverySources": sources,
         "playbackProviders": [{
-            "configurationId": "native",
+            "configurationId": str(uuid.uuid5(uuid.NAMESPACE_URL,
+                                                "dmm-benchmark:provider:native")),
             "displayName": "Comet Native Usenet",
             "kind": "comet_native_usenet",
             "enabled": True,

@@ -15,7 +15,7 @@ has been exercised against a live target.
 | 6. Verify endpoints | `python3 harness/verify_endpoints.py` | works, needs targets running |
 | 7. Protocol round | `./harness/round.sh --round <name>` | works |
 | 8. Client round | `./harness/client-round.sh <name>` | works, needs the Windows player |
-| 9. Connection parity | `python3 harness/parity.py --round <name>` | works, **read it before the report** |
+| 9. Connection parity | `python3 harness/parity.py --round <name> --expect 10` | works, **must pass before the report** |
 | 10. Report | `python3 harness/report.py --round <name> --against <earlier>` | works |
 | 11. Publish check | `python3 harness/scan_leaks.py` | works |
 
@@ -28,9 +28,10 @@ Step 9 is not optional and it does not belong after the write-up. Round 2 threw
 away two complete passes that the report rendered without complaint; the socket
 samples were the only thing that showed a second target alive on the account.
 
-**The field is four, not five.** Comet is registered, configured and excluded:
-its native usenet engine does not start. `harness/targets.py` carries the
-measured reason, and `./harness/round.sh --dry-run` prints it. An excluded
+**The measured field is four, not five.** Comet is registered, configured and
+excluded. Its current native engine starts and discovery works, but its NNTP
+capability preflight fails before media delivery. `harness/targets.py` carries
+the measured reason, and `./harness/round.sh --dry-run` prints it. An excluded
 target is dropped from the field unless it is named in `--only`, so the
 exclusion cannot be forgotten and cannot be undone by accident.
 
@@ -43,7 +44,7 @@ account, so they can be run from a laptop. Steps 5 onward need the bench host.
   running a production reader. The account's connection budget is shared across
   every host and process, so a round competing with production measures
   contention.
-- A Usenet account with at least 15 connections.
+- A Usenet account with at least the round's connection budget (10 in round 3).
 - Python 3.10 or newer. The harness imports only the standard library, so there
   is nothing to install and no virtualenv to create.
 - Docker, plus the Go and Node toolchains, for building the targets.
@@ -51,6 +52,14 @@ account, so they can be run from a laptop. Steps 5 onward need the bench host.
   meaningful.
 - For the client plane only: a Windows box with Stremio 4.4 and remote debugging
   reachable over CDP.
+
+If another Usenet suite is being prepared on a second VM, do not assume the VMs
+are independent. Read the same 512 MiB raw range twice on each VM alone and once
+on both VMs concurrently, with the final connection budget active. Only overlap
+the measured phases when each concurrent median remains within the isolated
+noise floor. This gate catches provider/account bandwidth caps that live socket
+parity cannot: both processes can hold exactly 10 connections and still split
+one fixed transfer ceiling.
 
 ## 1. Credentials
 
@@ -94,9 +103,10 @@ Read the three verdicts:
 - `unsupported` — it answers nothing for either id. Honest, and useless for
   that kind of search.
 
-Then `parity eligible` at the bottom is the set to put in
-`PARITY_INDEXERS` in `harness/titles.py`, and `answers TV by imdbid` says
-whether the round can include series at all.
+Then `parity eligible` at the bottom is the set `harness/titles.py build`
+selects automatically, and `answers TV by imdbid` says whether the round can
+include series at all. Do not copy the old set into source: capability drift is
+exactly what the live probe is meant to catch.
 
 ## 3. Census
 
@@ -150,6 +160,35 @@ rather than continue:
 
 One at a time. Every target keeps a pool of NNTP sockets warm, so two running
 together oversubscribe the account and skew both.
+
+For an all-current build, clone the four upstream repositories beneath
+`$HOME/sab/src`, put the exact zurg binary used by the sibling mount round at a
+known path, then run:
+
+```bash
+ROUND=round3 ./harness/build-current.sh
+CONNS=10 ZURG_BINARY=/path/to/the/exact/zurg \
+  BUILD_MANIFEST=$HOME/sab/versions-round3-build.json \
+  ./harness/prepare-current.sh
+```
+
+Image tags include each upstream commit and the build manifest records them.
+StreamNZB is pulled from its official release image only when the image's OCI
+revision is exactly the checked-out latest commit. Its release embeds the
+project's metadata fallback inputs; a local source build cannot reproduce those
+private inputs and otherwise returns empty lists before indexer search.
+Preparation retires prior target state, applies the measured parity indexers,
+sets all five configurations to the same connection count, verifies each
+manifest, and stops the target again before the round. Retired state goes
+under the run root's `.retired/` directory, outside every target directory;
+otherwise old databases and caches would be charged to the next run's state
+disk measurement.
+
+StremThru is started with only `newz`, `stremio_newz`, and `vault`. Its
+default feature set also starts IMDb, torrent and DMM hash-list
+workers; those are unrelated to the Newz addon and otherwise consume CPU,
+memory, network and disk during StremThru's measurement window. The explicit
+allowlist is part of the generated Compose file, not an operator convention.
 
 **zurg** is the only target whose configuration is established. Minimum config:
 
@@ -225,6 +264,13 @@ Anything unequal across targets is what the round actually measured.
    order of execution rotated between rounds.
 
 Connection parity is verified by sampling, not by reading:
+
+AIOStreams opens a transient validation connection while its stored provider
+pool is already live. Round preparation therefore stores `budget - 1` for its
+boot, and `round.py` raises the live pool to the full budget after readiness but
+before the phase window. At a budget of 10 this measured 9 during boot and 10,
+not 11, throughout the workload. This is connection accounting, not a smaller
+measured pool.
 
 ```bash
 while :; do date +%s; ss -tnp state established | grep :563; sleep 5; done > sockets.log

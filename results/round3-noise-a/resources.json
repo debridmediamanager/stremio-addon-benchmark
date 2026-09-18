@@ -1,0 +1,69 @@
+{
+ "round": "round3-noise-a",
+ "targets": {
+  "zurg": {
+   "samples": 24,
+   "sample_interval_s": 1.0,
+   "cpu_s": 7.31,
+   "disk_read_MB": 0.0,
+   "disk_write_MB": 206.92,
+   "state_disk_start_MB": 49.54,
+   "state_disk_end_MB": 256.9,
+   "state_disk_delta_MB": 207.36,
+   "rss_peak_MB": 291.45,
+   "rss_median_MB": 188.75,
+   "rss_final_MB": 291.45,
+   "cpu_cores_p95": 0.424,
+   "cpu_cores_peak": 0.501,
+   "cpu_cores_median": 0.261
+  },
+  "aiostreams": {
+   "samples": 49,
+   "sample_interval_s": 1.0,
+   "cpu_s": 12.95,
+   "disk_read_MB": 0.0,
+   "disk_write_MB": 284.89,
+   "state_disk_start_MB": 145.46,
+   "state_disk_end_MB": 430.22,
+   "state_disk_delta_MB": 284.76,
+   "rss_peak_MB": 333.33,
+   "rss_median_MB": 256.65,
+   "rss_final_MB": 333.33,
+   "cpu_cores_p95": 0.551,
+   "cpu_cores_peak": 0.875,
+   "cpu_cores_median": 0.19
+  },
+  "stremthru": {
+   "samples": 69,
+   "sample_interval_s": 1.0,
+   "cpu_s": 6.42,
+   "disk_read_MB": 0.06,
+   "disk_write_MB": 112.73,
+   "state_disk_start_MB": 0.75,
+   "state_disk_end_MB": 113.44,
+   "state_disk_delta_MB": 112.69,
+   "rss_peak_MB": 278.65,
+   "rss_median_MB": 196.14,
+   "rss_final_MB": 278.65,
+   "cpu_cores_p95": 0.339,
+   "cpu_cores_peak": 0.518,
+   "cpu_cores_median": 0.019
+  },
+  "streamnzb": {
+   "samples": 62,
+   "sample_interval_s": 1.0,
+   "cpu_s": 12.27,
+   "disk_read_MB": 0.0,
+   "disk_write_MB": 1.8,
+   "state_disk_start_MB": 1.33,
+   "state_disk_end_MB": 3.5,
+   "state_disk_delta_MB": 2.18,
+   "rss_peak_MB": 394.12,
+   "rss_median_MB": 190.23,
+   "rss_final_MB": 394.12,
+   "cpu_cores_p95": 0.522,
+   "cpu_cores_peak": 0.725,
+   "cpu_cores_median": 0.152
+  }
+ }
+}

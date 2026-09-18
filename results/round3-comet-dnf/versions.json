@@ -1,0 +1,17 @@
+{
+ "round": "round3-comet-dnf",
+ "targets": {
+  "comet": {
+   "language": "Python + Rust",
+   "repo": "g0ldyy/comet",
+   "branch": "feat/usenet",
+   "manifest_version": "2.0.0",
+   "manifest_id": "stremio.comet.fast",
+   "manifest_name": "Comet | COMET-NNTP",
+   "image": "comet:round3-ed1ede74",
+   "image_id": "sha256:ec6206ead1be2a589654e2c0659c7f4346f54302bba2a6a81911403795ccfaec",
+   "image_created": "2026-09-18T00:29:02.636254914Z",
+   "image_digest": "sha256:ec6206ead1be2a589654e2c0659c7f4346f54302bba2a6a81911403795ccfaec"
+  }
+ }
+}

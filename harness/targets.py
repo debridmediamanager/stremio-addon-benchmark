@@ -167,22 +167,18 @@ TARGETS = {
         "serve_mode": INGEST,
         "verified": "live",
         "standup": "harness/standup/comet.py",
-        # Registered, configured, and not in the round. Its own usenet engine
-        # will not run here in either mode, so there is no honest Comet row to
-        # publish -- see `excluded_reason`
+        # Registered, configured, and not in the round. The current native
+        # engine starts, but it still cannot pass its own NNTP preflight, so
+        # there is no honest Comet throughput row to publish.
         "excluded": True,
         "excluded_reason": (
-            "its native usenet engine does not start. With "
-            "USENET_ENGINE_ENABLED=true the supervisor gives up after 30s with "
-            "`native.startup.failed | initialization_failure` and "
-            "`EngineUnavailable`; with it unset the app boots but every stream "
-            "request answers `[⚠️] Comet setup: Comet Native Usenet: native "
-            "engine is unavailable`. The engine binary exits 78 (EX_CONFIG) run "
-            "directly, emitting one line -- `Native runtime bootstrap failed` -- "
-            "with no diagnostics at RUST_BACKTRACE=full or RUST_LOG=debug. "
-            "Everything above it works: the configuration document validates, "
-            "the news account passes its own validator, and the newznab sources "
-            "are accepted. Measured 2026-09-06 on the bench host. Comet can play "
+            "commit ed1ede74 starts its native engine and searches both parity "
+            "indexers, returning 188 candidates for the smoke title, but native "
+            "playback then answers 503 `nntp_availability_unknown` with cause "
+            "`nntp_capabilities_failed`. The addon turns that into a status "
+            "placeholder rather than media bytes. Measured 2026-09-18 on an "
+            "isolated Hetzner ccx23 with the same account and 10-connection "
+            "configuration as the field. Comet can play "
             "through another project's reader instead, and a row measured that "
             "way would be that reader's number wearing Comet's name, so the "
             "round publishes no Comet row at all"
@@ -204,7 +200,9 @@ TARGETS = {
             "at worker startup outlasts gunicorn's timeout on a small host and "
             "crashloops with no traceback, and USENET_ENGINE_ENABLED=true is "
             "what *stops* the native engine starting -- unset, the same build "
-            "reports the engine ready in 295 ms"
+            "reported the engine ready while leaving the feature disabled in an "
+            "older build. The current branch needs the flag enabled and boots the "
+            "engine, but fails its provider capability preflight"
         ),
         "budget_s": 1800,
     },

@@ -14,18 +14,29 @@ A target can win there and lose here.
 
 ## Status
 
-**Round 2 is measured and published.** The same four targets over the same
-fixed set of 23 titles, both planes, on 7 September 2026, each one on the build
-it ships today. The full generated tables are in
-[`docs/round2.md`](docs/round2.md) and the raw rows are in
-[`results/round2/`](results/round2); round 1 is in
-[`docs/round1.md`](docs/round1.md). Read
-[what round 2 got wrong](#what-round-2-got-wrong) before quoting any of it.
+**Round 3 is measured and published.** Four targets over the current 23-title
+set, at exactly 10 sampled NNTP connections each, on 18 September 2026. Every
+target was rebuilt from that day's upstream head and reset to empty state. The
+full report is [`docs/round3.md`](docs/round3.md), with raw rows in
+[`results/round3/`](results/round3/) and independent clean-start noise passes
+in [`results/round3-noise-a/`](results/round3-noise-a/) and
+[`results/round3-noise-b/`](results/round3-noise-b/).
 
-Every target was reset to an empty data directory and stood up again, so no
-round-2 number is served out of a cache round 1 filled.
+Comet's current `feat/usenet` build is an explicit DNF: it discovers candidates
+but fails its native capability preflight before opening an NNTP connection and
+serves a status clip. The isolated diagnostic, including CPU, RSS and disk
+counters for the failed path, is in
+[`results/round3-comet-dnf/`](results/round3-comet-dnf/).
 
-### What each round measured
+Round 3's protocol result: StreamNZB leads coverage at 19/23, AIOStreams leads
+fixed-population click-to-byte at 4.19 s, and zurg leads observed successful
+throughput at 6.91 MB/s but serves only 12/23. zurg therefore loses the
+end-to-end ranking despite winning stream-list latency and read rate. The
+latest-build client plane was not run because the browser-control surface was
+unavailable; round 2 remains the latest client measurement and must not be
+mixed into round 3.
+
+### What rounds 1 and 2 measured
 
 A round that says "the latest version" has to say which one. Round 2 records
 this itself, from each target's own manifest and the digest the daemon actually
@@ -219,7 +230,7 @@ Five Usenet-backed Stremio addons.
 | AIOStreams | TypeScript | the largest project in the field by a wide margin, and the author of a competing benchmark, which is exactly why an independent number is worth having |
 | StremThru | Go | its `newz` store also answers WebDAV, so it is the one target whose number here can be read against a number in the mount rounds |
 | streamnzb | Go | measured once in a six-way round on 18 August and dropped before either repository existed |
-| Comet | Python + Rust | **excluded from rounds 1 and 2.** Its `feat/usenet` branch has not moved since it was measured, so the reason below is unchanged. Configured and standing, but its own usenet engine will not run: with `USENET_ENGINE_ENABLED=true` the supervisor gives up after 30s with `initialization_failure`, and without it every stream request answers `native engine is unavailable`. The engine binary exits `EX_CONFIG` when run directly and prints one line with no diagnostics at `RUST_BACKTRACE=full`. It can play through another project's reader instead, and a row measured that way would be that reader's number wearing Comet's name, so there is no Comet row |
+| Comet | Python + Rust | **excluded from rounds 1–3.** The latest `feat/usenet` revision was rebuilt and re-tested on 18 September. Its native engine now starts and its two Newznab searches return candidates, but playback fails its own NNTP capability preflight with `nntp_availability_unknown` / `nntp_capabilities_failed` and returns a status placeholder instead of media. It can play through another project's reader, but that would be the other reader's number wearing Comet's name, so there is no throughput row |
 
 zurg is the author's own project. Every number here is reproducible from this
 repository against your own account and your own indexers, and you should do

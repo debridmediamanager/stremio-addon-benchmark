@@ -1,0 +1,7 @@
+{
+  "round": "stremthru-feature-smoke",
+  "target": "stremthru",
+  "state_disk_start_MB": 16019.54,
+  "state_disk_end_MB": 16020.23,
+  "state_disk_delta_MB": 0.69
+}

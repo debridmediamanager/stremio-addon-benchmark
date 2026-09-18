@@ -1,0 +1,72 @@
+{
+ "target": "comet",
+ "plane": "protocol",
+ "round": "round3-comet-dnf",
+ "measured_utc": "2026-09-18T07:44:47+00:00",
+ "harness": "protocol.py",
+ "title_set_built_utc": "2026-09-18T00:38:04+00:00",
+ "parity_indexers": [
+  "indexer-d",
+  "indexer-e"
+ ],
+ "playable_cap_bytes": 6442450944,
+ "population": 1,
+ "read_s": 30.0,
+ "cap_bytes": 6442450944,
+ "title_budget_s": 180,
+ "target_budget_s": 1800,
+ "verified": "live",
+ "passes": [
+  [
+   {
+    "id": "tt15239678",
+    "title": "Dune: Part Two",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T07:44:45+00:00",
+    "stream_list_s": 1.629,
+    "n_streams": 188,
+    "n_within_cap": 28,
+    "notices": null,
+    "max_offered_bytes": 113518648398,
+    "chosen": {
+     "release": "Dune.Part.Two.2024.HDR.BluRay.2160p.x265.7.1.aac.VMAF96-Rosy-xpost",
+     "size_bytes": 2338530402,
+     "indexer": "indexer-e",
+     "name": "[Comet Native Usenet\ud83d\udcf0] Comet 2160p",
+     "description": "\ud83d\udcc4 Dune.Part.Two.2024.HDR.BluRay.2160p.x265.7.1.aac.VMAF96-Rosy-xpost\n\ud83d\udcf9 hevc \u2022 HDR | \ud83d\udd0a AAC \u2022 7.1\n\u2b50 BluRay | \ud83c\udff7\ufe0f xpost\n\ud83d\udcbe 2.2 GB \ud83d\udd0e indexer-e"
+    },
+    "picked_rank": 75,
+    "picked_over_cap": false,
+    "resolve_s": 0.114,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.114,
+    "click_to_byte_s": 1.743,
+    "http_status": 200,
+    "content_bytes_total": 421667,
+    "read_bytes": 421667,
+    "read_s": 0.0,
+    "windows_n": 0,
+    "throughput_mb_s": 0.01,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": false,
+    "seek_profile": null,
+    "outcome": "placeholder",
+    "detail": "http 200 served a complete 421667-byte file, which is an error clip rather than the film. The status, the content type and the Content-Range are all well formed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:8091",
+      "status": 307,
+      "content_type": null
+     },
+     {
+      "url_host": "127.0.0.1:8091",
+      "status": 200,
+      "content_type": "video/mp4"
+     }
+    ]
+   }
+  ]
+ ]
+}

@@ -1,0 +1,14 @@
+round round3-noise-a: connection parity, sampled
+
+`sab-<target>` is that target's own network namespace. Anything else is a host process sharing the news account -- production, usually -- and is listed because the budget is shared, not because it is the target.
+
+target        samples   peak  processes at peak
+--------------------------------------------------------------------
+zurg                5     10  zurg[221467]=10
+aiostreams          9     10  sab-aiostreams=10
+stremthru          15     10  sab-stremthru=10
+streamnzb          12     10  sab-streamnzb=10
+
+A count above the configured budget is worth reading before it is worth acting on: a target can hold a connection outside its own pool accounting. A count well below it means the target never filled its allowance, which is a fact about the target rather than a broken parity rule.
+
+Exact parity held: every target peaked at 10 connections.

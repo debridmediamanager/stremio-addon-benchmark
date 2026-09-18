@@ -1,20 +1,18 @@
 {
- "built_utc": "2026-09-06T11:12:42+00:00",
+ "built_utc": "2026-09-18T00:38:04+00:00",
  "census_measured_utc": "2026-09-06T08:53:23+00:00",
  "parity_indexers": [
-  "indexer-a",
   "indexer-d",
   "indexer-e"
  ],
  "counting_indexers_by_type": {
   "movie": [
-   "indexer-a",
    "indexer-d",
    "indexer-e"
   ],
   "series": []
  },
- "capabilities_measured_utc": "2026-09-06T08:38:37+00:00",
+ "capabilities_measured_utc": "2026-09-18T00:33:29+00:00",
  "playable_cap_bytes": 6442450944,
  "tier_thresholds": {
   "thin": "1-5",
@@ -37,7 +35,7 @@
    "year": 2024,
    "proposed_tier": "blockbuster-recent",
    "measured_tier": "abundant",
-   "reachable_results": 605,
+   "reachable_results": 310,
    "per_indexer": {
     "indexer-a": {
      "total": 295,
@@ -75,7 +73,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -89,7 +86,7 @@
    "year": 2023,
    "proposed_tier": "blockbuster-recent",
    "measured_tier": "abundant",
-   "reachable_results": 355,
+   "reachable_results": 201,
    "per_indexer": {
     "indexer-a": {
      "total": 154,
@@ -127,7 +124,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -141,7 +137,7 @@
    "year": 2023,
    "proposed_tier": "blockbuster-recent",
    "measured_tier": "abundant",
-   "reachable_results": 376,
+   "reachable_results": 181,
    "per_indexer": {
     "indexer-a": {
      "total": 195,
@@ -179,7 +175,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -193,7 +188,7 @@
    "year": 2023,
    "proposed_tier": "blockbuster-recent",
    "measured_tier": "abundant",
-   "reachable_results": 402,
+   "reachable_results": 247,
    "per_indexer": {
     "indexer-a": {
      "total": 155,
@@ -231,7 +226,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -245,7 +239,7 @@
    "year": 2010,
    "proposed_tier": "catalog-modern",
    "measured_tier": "abundant",
-   "reachable_results": 407,
+   "reachable_results": 249,
    "per_indexer": {
     "indexer-a": {
      "total": 158,
@@ -283,7 +277,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -297,7 +290,7 @@
    "year": 2014,
    "proposed_tier": "catalog-modern",
    "measured_tier": "abundant",
-   "reachable_results": 426,
+   "reachable_results": 210,
    "per_indexer": {
     "indexer-a": {
      "total": 216,
@@ -335,7 +328,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -349,7 +341,7 @@
    "year": 2017,
    "proposed_tier": "catalog-modern",
    "measured_tier": "abundant",
-   "reachable_results": 222,
+   "reachable_results": 123,
    "per_indexer": {
     "indexer-a": {
      "total": 99,
@@ -387,7 +379,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -401,7 +392,7 @@
    "year": 1994,
    "proposed_tier": "catalog-classic",
    "measured_tier": "abundant",
-   "reachable_results": 324,
+   "reachable_results": 192,
    "per_indexer": {
     "indexer-a": {
      "total": 132,
@@ -439,7 +430,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -453,7 +443,7 @@
    "year": 1999,
    "proposed_tier": "catalog-classic",
    "measured_tier": "abundant",
-   "reachable_results": 841,
+   "reachable_results": 654,
    "per_indexer": {
     "indexer-a": {
      "total": 187,
@@ -491,7 +481,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -505,7 +494,7 @@
    "year": 1972,
    "proposed_tier": "catalog-classic",
    "measured_tier": "abundant",
-   "reachable_results": 351,
+   "reachable_results": 210,
    "per_indexer": {
     "indexer-a": {
      "total": 141,
@@ -543,7 +532,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -557,7 +545,7 @@
    "year": 1994,
    "proposed_tier": "catalog-classic",
    "measured_tier": "abundant",
-   "reachable_results": 347,
+   "reachable_results": 199,
    "per_indexer": {
     "indexer-a": {
      "total": 148,
@@ -590,12 +578,11 @@
      "kept": 0
     }
    },
-   "size_band": "has-playable",
+   "size_band": "oversize-only",
    "title_match": "ok",
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -609,7 +596,7 @@
    "year": 2019,
    "proposed_tier": "foreign-language",
    "measured_tier": "abundant",
-   "reachable_results": 198,
+   "reachable_results": 134,
    "per_indexer": {
     "indexer-a": {
      "total": 64,
@@ -647,7 +634,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -661,7 +647,7 @@
    "year": 2001,
    "proposed_tier": "anime",
    "measured_tier": "abundant",
-   "reachable_results": 165,
+   "reachable_results": 79,
    "per_indexer": {
     "indexer-a": {
      "total": 86,
@@ -699,7 +685,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -713,7 +698,7 @@
    "year": 2016,
    "proposed_tier": "anime",
    "measured_tier": "abundant",
-   "reachable_results": 155,
+   "reachable_results": 57,
    "per_indexer": {
     "indexer-a": {
      "total": 98,
@@ -751,7 +736,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -764,8 +748,8 @@
    "title": "Nausicaa of the Valley of the Wind",
    "year": 1984,
    "proposed_tier": "anime-longtail",
-   "measured_tier": "abundant",
-   "reachable_results": 76,
+   "measured_tier": "catalog",
+   "reachable_results": 33,
    "per_indexer": {
     "indexer-a": {
      "total": 43,
@@ -803,7 +787,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -817,7 +800,7 @@
    "year": 1968,
    "proposed_tier": "long-tail-old",
    "measured_tier": "abundant",
-   "reachable_results": 209,
+   "reachable_results": 121,
    "per_indexer": {
     "indexer-a": {
      "total": 88,
@@ -855,7 +838,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -869,7 +851,7 @@
    "year": 1957,
    "proposed_tier": "long-tail-old",
    "measured_tier": "abundant",
-   "reachable_results": 136,
+   "reachable_results": 80,
    "per_indexer": {
     "indexer-a": {
      "total": 56,
@@ -907,7 +889,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -921,7 +902,7 @@
    "year": 1939,
    "proposed_tier": "long-tail-old",
    "measured_tier": "abundant",
-   "reachable_results": 202,
+   "reachable_results": 119,
    "per_indexer": {
     "indexer-a": {
      "total": 83,
@@ -959,7 +940,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -972,8 +952,8 @@
    "title": "City Lights",
    "year": 1931,
    "proposed_tier": "long-tail-old",
-   "measured_tier": "abundant",
-   "reachable_results": 59,
+   "measured_tier": "catalog",
+   "reachable_results": 33,
    "per_indexer": {
     "indexer-a": {
      "total": 26,
@@ -1011,7 +991,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -1024,8 +1003,8 @@
    "title": "Metropolis",
    "year": 1927,
    "proposed_tier": "long-tail-old",
-   "measured_tier": "abundant",
-   "reachable_results": 62,
+   "measured_tier": "catalog",
+   "reachable_results": 31,
    "per_indexer": {
     "indexer-a": {
      "total": 31,
@@ -1063,7 +1042,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -1548,8 +1526,8 @@
    "title": "Carmencita",
    "year": 1894,
    "proposed_tier": "negative-real-title",
-   "measured_tier": "poisoned-index",
-   "reachable_results": 2971,
+   "measured_tier": "absent",
+   "reachable_results": 0,
    "per_indexer": {
     "indexer-a": {
      "total": 2971,
@@ -1582,16 +1560,15 @@
      "kept": 0
     }
    },
-   "size_band": "has-playable",
-   "title_match": "MISMATCH",
+   "size_band": "unknown",
+   "title_match": "no-results",
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
-   "expected_outcome": "no-unrelated-streams",
+   "expected_outcome": "empty-list",
    "in_round": true
   },
   {
@@ -1639,7 +1616,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],
@@ -1691,7 +1667,6 @@
    "census_complete": true,
    "parity_errors": [],
    "counting_indexers": [
-    "indexer-a",
     "indexer-d",
     "indexer-e"
    ],

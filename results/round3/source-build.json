@@ -1,0 +1,18 @@
+{
+  "round": "round3",
+  "built_at": "2026-09-18T00:29:11Z",
+  "built_from": "upstream branch heads on the day",
+  "commits": {
+    "stremthru": "b77350e6",
+    "streamnzb": "c5aa001b",
+    "aiostreams": "5afa43cd",
+    "comet": "ed1ede74"
+  },
+  "artifacts": {
+    "streamnzb": {
+      "source": "ghcr.io/gaisberg/streamnzb:latest",
+      "image_id": "sha256:3f5864a7f28877b87766e24de627368ad7569ca3a392223f16fe779703a2a3bf",
+      "revision_verified": true
+    }
+  }
+}

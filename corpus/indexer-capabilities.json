@@ -1,5 +1,5 @@
 {
- "measured_utc": "2026-09-06T08:38:37+00:00",
+ "measured_utc": "2026-09-18T00:33:29+00:00",
  "method": {
   "movie_imdbid": "t=movie for tt1375666 and tt0111161, answers compared",
   "tv_imdbid": "t=tvsearch s01e01 for tt0903747 and tt0944947. Identical pages mean the imdbid filter was dropped",
@@ -11,11 +11,11 @@
    "keyless": false,
    "caps": "ok",
    "movie_imdbid": {
-    "state": "honoured",
-    "why": "20 and 20 results, both on-title",
+    "state": "unsupported",
+    "why": "answers nothing for either id",
     "n": [
-     20,
-     20
+     0,
+     0
     ]
    },
    "tv_imdbid": {
@@ -30,7 +30,33 @@
     "stremio_ua": "http 200",
     "blocked": false
    },
-   "parity_eligible": true
+   "parity_eligible": false
+  },
+  "indexer-b": {
+   "kind": "private",
+   "keyless": false,
+   "caps": "ok",
+   "movie_imdbid": {
+    "state": "unmeasured",
+    "why": "http 429",
+    "n": [
+     null,
+     null
+    ]
+   },
+   "tv_imdbid": {
+    "state": "unmeasured",
+    "why": "http 429",
+    "n": [
+     null,
+     null
+    ]
+   },
+   "ua_policy": {
+    "stremio_ua": "http 200",
+    "blocked": false
+   },
+   "parity_eligible": false
   },
   "indexer-c": {
    "kind": "private",

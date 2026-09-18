@@ -1,0 +1,1829 @@
+{
+ "target": "aiostreams",
+ "plane": "protocol",
+ "round": "round3",
+ "measured_utc": "2026-09-18T03:20:48+00:00",
+ "harness": "protocol.py",
+ "title_set_built_utc": "2026-09-18T00:38:04+00:00",
+ "parity_indexers": [
+  "indexer-d",
+  "indexer-e"
+ ],
+ "playable_cap_bytes": 6442450944,
+ "population": 23,
+ "read_s": 30.0,
+ "cap_bytes": 6442450944,
+ "title_budget_s": 180,
+ "target_budget_s": 5400,
+ "verified": "live",
+ "passes": [
+  [
+   {
+    "id": "tt15239678",
+    "title": "Dune: Part Two",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:09:56+00:00",
+    "stream_list_s": 1.276,
+    "n_streams": 192,
+    "n_within_cap": 30,
+    "notices": null,
+    "max_offered_bytes": 113518648398,
+    "chosen": {
+     "release": "Dune.Part.Two.2024.1080p.WEBRip.AAC5.1.10bits.x265-Rapta",
+     "size_bytes": 1464641195,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p",
+     "description": "Dune.Part.Two.2024.1080p.WEBRip.AAC5.1.10bits.x265-Rapta\n\ud83d\udcbe1.36 GiB \ud83d\udcc5137d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 8,
+    "picked_over_cap": false,
+    "resolve_s": 3.89,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 3.89,
+    "click_to_byte_s": 5.166,
+    "http_status": 206,
+    "content_bytes_total": 1179297629,
+    "read_bytes": 189431003,
+    "read_s": 30.06,
+    "windows_n": 30,
+    "throughput_mb_s": 6.31,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 11792976,
+      "ttfb_s": 0.014,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 294824407,
+      "ttfb_s": 3.456,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 589648814,
+      "ttfb_s": 3.891,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 884473221,
+      "ttfb_s": 3.784,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 1120332747,
+      "ttfb_s": 0.864,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 294824407,
+      "ttfb_s": 0.007,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt15398776",
+    "title": "Oppenheimer",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:10:45+00:00",
+    "stream_list_s": 0.747,
+    "n_streams": 138,
+    "n_within_cap": 16,
+    "notices": null,
+    "max_offered_bytes": 137971182638,
+    "chosen": {
+     "release": "Oppenheimer.2023.1080p.FDNG.WEB-DL.DDP.5.1.H.264-PiRaTeS",
+     "size_bytes": 6026869401,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p",
+     "description": "Oppenheimer.2023.1080p.FDNG.WEB-DL.DDP.5.1.H.264-PiRaTeS\n\ud83d\udcbe5.61 GiB \ud83d\udcc511d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 2,
+    "picked_over_cap": false,
+    "resolve_s": 0.979,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.979,
+    "click_to_byte_s": 1.726,
+    "http_status": 206,
+    "content_bytes_total": 4865490818,
+    "read_bytes": 201355600,
+    "read_s": 30.0,
+    "windows_n": 30,
+    "throughput_mb_s": 6.71,
+    "p05_window_mb_s": 0.03,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 48654908,
+      "ttfb_s": 0.008,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1216372704,
+      "ttfb_s": 2.594,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2432745409,
+      "ttfb_s": 3.756,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 3649118113,
+      "ttfb_s": 1.629,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 4622216277,
+      "ttfb_s": 1.183,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1216372704,
+      "ttfb_s": 0.004,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt1517268",
+    "title": "Barbie",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:11:29+00:00",
+    "stream_list_s": 0.744,
+    "n_streams": 165,
+    "n_within_cap": 65,
+    "notices": null,
+    "max_offered_bytes": 99420699264,
+    "chosen": {
+     "release": "Barbie.2023.1080p.VIKI.WEB-DL.AAC2.0.H.264-FUZEER",
+     "size_bytes": 1588034651,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p",
+     "description": "Barbie.2023.1080p.VIKI.WEB-DL.AAC2.0.H.264-FUZEER\n\ud83d\udcbe1.48 GiB \ud83d\udcc59d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 0,
+    "picked_over_cap": false,
+    "resolve_s": 0.847,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.847,
+    "click_to_byte_s": 1.591,
+    "http_status": 206,
+    "content_bytes_total": 1278896217,
+    "read_bytes": 356264080,
+    "read_s": 30.7,
+    "windows_n": 30,
+    "throughput_mb_s": 11.88,
+    "p05_window_mb_s": 2.2,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 12788962,
+      "ttfb_s": 0.011,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 319724054,
+      "ttfb_s": 0.02,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 639448108,
+      "ttfb_s": 2.419,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 959172162,
+      "ttfb_s": 2.294,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 1214951406,
+      "ttfb_s": 1.792,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 319724054,
+      "ttfb_s": 0.004,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt9362722",
+    "title": "Spider-Man: Across the Spider-Verse",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:12:08+00:00",
+    "stream_list_s": 0.714,
+    "n_streams": 194,
+    "n_within_cap": 33,
+    "notices": null,
+    "max_offered_bytes": 98157845956,
+    "chosen": {
+     "release": "Spider-Man.Across.the.Spider-Verse.2023.720p.HMAX.WEB-DL.DUAL.DDP5.1.H.264-FUZEER",
+     "size_bytes": 4008791088,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 720p",
+     "description": "Spider-Man.Across.the.Spider-Verse.2023.720p.HMAX.WEB-DL.DUAL.DDP5.1.H.264-FUZEER\n\ud83d\udcbe3.73 GiB \ud83d\udcc52d \u2699\ufe0findexer-d\nDual Audio"
+    },
+    "picked_rank": 0,
+    "picked_over_cap": false,
+    "resolve_s": 0.88,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.88,
+    "click_to_byte_s": 1.594,
+    "http_status": 206,
+    "content_bytes_total": 3239307824,
+    "read_bytes": 378732544,
+    "read_s": 30.05,
+    "windows_n": 30,
+    "throughput_mb_s": 12.62,
+    "p05_window_mb_s": 7.84,
+    "sustain_25mbps": true,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 32393078,
+      "ttfb_s": 0.007,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 809826956,
+      "ttfb_s": 2.045,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1619653912,
+      "ttfb_s": 1.887,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 2429480868,
+      "ttfb_s": 1.805,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 3077342432,
+      "ttfb_s": 0.598,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 809826956,
+      "ttfb_s": 0.01,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt1375666",
+    "title": "Inception",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:12:46+00:00",
+    "stream_list_s": 0.727,
+    "n_streams": 166,
+    "n_within_cap": 33,
+    "notices": null,
+    "max_offered_bytes": 127906871528,
+    "chosen": {
+     "release": "Inception.2010.1080p.AV1.10bit-DKong",
+     "size_bytes": 1188145496,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p\n10bit",
+     "description": "Inception.2010.1080p.AV1.10bit-DKong\n\ud83d\udcbe1.11 GiB \ud83d\udcc552d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 2,
+    "picked_over_cap": false,
+    "resolve_s": 0.833,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.833,
+    "click_to_byte_s": 1.56,
+    "http_status": 206,
+    "content_bytes_total": 961401566,
+    "read_bytes": 245145600,
+    "read_s": 19.12,
+    "windows_n": 19,
+    "throughput_mb_s": 12.84,
+    "p05_window_mb_s": 8.17,
+    "sustain_25mbps": true,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 9614015,
+      "ttfb_s": 0.007,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 240350391,
+      "ttfb_s": 0.004,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 480700783,
+      "ttfb_s": 0.003,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 721051174,
+      "ttfb_s": 0.003,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 913331487,
+      "ttfb_s": 0.003,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 240350391,
+      "ttfb_s": 0.003,
+      "status": 302,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "truncated",
+    "detail": "the body stopped before the read window closed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0816692",
+    "title": "Interstellar",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:13:07+00:00",
+    "stream_list_s": 0.795,
+    "n_streams": 129,
+    "n_within_cap": 21,
+    "notices": null,
+    "max_offered_bytes": 108349346692,
+    "chosen": {
+     "release": "Interstellar.2014.IMAX.1080p.AV1.10bit-DKong",
+     "size_bytes": 1538899644,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p\n10bit | IMAX",
+     "description": "Interstellar.2014.IMAX.1080p.AV1.10bit-DKong\n\ud83d\udcbe1.43 GiB \ud83d\udcc552d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 4,
+    "picked_over_cap": false,
+    "resolve_s": 0.921,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.922,
+    "click_to_byte_s": 1.717,
+    "http_status": 206,
+    "content_bytes_total": 1241255718,
+    "read_bytes": 174899200,
+    "read_s": 22.22,
+    "windows_n": 18,
+    "throughput_mb_s": 7.81,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 12412557,
+      "ttfb_s": 0.003,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 310313929,
+      "ttfb_s": 0.003,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 620627859,
+      "ttfb_s": 0.003,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 930941788,
+      "ttfb_s": 0.003,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 1179192932,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 310313929,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "truncated",
+    "detail": "the body stopped before the read window closed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt2380307",
+    "title": "Coco",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:13:31+00:00",
+    "stream_list_s": 0.765,
+    "n_streams": 120,
+    "n_within_cap": 54,
+    "notices": null,
+    "max_offered_bytes": 475654657905,
+    "chosen": {
+     "release": "Coco.2017.720p.BluRay.HebDub.x264-Silver007",
+     "size_bytes": 2547406755,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 720p",
+     "description": "Coco.2017.720p.BluRay.HebDub.x264-Silver007\n\ud83d\udcbe2.37 GiB \ud83d\udcc5368d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 7,
+    "picked_over_cap": false,
+    "resolve_s": 2.46,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 2.46,
+    "click_to_byte_s": 3.225,
+    "http_status": 206,
+    "content_bytes_total": 19856,
+    "read_bytes": 19856,
+    "read_s": 0.0,
+    "windows_n": 0,
+    "throughput_mb_s": 0.0,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": false,
+    "seek_profile": null,
+    "outcome": "placeholder",
+    "detail": "http 206 served a complete 19856-byte file, which is an error clip rather than the film. The status, the content type and the Content-Range are all well formed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/mp4"
+     }
+    ]
+   },
+   {
+    "id": "tt0111161",
+    "title": "The Shawshank Redemption",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:13:34+00:00",
+    "stream_list_s": 0.624,
+    "n_streams": 120,
+    "n_within_cap": 19,
+    "notices": null,
+    "max_offered_bytes": 76509652508,
+    "chosen": {
+     "release": "The.Shawshank.Redemption.1994.bluray.sdr.1080p.av1.5.1.opus.subs-Dust-xpost",
+     "size_bytes": 4295414154,
+     "indexer": "indexer-e",
+     "name": "[AIO+] indexer-e 1080p\nSDR",
+     "description": "The.Shawshank.Redemption.1994.bluray.sdr.1080p.av1.5.1.opus.subs-Dust-xpost\n\ud83d\udcbe4 GiB \ud83d\udcc57d \u2699\ufe0fNZB.su"
+    },
+    "picked_rank": 21,
+    "picked_over_cap": false,
+    "resolve_s": 2.64,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 2.64,
+    "click_to_byte_s": 3.264,
+    "http_status": 206,
+    "content_bytes_total": 4156838052,
+    "read_bytes": 265230480,
+    "read_s": 40.24,
+    "windows_n": 40,
+    "throughput_mb_s": 6.63,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 41568380,
+      "ttfb_s": 0.011,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1039209513,
+      "ttfb_s": 2.016,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2078419026,
+      "ttfb_s": 1.37,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 3117628539,
+      "ttfb_s": 0.594,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 3948996149,
+      "ttfb_s": 0.504,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1039209513,
+      "ttfb_s": 0.004,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0133093",
+    "title": "The Matrix",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:14:22+00:00",
+    "stream_list_s": 0.873,
+    "n_streams": 148,
+    "n_within_cap": 33,
+    "notices": null,
+    "max_offered_bytes": 77917669646,
+    "chosen": {
+     "release": "The.Matrix.1999.1080p.AV1.10bit-DKong",
+     "size_bytes": 1432503954,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p\n10bit",
+     "description": "The.Matrix.1999.1080p.AV1.10bit-DKong\n\ud83d\udcbe1.33 GiB \ud83d\udcc561d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 8,
+    "picked_over_cap": false,
+    "resolve_s": 0.935,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.935,
+    "click_to_byte_s": 1.808,
+    "http_status": 206,
+    "content_bytes_total": 1157959123,
+    "read_bytes": 319707280,
+    "read_s": 30.73,
+    "windows_n": 30,
+    "throughput_mb_s": 10.66,
+    "p05_window_mb_s": 1.64,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 11579591,
+      "ttfb_s": 0.015,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 289489780,
+      "ttfb_s": 0.008,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 578979561,
+      "ttfb_s": 2.18,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 868469342,
+      "ttfb_s": 3.104,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 1100061166,
+      "ttfb_s": 1.994,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 289489780,
+      "ttfb_s": 0.004,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0068646",
+    "title": "The Godfather",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:15:02+00:00",
+    "stream_list_s": 1.592,
+    "n_streams": 130,
+    "n_within_cap": 24,
+    "notices": null,
+    "max_offered_bytes": 128961475917,
+    "chosen": {
+     "release": "The.Godfather.1972.1080p.ROKU.WEB-DL.DD.5.1.H.264-PiRaTeS",
+     "size_bytes": 5641081249,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p",
+     "description": "The.Godfather.1972.1080p.ROKU.WEB-DL.DD.5.1.H.264-PiRaTeS\n\ud83d\udcbe5.25 GiB \ud83d\udcc5243d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 15,
+    "picked_over_cap": false,
+    "resolve_s": 5.108,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 5.108,
+    "click_to_byte_s": 6.7,
+    "http_status": 206,
+    "content_bytes_total": 19856,
+    "read_bytes": 19856,
+    "read_s": 0.0,
+    "windows_n": 0,
+    "throughput_mb_s": 0.0,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": false,
+    "seek_profile": null,
+    "outcome": "placeholder",
+    "detail": "http 206 served a complete 19856-byte file, which is an error clip rather than the film. The status, the content type and the Content-Range are all well formed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/mp4"
+     }
+    ]
+   },
+   {
+    "id": "tt0110912",
+    "title": "Pulp Fiction",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:15:09+00:00",
+    "stream_list_s": 0.697,
+    "n_streams": 138,
+    "n_within_cap": 23,
+    "notices": null,
+    "max_offered_bytes": 104183768393,
+    "chosen": {
+     "release": "Pulp.Fiction.1994.720p.TUBI.WEB-DL.AAC.2.0.H.264-PiRaTeS",
+     "size_bytes": 2251938515,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 720p",
+     "description": "Pulp.Fiction.1994.720p.TUBI.WEB-DL.AAC.2.0.H.264-PiRaTeS\n\ud83d\udcbe2.1 GiB \ud83d\udcc5423d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 29,
+    "picked_over_cap": false,
+    "resolve_s": 2.138,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 2.138,
+    "click_to_byte_s": 2.835,
+    "http_status": 206,
+    "content_bytes_total": 2105023233,
+    "read_bytes": 162770400,
+    "read_s": 30.86,
+    "windows_n": 30,
+    "throughput_mb_s": 5.43,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 21050232,
+      "ttfb_s": 0.008,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 526255808,
+      "ttfb_s": 0.824,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1052511616,
+      "ttfb_s": 1.076,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 1578767424,
+      "ttfb_s": 1.75,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 1999772071,
+      "ttfb_s": 1.003,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 526255808,
+      "ttfb_s": 0.004,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt6751668",
+    "title": "Parasite",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:15:47+00:00",
+    "stream_list_s": 0.991,
+    "n_streams": 129,
+    "n_within_cap": 26,
+    "notices": null,
+    "max_offered_bytes": 103066344835,
+    "chosen": {
+     "release": "Parasite.2019.1080p.AV1.10bit-DKong",
+     "size_bytes": 982181033,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p\n10bit",
+     "description": "Parasite.2019.1080p.AV1.10bit-DKong\n\ud83d\udcbe936.68 MiB \ud83d\udcc568d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 1,
+    "picked_over_cap": false,
+    "resolve_s": 0.882,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.882,
+    "click_to_byte_s": 1.873,
+    "http_status": 206,
+    "content_bytes_total": 791888924,
+    "read_bytes": 112537600,
+    "read_s": 13.62,
+    "windows_n": 13,
+    "throughput_mb_s": 8.4,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 7918889,
+      "ttfb_s": 0.003,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 197972231,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 395944462,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 593916693,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 752294477,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 197972231,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "truncated",
+    "detail": "the body stopped before the read window closed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0245429",
+    "title": "Spirited Away",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:16:03+00:00",
+    "stream_list_s": 1.212,
+    "n_streams": 79,
+    "n_within_cap": 36,
+    "notices": null,
+    "max_offered_bytes": 38622208198,
+    "chosen": {
+     "release": "Spirited.Away.2001.1080p.BDRip.DUAL.AAC5.1.x264-Rapta",
+     "size_bytes": 3829213925,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p",
+     "description": "Spirited.Away.2001.1080p.BDRip.DUAL.AAC5.1.x264-Rapta\n\ud83d\udcbe3.57 GiB \ud83d\udcc5137d \u2699\ufe0findexer-d\nDual Audio"
+    },
+    "picked_rank": 0,
+    "picked_over_cap": false,
+    "resolve_s": 0.839,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.839,
+    "click_to_byte_s": 2.051,
+    "http_status": 206,
+    "content_bytes_total": 3091895025,
+    "read_bytes": 185129880,
+    "read_s": 30.02,
+    "windows_n": 30,
+    "throughput_mb_s": 6.17,
+    "p05_window_mb_s": 0.31,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 30918950,
+      "ttfb_s": 0.006,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 772973756,
+      "ttfb_s": 3.681,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1545947512,
+      "ttfb_s": 3.291,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 2318921268,
+      "ttfb_s": 4.059,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 2937300273,
+      "ttfb_s": 1.432,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 772973756,
+      "ttfb_s": 0.004,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt5311514",
+    "title": "Your Name",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:16:47+00:00",
+    "stream_list_s": 0.552,
+    "n_streams": 56,
+    "n_within_cap": 25,
+    "notices": null,
+    "max_offered_bytes": 55989718416,
+    "chosen": {
+     "release": "Your.Name.2016.Bluray.1080p.DDP.5.1.x264-hallowed",
+     "size_bytes": 6243584557,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p",
+     "description": "Your.Name.2016.Bluray.1080p.DDP.5.1.x264-hallowed\n\ud83d\udcbe5.81 GiB \ud83d\udcc5830d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 4,
+    "picked_over_cap": false,
+    "resolve_s": 3.64,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 3.64,
+    "click_to_byte_s": 4.192,
+    "http_status": 206,
+    "content_bytes_total": 5891818641,
+    "read_bytes": 182778776,
+    "read_s": 30.18,
+    "windows_n": 30,
+    "throughput_mb_s": 6.09,
+    "p05_window_mb_s": 0.48,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 58918186,
+      "ttfb_s": 0.007,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1472954660,
+      "ttfb_s": 0.944,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2945909320,
+      "ttfb_s": 0.877,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 4418863980,
+      "ttfb_s": 0.821,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 5597227708,
+      "ttfb_s": 1.064,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1472954660,
+      "ttfb_s": 0.005,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0087544",
+    "title": "Nausicaa of the Valley of the Wind",
+    "type": "movie",
+    "measured_tier": "catalog",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:17:26+00:00",
+    "stream_list_s": 0.69,
+    "n_streams": 33,
+    "n_within_cap": 12,
+    "notices": null,
+    "max_offered_bytes": 42678858570,
+    "chosen": {
+     "release": "Nausicaa.of.the.Valley.of.the.Wind.1984.1080p.BDRip.DUAL.x264-Rapta",
+     "size_bytes": 2788257163,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p",
+     "description": "Nausicaa.of.the.Valley.of.the.Wind.1984.1080p.BDRip.DUAL.x264-Rapta\n\ud83d\udcbe2.6 GiB \ud83d\udcc5137d \u2699\ufe0findexer-d\nDual Audio"
+    },
+    "picked_rank": 0,
+    "picked_over_cap": false,
+    "resolve_s": 2.197,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 2.197,
+    "click_to_byte_s": 2.887,
+    "http_status": 206,
+    "content_bytes_total": 2252110278,
+    "read_bytes": 188063744,
+    "read_s": 30.02,
+    "windows_n": 30,
+    "throughput_mb_s": 6.27,
+    "p05_window_mb_s": 0.67,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 22521102,
+      "ttfb_s": 0.009,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 563027569,
+      "ttfb_s": 3.861,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1126055139,
+      "ttfb_s": 4.378,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 1689082708,
+      "ttfb_s": 0.967,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 2139504764,
+      "ttfb_s": 1.247,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 563027569,
+      "ttfb_s": 0.004,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0064116",
+    "title": "Once Upon a Time in the West",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:18:12+00:00",
+    "stream_list_s": 0.718,
+    "n_streams": 116,
+    "n_within_cap": 38,
+    "notices": null,
+    "max_offered_bytes": 96030513546,
+    "chosen": {
+     "release": "Cera.una.volta.il.West.-Batida.Kan.Var.1968.1080p.TOD.WEB-DL.H.264.DUAL.AAC.2.0.TurkSeed",
+     "size_bytes": 5303286484,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p",
+     "description": "Cera.una.volta.il.West.-Batida.Kan.Var.1968.1080p.TOD.WEB-DL.H.264.DUAL.AAC.2.0.TurkSeed\n\ud83d\udcbe4.94 GiB \ud83d\udcc5100d \u2699\ufe0findexer-d\nDual Audio / \ud83c\uddee\ud83c\uddf3"
+    },
+    "picked_rank": 0,
+    "picked_over_cap": false,
+    "resolve_s": 0.739,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.739,
+    "click_to_byte_s": 1.457,
+    "http_status": 206,
+    "content_bytes_total": 19856,
+    "read_bytes": 19856,
+    "read_s": 0.0,
+    "windows_n": 0,
+    "throughput_mb_s": 0.0,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": false,
+    "seek_profile": null,
+    "outcome": "placeholder",
+    "detail": "http 206 served a complete 19856-byte file, which is an error clip rather than the film. The status, the content type and the Content-Range are all well formed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/mp4"
+     }
+    ]
+   },
+   {
+    "id": "tt0050083",
+    "title": "12 Angry Men",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:18:13+00:00",
+    "stream_list_s": 0.252,
+    "n_streams": 80,
+    "n_within_cap": 31,
+    "notices": null,
+    "max_offered_bytes": 63646146787,
+    "chosen": {
+     "release": "12.Angry.Men.1957.1080p.BluRay.x265-YAWNTiC",
+     "size_bytes": 5332844248,
+     "indexer": "indexer-e",
+     "name": "[AIO+] indexer-e 1080p",
+     "description": "12.Angry.Men.1957.1080p.BluRay.x265-YAWNTiC\n\ud83d\udcbe4.97 GiB \ud83d\udcc5503d \u2699\ufe0fNZB.su"
+    },
+    "picked_rank": 24,
+    "picked_over_cap": false,
+    "resolve_s": 4.521,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 4.521,
+    "click_to_byte_s": 4.773,
+    "http_status": 206,
+    "content_bytes_total": 4918390627,
+    "read_bytes": 169147288,
+    "read_s": 30.09,
+    "windows_n": 30,
+    "throughput_mb_s": 5.64,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 49183906,
+      "ttfb_s": 0.007,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1229597656,
+      "ttfb_s": 1.438,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2459195313,
+      "ttfb_s": 0.878,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 3688792970,
+      "ttfb_s": 0.76,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 4672471095,
+      "ttfb_s": 1.004,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1229597656,
+      "ttfb_s": 0.003,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0032138",
+    "title": "The Wizard of Oz",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:18:52+00:00",
+    "stream_list_s": 0.724,
+    "n_streams": 110,
+    "n_within_cap": 53,
+    "notices": null,
+    "max_offered_bytes": 86765138379,
+    "chosen": {
+     "release": "The.Wizard.of.Oz.1939.BluRay.810p.DTS.x264-PRoDJi",
+     "size_bytes": 5814167802,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 720p",
+     "description": "The.Wizard.of.Oz.1939.BluRay.810p.DTS.x264-PRoDJi\n\ud83d\udcbe5.41 GiB \ud83d\udcc5137d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 3,
+    "picked_over_cap": false,
+    "resolve_s": 1.806,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 1.806,
+    "click_to_byte_s": 2.53,
+    "http_status": 206,
+    "content_bytes_total": 4690259825,
+    "read_bytes": 164161680,
+    "read_s": 30.2,
+    "windows_n": 30,
+    "throughput_mb_s": 5.47,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 46902598,
+      "ttfb_s": 0.019,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1172564956,
+      "ttfb_s": 2.921,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2345129912,
+      "ttfb_s": 4.026,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 3517694868,
+      "ttfb_s": null,
+      "note": "RemoteDisconnected: Remote end closed connection without response"
+     },
+     {
+      "mark": "95%",
+      "offset": 4455746833,
+      "ttfb_s": 0.003,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1172564956,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0021749",
+    "title": "City Lights",
+    "type": "movie",
+    "measured_tier": "catalog",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:19:34+00:00",
+    "stream_list_s": 1.044,
+    "n_streams": 33,
+    "n_within_cap": 20,
+    "notices": null,
+    "max_offered_bytes": 25556666521,
+    "chosen": {
+     "release": "City.Lights.1931.WEB-DL.1080P.H264.AAC-LeagueTV",
+     "size_bytes": 4799308622,
+     "indexer": "indexer-d",
+     "name": "[AIO+] indexer-d 1080p",
+     "description": "City.Lights.1931.WEB-DL.1080P.H264.AAC-LeagueTV\n\ud83d\udcbe4.47 GiB \ud83d\udcc5245d \u2699\ufe0findexer-d"
+    },
+    "picked_rank": 0,
+    "picked_over_cap": false,
+    "resolve_s": 0.952,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 0.952,
+    "click_to_byte_s": 1.996,
+    "http_status": 206,
+    "content_bytes_total": 3871662972,
+    "read_bytes": 179292672,
+    "read_s": 30.73,
+    "windows_n": 30,
+    "throughput_mb_s": 5.98,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 38716629,
+      "ttfb_s": 0.007,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 967915743,
+      "ttfb_s": 2.935,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1935831486,
+      "ttfb_s": 0.005,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 2903747229,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 3678079823,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 967915743,
+      "ttfb_s": 0.002,
+      "status": 302,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/mp4"
+     }
+    ]
+   },
+   {
+    "id": "tt0017136",
+    "title": "Metropolis",
+    "type": "movie",
+    "measured_tier": "catalog",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:20:09+00:00",
+    "stream_list_s": 0.545,
+    "n_streams": 31,
+    "n_within_cap": 9,
+    "notices": null,
+    "max_offered_bytes": 42983297865,
+    "chosen": {
+     "release": "Metropolis.1927.Giorgio.Moroder.Cut.720p.BluRay.x264-HANDJOB",
+     "size_bytes": 5559144699,
+     "indexer": "indexer-e",
+     "name": "[AIO+] indexer-e 720p",
+     "description": "Metropolis.1927.Giorgio.Moroder.Cut.720p.BluRay.x264-HANDJOB\n\ud83d\udcbe5.18 GiB \ud83d\udcc5656d \u2699\ufe0fNZB.su"
+    },
+    "picked_rank": 4,
+    "picked_over_cap": false,
+    "resolve_s": 3.409,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 3.409,
+    "click_to_byte_s": 3.954,
+    "http_status": 206,
+    "content_bytes_total": 5128237598,
+    "read_bytes": 247609488,
+    "read_s": 30.69,
+    "windows_n": 30,
+    "throughput_mb_s": 8.25,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 51282375,
+      "ttfb_s": 0.015,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 1282059399,
+      "ttfb_s": 0.609,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 2564118799,
+      "ttfb_s": 0.363,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 3846178198,
+      "ttfb_s": 1.502,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 4871825718,
+      "ttfb_s": 0.364,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 1282059399,
+      "ttfb_s": 0.004,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 307,
+      "content_type": "text/plain; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:3010",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0000001",
+    "title": "Carmencita",
+    "type": "movie",
+    "measured_tier": "absent",
+    "expected_outcome": "empty-list",
+    "started_utc": "2026-09-18T03:20:47+00:00",
+    "stream_list_s": 0.497,
+    "n_streams": 0,
+    "n_within_cap": null,
+    "notices": null,
+    "max_offered_bytes": null,
+    "chosen": null,
+    "picked_rank": null,
+    "picked_over_cap": null,
+    "resolve_s": null,
+    "resolve_waited_s": null,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "empty-list",
+    "detail": null
+   },
+   {
+    "id": "tt0000009",
+    "title": "Miss Jerry",
+    "type": "movie",
+    "measured_tier": "absent",
+    "expected_outcome": "empty-list",
+    "started_utc": "2026-09-18T03:20:47+00:00",
+    "stream_list_s": 0.183,
+    "n_streams": 0,
+    "n_within_cap": null,
+    "notices": null,
+    "max_offered_bytes": null,
+    "chosen": null,
+    "picked_rank": null,
+    "picked_over_cap": null,
+    "resolve_s": null,
+    "resolve_waited_s": null,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "empty-list",
+    "detail": null
+   },
+   {
+    "id": "tt9999999",
+    "title": "(unallocated id)",
+    "type": "movie",
+    "measured_tier": "absent",
+    "expected_outcome": "empty-list",
+    "started_utc": "2026-09-18T03:20:47+00:00",
+    "stream_list_s": 0.266,
+    "n_streams": 0,
+    "n_within_cap": null,
+    "notices": [
+     "[\u274c] indexer-d: Failed to get metadata",
+     "[\u274c] indexer-e: Failed to get metadata"
+    ],
+    "max_offered_bytes": null,
+    "chosen": null,
+    "picked_rank": null,
+    "picked_over_cap": null,
+    "resolve_s": null,
+    "resolve_waited_s": null,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "empty-list",
+    "detail": "[\u274c] indexer-d: Failed to get metadata"
+   }
+  ]
+ ]
+}

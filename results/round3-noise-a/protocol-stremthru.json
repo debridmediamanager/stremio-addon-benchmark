@@ -1,0 +1,190 @@
+{
+ "target": "stremthru",
+ "plane": "protocol",
+ "round": "round3-noise-a",
+ "measured_utc": "2026-09-18T03:33:44+00:00",
+ "harness": "protocol.py",
+ "title_set_built_utc": "2026-09-18T00:38:04+00:00",
+ "parity_indexers": [
+  "indexer-d",
+  "indexer-e"
+ ],
+ "playable_cap_bytes": 6442450944,
+ "population": 3,
+ "read_s": 10.0,
+ "cap_bytes": 6442450944,
+ "title_budget_s": 180,
+ "target_budget_s": 5400,
+ "verified": "live",
+ "passes": [
+  [
+   {
+    "id": "tt15239678",
+    "title": "Dune: Part Two",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:32:30+00:00",
+    "stream_list_s": 3.241,
+    "n_streams": 192,
+    "n_within_cap": 31,
+    "notices": null,
+    "max_offered_bytes": 113816633344,
+    "chosen": {
+     "release": "Dune.Part.Two.2024.hdr.bluray.Movie.2160p.av1.7.1.opus-Rosy",
+     "size_bytes": 5261334937,
+     "indexer": "indexer-e",
+     "name": "Newz\n4k",
+     "description": "\ud83d\udcbf BluRay \n\ud83d\udcfa HDR \ud83c\udfa7 OPUS | 7.1\n\ud83d\udce6 4.9 GB \u23f1\ufe0f 2yr\n\u2699\ufe0f Rosy \ud83d\udd0d indexer-e\n\ud83d\udcc1 Dune.Part.Two.2024.hdr.bluray.Movie.2160p.av1.7.1.opus-Rosy"
+    },
+    "picked_rank": 63,
+    "picked_over_cap": false,
+    "resolve_s": 15.008,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 15.008,
+    "click_to_byte_s": 18.249,
+    "http_status": 206,
+    "content_bytes_total": 18847,
+    "read_bytes": 18847,
+    "read_s": 0.0,
+    "windows_n": 0,
+    "throughput_mb_s": 0.0,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": false,
+    "seek_profile": null,
+    "outcome": "placeholder",
+    "detail": "http 206 served a complete 18847-byte file, which is an error clip rather than the film. The status, the content type and the Content-Range are all well formed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:8484",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:8484",
+      "status": 206,
+      "content_type": "video/mp4"
+     }
+    ]
+   },
+   {
+    "id": "tt0017136",
+    "title": "Metropolis",
+    "type": "movie",
+    "measured_tier": "catalog",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:32:48+00:00",
+    "stream_list_s": 0.442,
+    "n_streams": 31,
+    "n_within_cap": 9,
+    "notices": null,
+    "max_offered_bytes": 42949672960,
+    "chosen": {
+     "release": "Metropolis.1927.1080p.BluRay.AV1.Opus.5.1-dAV1nci.mkv-[N-Z-B]-xpost",
+     "size_bytes": 4080218931,
+     "indexer": "indexer-e",
+     "name": "Newz\n1080p",
+     "description": "\ud83d\udcbf BluRay \n\ud83c\udfa7 OPUS | 5.1\n\ud83d\udce6 3.8 GB \u23f1\ufe0f 2yr\n\u2699\ufe0f xpost \ud83d\udd0d indexer-e\n\ud83d\udcc1 Metropolis.1927.1080p.BluRay.AV1.Opus.5.1-dAV1nci.mkv-[N-Z-B]-xpost"
+    },
+    "picked_rank": 13,
+    "picked_over_cap": false,
+    "resolve_s": 10.054,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 10.054,
+    "click_to_byte_s": 10.496,
+    "http_status": 206,
+    "content_bytes_total": 3924500462,
+    "read_bytes": 59637760,
+    "read_s": 10.15,
+    "windows_n": 10,
+    "throughput_mb_s": 5.96,
+    "p05_window_mb_s": 0.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 39245004,
+      "ttfb_s": 5.047,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 981125115,
+      "ttfb_s": 6.061,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1962250231,
+      "ttfb_s": 5.961,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 2943375346,
+      "ttfb_s": 6.038,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 3728275438,
+      "ttfb_s": 6.358,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 981125115,
+      "ttfb_s": 5.041,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:8484",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt9999999",
+    "title": "(unallocated id)",
+    "type": "movie",
+    "measured_tier": "absent",
+    "expected_outcome": "empty-list",
+    "started_utc": "2026-09-18T03:33:43+00:00",
+    "stream_list_s": 0.394,
+    "n_streams": 0,
+    "n_within_cap": null,
+    "notices": null,
+    "max_offered_bytes": null,
+    "chosen": null,
+    "picked_rank": null,
+    "picked_over_cap": null,
+    "resolve_s": null,
+    "resolve_waited_s": null,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "empty-list",
+    "detail": null
+   }
+  ]
+ ]
+}

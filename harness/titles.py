@@ -39,8 +39,6 @@ OUT = os.path.join(ROOT, "corpus", "titles.json")
 # hand three targets a catalogue the other two are banned from. indexer-b
 # answered nine titles and then rate limited for the rest of the run, which
 # cannot survive five targets asking it for the same set.
-PARITY_INDEXERS = ["indexer-a", "indexer-d", "indexer-e"]
-
 # per-entry-type: which parity indexers may be counted. An indexer that drops
 # the imdbid filter on tvsearch does not answer zero for a series, it answers
 # with every unrelated show carrying the same episode number, and counting that
@@ -122,12 +120,22 @@ def tier_for(reachable):
     return ABUNDANT
 
 
-def counting_indexers(capabilities):
+def parity_indexers(capabilities):
+    """Return the labels that passed the current capability measurement."""
+    return [
+        label
+        for label, result in capabilities.get("indexers", {}).items()
+        if result.get("parity_eligible") is True
+    ]
+
+
+def counting_indexers(capabilities, parity=None):
     """Parity indexers whose answer for each entry type can be believed."""
+    parity = parity if parity is not None else parity_indexers(capabilities)
     table = {}
     for kind, field in CAPABILITY_FOR.items():
         table[kind] = [
-            label for label in PARITY_INDEXERS
+            label for label in parity
             if capabilities.get("indexers", {}).get(label, {}).get(field, {}).get("state")
             == "honoured"
         ]
@@ -168,7 +176,10 @@ def build():
     results = census["results"]
     with open(CAPABILITIES) as handle:
         capabilities = json.load(handle)
-    countable = counting_indexers(capabilities)
+    parity = parity_indexers(capabilities)
+    if not parity:
+        raise SystemExit("the capability probe found no parity-eligible indexer")
+    countable = counting_indexers(capabilities, parity)
 
     entries = []
     for candidate in candidates:
@@ -255,7 +266,7 @@ def build():
     document = {
         "built_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "census_measured_utc": census["measured_utc"],
-        "parity_indexers": PARITY_INDEXERS,
+        "parity_indexers": parity,
         "counting_indexers_by_type": countable,
         "capabilities_measured_utc": capabilities["measured_utc"],
         "playable_cap_bytes": PLAYABLE_CAP_BYTES,

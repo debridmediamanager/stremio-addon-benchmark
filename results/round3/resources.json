@@ -1,0 +1,69 @@
+{
+ "round": "round3",
+ "targets": {
+  "streamnzb": {
+   "samples": 1193,
+   "sample_interval_s": 1.0,
+   "cpu_s": 1962.47,
+   "disk_read_MB": 0.14,
+   "disk_write_MB": 58.25,
+   "state_disk_start_MB": 1.33,
+   "state_disk_end_MB": 14.84,
+   "state_disk_delta_MB": 13.51,
+   "rss_peak_MB": 703.95,
+   "rss_median_MB": 643.93,
+   "rss_final_MB": 698.77,
+   "cpu_cores_p95": 3.277,
+   "cpu_cores_peak": 3.666,
+   "cpu_cores_median": 1.552
+  },
+  "zurg": {
+   "samples": 753,
+   "sample_interval_s": 1.0,
+   "cpu_s": 281.95,
+   "disk_read_MB": 0.0,
+   "disk_write_MB": 7260.09,
+   "state_disk_start_MB": 49.54,
+   "state_disk_end_MB": 709.75,
+   "state_disk_delta_MB": 660.21,
+   "rss_peak_MB": 1167.97,
+   "rss_median_MB": 978.14,
+   "rss_final_MB": 997.63,
+   "cpu_cores_p95": 0.669,
+   "cpu_cores_peak": 1.554,
+   "cpu_cores_median": 0.345
+  },
+  "aiostreams": {
+   "samples": 616,
+   "sample_interval_s": 1.0,
+   "cpu_s": 140.57,
+   "disk_read_MB": 1.97,
+   "disk_write_MB": 4362.95,
+   "state_disk_start_MB": 145.47,
+   "state_disk_end_MB": 2074.78,
+   "state_disk_delta_MB": 1929.31,
+   "rss_peak_MB": 400.51,
+   "rss_median_MB": 349.88,
+   "rss_final_MB": 384.79,
+   "cpu_cores_p95": 0.405,
+   "cpu_cores_peak": 0.557,
+   "cpu_cores_median": 0.206
+  },
+  "stremthru": {
+   "samples": 466,
+   "sample_interval_s": 1.0,
+   "cpu_s": 60.38,
+   "disk_read_MB": 0.19,
+   "disk_write_MB": 1002.34,
+   "state_disk_start_MB": 0.75,
+   "state_disk_end_MB": 1002.18,
+   "state_disk_delta_MB": 1001.43,
+   "rss_peak_MB": 391.0,
+   "rss_median_MB": 298.46,
+   "rss_final_MB": 308.8,
+   "cpu_cores_p95": 0.311,
+   "cpu_cores_peak": 0.583,
+   "cpu_cores_median": 0.118
+  }
+ }
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read connection parity out of a round's socket samples.
 
-    python3 harness/parity.py --round round1
+    python3 harness/parity.py --round round1 --expect 10
 
 The round samples established connections to the news port every five seconds
 for its whole duration, into `results/<round>/sockets.log`, and records when
@@ -69,6 +69,13 @@ def samples(path):
             if now is None:
                 continue
             tag, _, rest = line.partition(" ")
+            fields = rest.split()
+            # Older samplers grepped `:563` anywhere in the line, which also
+            # captured an unrelated SSH connection when its local ephemeral
+            # port was 56375. The peer endpoint is the fourth ss field after
+            # the source tag; discard anything whose peer port is not 563.
+            if len(fields) < 4 or not fields[3].endswith(":563"):
+                continue
             if tag != "host":
                 # a container's own namespace: one line, one connection, and
                 # the container name is the only attribution available
@@ -83,10 +90,17 @@ def samples(path):
                 yield now, process, int(pid)
 
 
+def exact_budget(peaks, budget):
+    """True only when every measured target filled exactly the requested pool."""
+    return bool(peaks) and all(value == budget for value in peaks.values())
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--round", default="round1")
+    parser.add_argument("--expect", type=int,
+                        help="fail unless every target's sampled peak is exactly this")
     args = parser.parse_args()
 
     directory = os.path.join(ROOT, "results", args.round)
@@ -106,9 +120,11 @@ def main():
           "listed because the budget is shared, not because it is the target.\n")
     print(f"{'target':<12} {'samples':>8} {'peak':>6}  processes at peak")
     print("-" * 68)
+    peaks = {}
     for target in windows:
         instants = counts.get(target) or {}
         if not instants:
+            peaks[target] = 0
             print(f"{target:<12} {0:>8} {'-':>6}  no samples inside its window")
             continue
         peak_at, peak_total = None, 0
@@ -120,11 +136,20 @@ def main():
                            for (name, pid), n in sorted(instants[peak_at].items(),
                                                         key=lambda item: -item[1]))
         print(f"{target:<12} {len(instants):>8} {peak_total:>6}  {detail}")
+        peaks[target] = peak_total
 
     print("\nA count above the configured budget is worth reading before it is worth "
           "acting on: a target can hold a connection outside its own pool accounting. "
           "A count well below it means the target never filled its allowance, which is "
           "a fact about the target rather than a broken parity rule.")
+    if args.expect is not None:
+        if not exact_budget(peaks, args.expect):
+            wrong = ", ".join(f"{name}={peak}" for name, peak in peaks.items()
+                              if peak != args.expect)
+            print(f"\nFAIL: expected an exact peak of {args.expect}: {wrong}",
+                  file=sys.stderr)
+            return 1
+        print(f"\nExact parity held: every target peaked at {args.expect} connections.")
     return 0
 
 

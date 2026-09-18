@@ -1,0 +1,34 @@
+{
+ "round": "round3-noise-a",
+ "order": [
+  "zurg",
+  "aiostreams",
+  "stremthru",
+  "streamnzb"
+ ],
+ "windows": {
+  "zurg": {
+   "ready_utc": "2026-09-18T03:31:03+00:00",
+   "start": 1789702263.2703998,
+   "end": 1789702289.2633202
+  },
+  "aiostreams": {
+   "ready_utc": "2026-09-18T03:31:33+00:00",
+   "start": 1789702294.3806715,
+   "end": 1789702346.1646464
+  },
+  "stremthru": {
+   "ready_utc": "2026-09-18T03:32:30+00:00",
+   "start": 1789702350.3613892,
+   "end": 1789702424.3011901
+  },
+  "streamnzb": {
+   "ready_utc": "2026-09-18T03:33:49+00:00",
+   "start": 1789702429.3159819,
+   "end": 1789702495.4946954
+  }
+ },
+ "excluded": {
+  "comet": "commit ed1ede74 starts its native engine and searches both parity indexers, returning 188 candidates for the smoke title, but native playback then answers 503 `nntp_availability_unknown` with cause `nntp_capabilities_failed`. The addon turns that into a status placeholder rather than media bytes. Measured 2026-09-18 on an isolated Hetzner ccx23 with the same account and 10-connection configuration as the field. Comet can play through another project's reader instead, and a row measured that way would be that reader's number wearing Comet's name, so the round publishes no Comet row at all"
+ }
+}

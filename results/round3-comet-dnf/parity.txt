@@ -1,0 +1,8 @@
+round round3-comet-dnf: connection parity diagnostic
+
+Configured connection budget: 10
+Sampled NNTP connections: 0
+
+FAIL: Comet never opened a provider socket, so it did not reach the exact peak
+required for a measured playback row. The result is classified as DNF and is
+excluded from throughput, latency and resource rankings.

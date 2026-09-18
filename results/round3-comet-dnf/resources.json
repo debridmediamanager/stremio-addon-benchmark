@@ -1,0 +1,21 @@
+{
+ "round": "round3-comet-dnf",
+ "targets": {
+  "comet": {
+   "samples": 1,
+   "sample_interval_s": 1.0,
+   "cpu_s": 1.12,
+   "disk_read_MB": 0.0,
+   "disk_write_MB": 0.89,
+   "state_disk_start_MB": 2.83,
+   "state_disk_end_MB": 2.83,
+   "state_disk_delta_MB": 0.0,
+   "rss_peak_MB": 486.42,
+   "rss_median_MB": 486.42,
+   "rss_final_MB": 486.42,
+   "cpu_cores_p95": 1.088,
+   "cpu_cores_peak": 1.088,
+   "cpu_cores_median": 1.088
+  }
+ }
+}

@@ -1,0 +1,238 @@
+{
+ "target": "zurg",
+ "plane": "protocol",
+ "round": "round3-noise-b",
+ "measured_utc": "2026-09-18T03:39:35+00:00",
+ "harness": "protocol.py",
+ "title_set_built_utc": "2026-09-18T00:38:04+00:00",
+ "parity_indexers": [
+  "indexer-d",
+  "indexer-e"
+ ],
+ "playable_cap_bytes": 6442450944,
+ "population": 3,
+ "read_s": 10.0,
+ "cap_bytes": 6442450944,
+ "title_budget_s": 180,
+ "target_budget_s": 5400,
+ "verified": "upstream",
+ "passes": [
+  [
+   {
+    "id": "tt15239678",
+    "title": "Dune: Part Two",
+    "type": "movie",
+    "measured_tier": "abundant",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:39:05+00:00",
+    "stream_list_s": 0.44,
+    "n_streams": 14,
+    "n_within_cap": 5,
+    "notices": null,
+    "max_offered_bytes": 39857296506,
+    "chosen": {
+     "release": "Dune.Part.Two.2024.2160p.BDRip.AAC5.1.10bits.x265-Rapta",
+     "size_bytes": 3274912563,
+     "indexer": "indexer-d",
+     "name": "Zurg Usenet\n2160p",
+     "description": "Dune.Part.Two.2024.2160p.BDRip.AAC5.1.10bits.x265-Rapta\n3.05 GB \u00b7 indexer-d \u00b7 137d"
+    },
+    "picked_rank": 4,
+    "picked_over_cap": false,
+    "resolve_s": 1.038,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 1.038,
+    "click_to_byte_s": 1.478,
+    "http_status": 206,
+    "content_bytes_total": 2639461546,
+    "read_bytes": 120586240,
+    "read_s": 10.32,
+    "windows_n": 10,
+    "throughput_mb_s": 12.06,
+    "p05_window_mb_s": 1.0,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 26394615,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 659865386,
+      "ttfb_s": 0.504,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 1319730773,
+      "ttfb_s": 0.308,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "75%",
+      "offset": 1979596159,
+      "ttfb_s": 0.438,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 2507488468,
+      "ttfb_s": 0.45,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 659865386,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "served",
+    "detail": null,
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/x-matroska"
+     }
+    ]
+   },
+   {
+    "id": "tt0017136",
+    "title": "Metropolis",
+    "type": "movie",
+    "measured_tier": "catalog",
+    "expected_outcome": "playable-stream",
+    "started_utc": "2026-09-18T03:39:19+00:00",
+    "stream_list_s": 0.375,
+    "n_streams": 15,
+    "n_within_cap": 6,
+    "notices": null,
+    "max_offered_bytes": 41521596334,
+    "chosen": {
+     "release": "Metropolis.1927.1080p.BluRay.H264.AC3.DD5.1.Will1869",
+     "size_bytes": 3886945402,
+     "indexer": "indexer-e",
+     "name": "Zurg Usenet\n1080p",
+     "description": "Metropolis.1927.1080p.BluRay.H264.AC3.DD5.1.Will1869\n3.62 GB \u00b7 indexer-e \u00b7 6y"
+    },
+    "picked_rank": 4,
+    "picked_over_cap": false,
+    "resolve_s": 10.014,
+    "resolve_waited_s": 0.0,
+    "ttfb_s": 10.014,
+    "click_to_byte_s": 10.389,
+    "http_status": 206,
+    "content_bytes_total": 14384224,
+    "read_bytes": 14384224,
+    "read_s": 5.54,
+    "windows_n": 5,
+    "throughput_mb_s": 1.7,
+    "p05_window_mb_s": 0.31,
+    "sustain_25mbps": false,
+    "seek_profile": [
+     {
+      "mark": "1%",
+      "offset": 143842,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "25%",
+      "offset": 3596056,
+      "ttfb_s": 0.003,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "50%",
+      "offset": 7192112,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": true
+     },
+     {
+      "mark": "75%",
+      "offset": 10788168,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "95%",
+      "offset": 13665012,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     },
+     {
+      "mark": "back to 25%",
+      "offset": 3596056,
+      "ttfb_s": 0.002,
+      "status": 206,
+      "zero_fill": false
+     }
+    ],
+    "outcome": "truncated",
+    "detail": "the body stopped before the read window closed",
+    "hops": [
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 302,
+      "content_type": "text/html; charset=utf-8"
+     },
+     {
+      "url_host": "127.0.0.1:9998",
+      "status": 206,
+      "content_type": "video/mp4"
+     }
+    ]
+   },
+   {
+    "id": "tt9999999",
+    "title": "(unallocated id)",
+    "type": "movie",
+    "measured_tier": "absent",
+    "expected_outcome": "empty-list",
+    "started_utc": "2026-09-18T03:39:35+00:00",
+    "stream_list_s": 0.149,
+    "n_streams": 0,
+    "n_within_cap": null,
+    "notices": null,
+    "max_offered_bytes": null,
+    "chosen": null,
+    "picked_rank": null,
+    "picked_over_cap": null,
+    "resolve_s": null,
+    "resolve_waited_s": null,
+    "ttfb_s": null,
+    "click_to_byte_s": null,
+    "http_status": null,
+    "content_bytes_total": null,
+    "read_bytes": null,
+    "read_s": null,
+    "windows_n": null,
+    "throughput_mb_s": null,
+    "p05_window_mb_s": null,
+    "sustain_25mbps": null,
+    "seek_profile": null,
+    "outcome": "empty-list",
+    "detail": null
+   }
+  ]
+ ]
+}

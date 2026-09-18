@@ -1,0 +1,16 @@
+{
+ "round": "round3-comet-dnf",
+ "order": [
+  "comet"
+ ],
+ "windows": {
+  "comet": {
+   "ready_utc": "2026-09-18T07:44:45+00:00",
+   "start": 1789717485.5483463,
+   "end": 1789717487.398926
+  }
+ },
+ "excluded": {
+  "comet": "commit ed1ede74 starts its native engine and searches both parity indexers, returning 188 candidates for the smoke title, but native playback then answers 503 `nntp_availability_unknown` with cause `nntp_capabilities_failed`. The addon turns that into a status placeholder rather than media bytes. Measured 2026-09-18 on an isolated Hetzner ccx23 with the same account and 10-connection configuration as the field. Comet can play through another project's reader instead, and a row measured that way would be that reader's number wearing Comet's name, so the round publishes no Comet row at all"
+ }
+}
