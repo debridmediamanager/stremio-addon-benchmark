@@ -213,6 +213,21 @@ Sampled once per second from the target's own process tree while its protocol ph
 
 **Not run.** No `client-*.json` in this round, so nothing here says whether a player would accept what each addon served. The protocol plane cannot answer that.
 
+## The seek data in this round
+
+**Read the stored `seek_profile` marks with care.** The probe that took them
+did not follow redirects, and `looks_like_a_fill` counts an empty body as
+silence, so a target that answers a range with a 302 had the redirect's own
+empty body judged instead of the range. Six of StreamNZB's marks on The Wizard
+of Oz are recorded as zero fill for that reason and say nothing about what it
+serves. Both faults are fixed in the harness now; the round's stored numbers
+predate the fix and were not re-measured.
+
+What survives that correction is one genuine silent seek for StreamNZB (City
+Lights, at the 50% mark, a 206 that took 6.254 s) and four for zurg (Your Name,
+where the repeat of the same offset returned the silence in 2 ms). None of it
+is scored either way.
+
 ## Noise floor
 
 Repeat passes on one target, same evening. Two targets closer together than this are tied. Measured on a sampled subset in its own run, because repeat passes over the whole set cost the account more than the number is worth.

@@ -78,6 +78,11 @@ READ_S = 30
 FIRST_CHUNK = 64 * 1024
 # what a seek costs: request a small window at each mark and time its first byte
 SEEK_WINDOW = 256 * 1024
+# A seek follows redirects like the read does. Without this a target that
+# answers a range with a 302 has its seeks judged on the redirect's own empty
+# body, which reads as silence.
+SEEK_MAX_HOPS = 8
+REDIRECTS = (301, 302, 303, 307, 308)
 SEEK_MARKS = [0.01, 0.25, 0.50, 0.75, 0.95]
 # 25 Mbps is a 1080p stream with headroom. Held for the whole read window, in
 # every one-second window, not on average -- an average that holds hides the
@@ -695,7 +700,12 @@ def measure_title(target, base, title, read_s, cap_bytes, do_seeks=True):
         except Exception:
             pass
 
-    if do_seeks and row["content_bytes_total"] and row["outcome"] in ("served", "truncated", "sample"):
+    # `zero-bytes` is in the list on purpose, and it is the row that needs it
+    # most: a read from offset 0 that came back silent cannot say whether the
+    # file IS a hole or merely starts with one, and the seek marks are the only
+    # thing in this harness that can tell those apart.
+    if do_seeks and row["content_bytes_total"] and row["outcome"] in (
+            "served", "truncated", "sample", "zero-bytes"):
         row["seek_profile"] = seek_profile(resolution.final_url, row["content_bytes_total"], deadline)
     return row
 
@@ -731,14 +741,43 @@ def seek_profile(url, total, deadline):
         end = min(offset + SEEK_WINDOW - 1, max(total - 1, offset))
         started = time.monotonic()
         record = {"mark": label, "offset": offset}
+        current = url
         try:
-            conn, response = open_stream(url, 60, {"Range": f"bytes={offset}-{end}"})
-            chunk = response.read(1)
-            record["ttfb_s"] = round(time.monotonic() - started, 3)
-            record["status"] = response.status
-            body = chunk + response.read(64 * 1024)
-            record["zero_fill"] = looks_like_a_fill(body)
-            conn.close()
+            for _ in range(SEEK_MAX_HOPS):
+                conn, response = open_stream(current, 60, {"Range": f"bytes={offset}-{end}"})
+                location = response.getheader("Location")
+                if response.status in REDIRECTS and location:
+                    # A target entitled to answer a range with a redirect is
+                    # not answering it with silence. Reading the 302's own
+                    # (empty) body and judging THAT was scoring six of one
+                    # target's seeks as zero fill in round 3.
+                    response.read()
+                    conn.close()
+                    current = urllib.parse.urljoin(current, location)
+                    continue
+                chunk = response.read(1)
+                record["ttfb_s"] = round(time.monotonic() - started, 3)
+                record["status"] = response.status
+                body = chunk + response.read(64 * 1024)
+                record["body_bytes"] = len(body)
+                if response.status not in (200, 206):
+                    # Nothing was served, so there is nothing to call silence.
+                    # An error is a different finding and belongs in `status`.
+                    record["zero_fill"] = None
+                    record["note"] = f"http {response.status}"
+                elif not body:
+                    # Served nothing at all. Distinct from serving zeros: one
+                    # is an empty answer, the other is an answer made of
+                    # silence, and calling both a fill hides which happened.
+                    record["zero_fill"] = None
+                    record["note"] = "no body"
+                else:
+                    record["zero_fill"] = looks_like_a_fill(body)
+                conn.close()
+                break
+            else:
+                record["ttfb_s"] = None
+                record["note"] = f"more than {SEEK_MAX_HOPS} redirects"
         except Exception as problem:
             record["ttfb_s"] = None
             record["note"] = f"{type(problem).__name__}: {problem}"
