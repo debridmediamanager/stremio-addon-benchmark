@@ -22,10 +22,15 @@ and spends its work in local archive/cache materialisation. Its five resolve
 failures, one truncation and one zero-byte response then erase that successful
 path's speed from the fixed-population ranking.
 
-This round has been re-read under a rule added after it was measured: a body
-far smaller than the release the target itself advertised is the release's
-sample rather than its film, and is set aside instead of counted as a
-truncation. One row moved, zurg's Metropolis. Nothing was re-run.
+This round has been re-read under two rules added after it was measured, and
+nothing was re-run. A body far smaller than the release the target itself
+advertised is the release's sample rather than its film, and is set aside
+instead of counted as a truncation; one row moved, zurg's Metropolis. And a
+2xx over an error clip or a stretch of zeros is now `faked` rather than
+`missed`, below a refusal in severity, because a refusal is information a
+client can act on and a fake success ends the search. That split the missed
+tier cleanly: every one of zurg's was a refusal, every one of AIOStreams' and
+StremThru's was a fake.
 
 ## Fairness and isolation
 
@@ -126,14 +131,14 @@ Coverage first, and no speed column appears without it. `median (population)` co
 
 Part of the set is negative. Two entries are real titles with nothing posted, where an empty list is correct and a stream is a fabrication; one is an id whose indexer answers with an unrelated feed, where the question is whether the addon forwards it.
 
-A row that served the release's sample instead of its feature is not judged here at all; it is set aside and counted in its own section below.
+The tiers are in severity order. `faked` is below `missed` deliberately: a refusal is information a client can act on, and a 2xx over an error clip or a stretch of zeros ends the search with the viewer holding nothing and no way to know it. A row that served the release's sample instead of its feature is not judged here at all; it is set aside and counted in its own section below.
 
-| Target | correct | partial | missed | fabricated | forwarded-garbage | unclassified |
-|---|---|---|---|---|---|---|
-| aiostreams | 17 | 3 | 3 | 0 | 0 | 0 |
-| streamnzb | 22 | 1 | 0 | 0 | 0 | 0 |
-| zurg | 15 | 1 | 6 | 0 | 0 | 0 |
-| stremthru | 5 | 1 | 17 | 0 | 0 | 0 |
+| Target | correct | partial | missed | faked | fabricated | forwarded-garbage | unclassified |
+|---|---|---|---|---|---|---|---|
+| aiostreams | 17 | 3 | 0 | 3 | 0 | 0 | 0 |
+| streamnzb | 22 | 1 | 0 | 0 | 0 | 0 | 0 |
+| zurg | 15 | 1 | 5 | 1 | 0 | 0 | 0 |
+| stremthru | 5 | 1 | 0 | 17 | 0 | 0 | 0 |
 
 ## The sample, and why it is not scored
 
@@ -178,6 +183,7 @@ Each metric is ordered independently. Missing population medians are DNF because
 - Median p05 window (higher is better): 1. zurg (0.04 MB/s); 2. aiostreams (0.01 MB/s); 3 (tie). streamnzb, stremthru (0.00 MB/s)
 - Titles sustaining 25 Mbps (higher is better): 1. aiostreams (1); 2 (tie). streamnzb, stremthru, zurg (0)
 - Correct outcomes (higher is better): 1. streamnzb (22); 2. aiostreams (17); 3. zurg (15); 4. stremthru (5)
+- Faked successes (lower is better): 1. streamnzb (0); 2. zurg (1); 3. aiostreams (3); 4. stremthru (17)
 - Titles offering oversize streams (lower is better): 1 (tie). aiostreams, streamnzb, stremthru, zurg (20)
 - Oversize-only picks (lower is better): 1 (tie). aiostreams, streamnzb, stremthru, zurg (0)
 

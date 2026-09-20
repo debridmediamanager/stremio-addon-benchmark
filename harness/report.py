@@ -62,6 +62,21 @@ PLACEHOLDER_MAX_BYTES = 1024 * 1024
 SAMPLE = ("sample",)
 SAMPLE_MAX_RELEASE_FRACTION = 0.05
 
+# A 2xx over something that is not the film. The status line is right, the
+# content type is right, the Content-Range agrees with itself, and what
+# arrives is a 19 KB error clip or a stretch of zeros.
+#
+# Ranked below an honest failure on purpose, because the two cost a viewer
+# different amounts. A refusal is information: the client knows, Stremio
+# offers the next stream, an *arr retries, and the title gets another chance
+# from something else. A fake success ends the search -- the player accepts
+# it, nothing falls back, nothing retries, and the viewer concludes the film
+# is broken rather than the addon. A target that cannot serve a title is
+# better for the viewer than one that pretends it can.
+#
+# Severity, worst last: correct, partial, missed, faked.
+FAKED = ("placeholder", "zero-bytes")
+
 
 def looks_like_a_sample(row):
     """Both numbers are on the row: what was served, and what was offered."""
@@ -160,8 +175,9 @@ def verdict(row):
             return "correct"
         if outcome in PARTIAL:
             return "partial"
-        # a placeholder is a miss dressed as a success, and counting it as a
-        # partial would credit the target for the dressing
+        if outcome in FAKED:
+            # Not a miss: a miss tells the truth. See FAKED above.
+            return "faked"
         return "missed"
     if expected == "empty-list":
         # a real title with nothing posted. Promptly nothing is the right
@@ -558,6 +574,8 @@ def render_metric_rankings(summaries):
          lambda v: str(v)),
         ("Correct outcomes", lambda row: row.get("verdicts", {}).get("correct", 0), True,
          lambda v: str(v)),
+        ("Faked successes", lambda row: row.get("verdicts", {}).get("faked", 0), False,
+         lambda v: str(v)),
         ("Titles offering oversize streams", lambda row: row.get("over_cap_titles"), False,
          lambda v: str(v)),
         ("Oversize-only picks", lambda row: row.get("picked_over_cap"), False,
@@ -686,11 +704,15 @@ def render(documents, round_name, client=None, noise_documents=None, against=Non
                "fabrication; one is an id whose indexer answers with an unrelated "
                "feed, where the question is whether the addon forwards it.")
     out.append("")
-    out.append("A row that served the release's sample instead of its feature is "
-               "not judged here at all; it is set aside and counted in its own "
-               "section below.")
+    out.append("The tiers are in severity order. `faked` is below `missed` "
+               "deliberately: a refusal is information a client can act on, and a "
+               "2xx over an error clip or a stretch of zeros ends the search with "
+               "the viewer holding nothing and no way to know it. A row that "
+               "served the release's sample instead of its feature is not judged "
+               "here at all; it is set aside and counted in its own section below.")
     out.append("")
-    keys = ["correct", "partial", "missed", "fabricated", "forwarded-garbage", "unclassified"]
+    keys = ["correct", "partial", "missed", "faked", "fabricated",
+            "forwarded-garbage", "unclassified"]
     out.append("| Target | " + " | ".join(keys) + " |")
     out.append("|---|" + "---|" * len(keys))
     for s in summaries:

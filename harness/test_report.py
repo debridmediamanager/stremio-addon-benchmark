@@ -106,5 +106,50 @@ class SampleOutcomeTests(unittest.TestCase):
                          "the genuine failure is still counted")
 
 
+class FakedVerdictTests(unittest.TestCase):
+    """A refusal and a lie are not the same failure.
+
+    Both leave the viewer without the film, and there the resemblance ends. A
+    refusal is information: the client is told, Stremio offers the next
+    stream, an *arr retries. A 2xx over a 19 KB error clip or a stretch of
+    zeros ends the search -- the player takes it, nothing falls back, and the
+    viewer blames the film. Round 3's missed tier held both and said they
+    were equal: zurg's six were all refusals, StremThru's seventeen were all
+    error clips.
+    """
+
+    def row(self, outcome, **kw):
+        base = {"id": "tt0111161", "expected_outcome": "playable-stream",
+                "outcome": outcome, "n_streams": 5}
+        base.update(kw)
+        return base
+
+    def test_an_error_clip_is_faked_not_missed(self):
+        self.assertEqual("faked", report.verdict(
+            self.row("truncated", content_bytes_total=19_000,
+                     chosen={"size_bytes": 3_000_000_000})))
+
+    def test_a_body_of_zeros_is_faked_not_missed(self):
+        self.assertEqual("faked", report.verdict(self.row("zero-bytes")))
+
+    def test_an_honest_refusal_stays_missed(self):
+        self.assertEqual("missed", report.verdict(self.row("resolve-failed")))
+        self.assertEqual("missed", report.verdict(self.row("timeout")))
+
+    def test_serving_the_film_is_still_correct(self):
+        self.assertEqual("correct", report.verdict(self.row("served")))
+
+    def test_the_two_are_counted_apart(self):
+        document = {"target": "t", "population": 3, "passes": [[
+            self.row("resolve-failed"),
+            self.row("zero-bytes"),
+            self.row("served"),
+        ]]}
+        got = report.summarise("t", document, cap_bytes=6 * 1024 ** 3)
+        self.assertEqual(1, got["verdicts"].get("missed", 0))
+        self.assertEqual(1, got["verdicts"].get("faked", 0))
+        self.assertEqual(1, got["verdicts"].get("correct", 0))
+
+
 if __name__ == "__main__":
     unittest.main()
