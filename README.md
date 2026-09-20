@@ -30,7 +30,8 @@ counters for the failed path, is in
 
 Round 3's protocol result: StreamNZB leads coverage at 19/23, AIOStreams leads
 fixed-population click-to-byte at 4.19 s, and zurg leads observed successful
-throughput at 6.91 MB/s but serves only 12/23. zurg therefore loses the
+throughput at 6.91 MB/s but serves only 12 of the 22 titles it is scored on.
+zurg therefore loses the
 end-to-end ranking despite winning stream-list latency and read rate. The
 latest-build client plane was not run because the browser-control surface was
 unavailable; round 2 remains the latest client measurement and must not be

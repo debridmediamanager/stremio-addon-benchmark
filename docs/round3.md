@@ -8,9 +8,10 @@ There is no single winner. StreamNZB has the best coverage and correctness
 (19/23 served, 22/23 correct). AIOStreams has the best fixed-population and
 successful click-to-byte medians (4.19 s and 2.68 s). zurg is the quickest to
 return a stream list (0.37 s) and leads the observed successful-read rate and
-p05 floor (6.91 and 0.04 MB/s), but it serves only 12/23, so its
-fixed-population click-to-byte falls to third at 21.95 s. Coverage outranks a
-fast subset: on the end-to-end question, zurg loses this round.
+p05 floor (6.91 and 0.04 MB/s), but it serves only 12 of the 22 titles it is
+scored on, so its fixed-population click-to-byte falls to third at 18.64 s.
+Coverage outranks a fast subset: on the end-to-end question, zurg loses this
+round.
 
 zurg also loses the resource comparison. It is much cheaper in CPU than
 StreamNZB, but only third of four on CPU, last on peak RSS at 1167.97 MB, and
@@ -18,8 +19,13 @@ last on physical writes at 315.66 MB per title. It retains 660.21 MB, second
 best behind StreamNZB. The likely explanation, consistent with its fast stream
 list and high write/RSS footprint, is that zurg gets through discovery cheaply
 and spends its work in local archive/cache materialisation. Its five resolve
-failures, two truncations and one zero-byte response then erase that successful
+failures, one truncation and one zero-byte response then erase that successful
 path's speed from the fixed-population ranking.
+
+This round has been re-read under a rule added after it was measured: a body
+far smaller than the release the target itself advertised is the release's
+sample rather than its film, and is set aside instead of counted as a
+truncation. One row moved, zurg's Metropolis. Nothing was re-run.
 
 ## Fairness and isolation
 
@@ -91,7 +97,7 @@ Coverage first, and no speed column appears without it. `median (population)` co
 |---|---|---|---|---|---|---|
 | aiostreams | TypeScript | 14/23 | 60.9% | 4.19s | 2.68s | 14 |
 | streamnzb | Go | 19/23 | 82.6% | 17.30s | 12.13s | 19 |
-| zurg | Go | 12/23 | 52.2% | 21.95s | 3.84s | 12 |
+| zurg | Go | 12/22 | 54.5% | 18.64s | 3.84s | 12 |
 | stremthru | Go | 2/23 | 8.7% | >budget | 10.73s | 2 |
 
 ## Where the time goes
@@ -102,7 +108,7 @@ Coverage first, and no speed column appears without it. `median (population)` co
 |---|---|---|---|---|---|
 | aiostreams | 0.72s | 1.97s | 1.97s | 2.68s | 14/23 |
 | streamnzb | 0.47s | 11.85s | 11.85s | 12.13s | 19/23 |
-| zurg | 0.37s | 3.46s | 3.46s | 3.84s | 12/23 |
+| zurg | 0.37s | 3.46s | 3.46s | 3.84s | 12/22 |
 | stremthru | 0.63s | 10.04s | 10.04s | 10.73s | 2/23 |
 
 ## Reading, once it is playing
@@ -113,20 +119,31 @@ Coverage first, and no speed column appears without it. `median (population)` co
 |---|---|---|---|---|
 | aiostreams | 6.29 | 0.01 | 1/14 | 14/23 |
 | streamnzb | 6.10 | 0.00 | 0/19 | 19/23 |
-| zurg | 6.91 | 0.04 | 0/12 | 12/23 |
+| zurg | 6.91 | 0.04 | 0/12 | 12/22 |
 | stremthru | 4.45 | 0.00 | 0/2 | 2/23 |
 
 ## Did it do the right thing
 
 Part of the set is negative. Two entries are real titles with nothing posted, where an empty list is correct and a stream is a fabrication; one is an id whose indexer answers with an unrelated feed, where the question is whether the addon forwards it.
 
+A row that served the release's sample instead of its feature is not judged here at all; it is set aside and counted in its own section below.
+
 | Target | correct | partial | missed | fabricated | forwarded-garbage | unclassified |
 |---|---|---|---|---|---|---|
 | aiostreams | 17 | 3 | 3 | 0 | 0 | 0 |
 | streamnzb | 22 | 1 | 0 | 0 | 0 | 0 |
-| zurg | 15 | 2 | 6 | 0 | 0 | 0 |
+| zurg | 15 | 1 | 6 | 0 | 0 | 0 |
 | stremthru | 5 | 1 | 17 | 0 | 0 | 0 |
 
+## The sample, and why it is not scored
+
+**1 row across the field served the sample rather than the film.** A scene release ships one inside the same archive as the feature, so an addon has to choose between two real videos, and the one it opens is a product decision -- the same class of choice as a size cap or a ranking rule. What arrives is whole, valid and from the release the viewer asked for. It is simply not the film, and it ends long before a read window closes, which is why this reads as a truncation until it is named.
+
+So these rows score neither way: out of the served count, out of every speed median, out of the correctness tiers, and out of the population the rest are measured against. A target is told what it did, and no target gains or loses a point for it. Measured as a body at or under 5% of the release the target itself advertised; real samples run near one per cent.
+
+| Target | samples served | scored population |
+|---|---|---|
+| zurg | 1 | 22 |
 ## The error clip
 
 **20 rows across the field are a complete, valid, tiny MP4 rather than a film.** HTTP 206, `video/mp4`, a `Content-Range` whose total is the same few kilobytes, and the whole of it delivered. Nothing about the response is malformed; it is simply not the movie. A harness that stops at the status line, or that reads a fixed first chunk, records these as served, and they are the difference between a target that answers a title and one that appears to.
@@ -144,15 +161,15 @@ The cap is 6.00 GiB and it is applied at the pick, identically for every target,
 |---|---|---|---|---|---|
 | aiostreams | empty-list 3, placeholder 3, served 14, truncated 3 | 442.99 GiB | 20 | 3.5 | 0 |
 | streamnzb | empty-list 3, served 19, truncated 1 | 442.99 GiB | 20 | 10 | 0 |
-| zurg | empty-list 3, resolve-failed 5, served 12, truncated 2, zero-bytes 1 | 39.76 GiB | 20 | 5.5 | 0 |
+| zurg | empty-list 3, resolve-failed 5, sample 1, served 12, truncated 1, zero-bytes 1 | 39.76 GiB | 20 | 5.5 | 0 |
 | stremthru | empty-list 3, placeholder 17, served 2, truncated 1 | 443.00 GiB | 20 | 40 | 0 |
 
 ## Metric rankings
 
 Each metric is ordered independently. Missing population medians are DNF because fewer than half the fixed population was served.
 
-- Coverage (higher is better): 1. streamnzb (82.6%); 2. aiostreams (60.9%); 3. zurg (52.2%); 4. stremthru (8.7%)
-- Population click-to-byte (lower is better): 1. aiostreams (4.19s); 2. streamnzb (17.30s); 3. zurg (21.95s); 4. stremthru (DNF)
+- Coverage (higher is better): 1. streamnzb (82.6%); 2. aiostreams (60.9%); 3. zurg (54.5%); 4. stremthru (8.7%)
+- Population click-to-byte (lower is better): 1. aiostreams (4.19s); 2. streamnzb (17.30s); 3. zurg (18.64s); 4. stremthru (DNF)
 - Served click-to-byte (lower is better): 1. aiostreams (2.68s); 2. zurg (3.84s); 3. stremthru (10.73s); 4. streamnzb (12.13s)
 - Stream list (lower is better): 1. zurg (0.37s); 2. streamnzb (0.47s); 3. stremthru (0.63s); 4. aiostreams (0.72s)
 - Resolve (lower is better): 1. aiostreams (1.97s); 2. zurg (3.46s); 3. stremthru (10.04s); 4. streamnzb (11.85s)

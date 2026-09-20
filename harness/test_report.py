@@ -44,5 +44,67 @@ class NoiseRoundTests(unittest.TestCase):
         self.assertIn("Population click-to-byte (lower is better): 1. zurg", text)
 
 
+class SampleOutcomeTests(unittest.TestCase):
+    """A sample is a product decision, not a defect and not a score.
+
+    The shape is a real one, measured on zen 2026-09-20: the corpus release
+    Father.Brown.2013.S02E05.HDTV.x264-TLA is a 12-volume scene RAR whose
+    archive lists a 9,538,724-byte sample before its 321,905,886-byte feature,
+    and a target that opens the first video it finds serves the sample. It
+    arrives whole and valid, and it ends long before a read window closes, so
+    it used to be recorded as `truncated` -- a defect it is not.
+    """
+
+    def row(self, served, release, outcome="truncated"):
+        return {"id": "tt0017136", "expected_outcome": "playable-stream",
+                "outcome": outcome, "content_bytes_total": served,
+                "chosen": {"size_bytes": release}, "n_streams": 5,
+                "click_to_byte_s": 2.0, "throughput_mb_s": 9.0}
+
+    def test_a_sample_is_reread_out_of_truncated(self):
+        # 9.5 MB of a 322 MB release: the real FatherBrown geometry.
+        self.assertEqual("sample", report.outcome_of(self.row(9_538_724, 321_905_886)))
+
+    def test_the_feature_is_untouched(self):
+        self.assertEqual("served", report.outcome_of(
+            self.row(321_905_886, 321_905_886, outcome="served")))
+
+    def test_an_error_clip_is_still_an_error_clip(self):
+        # Under a megabyte stays a placeholder: a 19 KB status clip is not a
+        # sample of anything, and the two findings must not merge.
+        self.assertEqual("placeholder", report.outcome_of(self.row(19_000, 321_905_886)))
+
+    def test_a_genuine_truncation_is_still_a_truncation(self):
+        # Most of the release arrived and then stopped. Nothing about that is
+        # a choice of file, and it stays a defect.
+        self.assertEqual("truncated", report.outcome_of(self.row(300_000_000, 321_905_886)))
+
+    def test_a_sample_is_judged_neither_way(self):
+        self.assertEqual("sample", report.verdict(self.row(9_538_724, 321_905_886)))
+
+    def test_a_sample_leaves_the_scored_population(self):
+        document = {"target": "zurg", "population": 3, "passes": [[
+            self.row(9_538_724, 321_905_886),
+            self.row(321_905_886, 321_905_886, outcome="served"),
+            {"id": "gone", "expected_outcome": "playable-stream",
+             "outcome": "resolve-failed", "n_streams": 2},
+        ]]}
+        got = report.summarise("zurg", document, cap_bytes=6 * 1024 ** 3)
+        self.assertEqual(1, got["sample"])
+        self.assertEqual(1, got["served"])
+        # Three titles asked, two scored. The asked count is what the
+        # same-set guard and the budget warning are about, and a row set aside
+        # after measurement is neither of those; the scored count is the
+        # denominator, so the sample is out of the numerator and the
+        # denominator alike and moves coverage in neither direction.
+        self.assertEqual(3, got["population"])
+        self.assertEqual(2, got["scored"])
+        self.assertEqual(50.0, got["coverage_pct"])
+        self.assertEqual(0, got["verdicts"].get("partial", 0),
+                         "the sample must not land in the truncation tier")
+        self.assertEqual(1, got["verdicts"].get("missed", 0),
+                         "the genuine failure is still counted")
+
+
 if __name__ == "__main__":
     unittest.main()

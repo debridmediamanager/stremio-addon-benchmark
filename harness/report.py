@@ -52,6 +52,27 @@ PARTIAL = ("truncated",)
 # line. See harness/protocol.py, PLACEHOLDER_MAX_BYTES.
 PLACEHOLDER_MAX_BYTES = 1024 * 1024
 
+# A scene release ships a sample inside the archive beside the feature, and an
+# addon has to choose which to open. One that opens the sample served a whole,
+# valid video out of the right release -- the wrong file, not a broken stream.
+# Which file to open is a product decision, like a size cap or a ranking rule,
+# so these rows are named, set aside and reported: out of the served count,
+# out of every speed median, out of the correctness tiers, and out of the
+# population the rest are scored against. See harness/protocol.py.
+SAMPLE = ("sample",)
+SAMPLE_MAX_RELEASE_FRACTION = 0.05
+
+
+def looks_like_a_sample(row):
+    """Both numbers are on the row: what was served, and what was offered."""
+    total = row.get("content_bytes_total")
+    release = (row.get("chosen") or {}).get("size_bytes")
+    if not total or not release:
+        return False
+    if total <= PLACEHOLDER_MAX_BYTES:
+        return False
+    return total <= release * SAMPLE_MAX_RELEASE_FRACTION
+
 
 def outcome_of(row):
     """The row's outcome under the current rule, not the one it was written under.
@@ -63,11 +84,13 @@ def outcome_of(row):
     the round is judged by the same rule whenever it was measured.
     """
     outcome = row.get("outcome")
-    if outcome not in ("truncated", "served"):
+    if outcome not in ("truncated", "served", "sample"):
         return outcome
     total = row.get("content_bytes_total")
     if total and total <= PLACEHOLDER_MAX_BYTES:
         return "placeholder"
+    if looks_like_a_sample(row):
+        return "sample"
     return outcome
 
 
@@ -127,6 +150,11 @@ def verdict(row):
     expected = row.get("expected_outcome")
     outcome = outcome_of(row)
     streams = row.get("n_streams") or 0
+    if outcome in SAMPLE:
+        # Set aside rather than judged: see SAMPLE above. Counting it correct
+        # would say the viewer got the film, and counting it missed would call
+        # a ranking choice a failure to serve bytes.
+        return "sample"
     if expected == "playable-stream":
         if outcome in SERVED:
             return "correct"
@@ -152,7 +180,15 @@ def verdict(row):
 
 def summarise(name, document, cap_bytes):
     rows = first_pass(document)
+    samples = [r for r in rows if outcome_of(r) in SAMPLE]
+    # Two denominators, because they answer different questions. `population`
+    # is what the target was ASKED, and the same-set guard and the budget
+    # warning are both about that -- a sample set aside after the fact is not
+    # a target being asked a different set. `scored` is what it is MEASURED
+    # against, which drops the rows set aside so a sample neither flatters a
+    # target's coverage nor counts against it.
     population = document.get("population") or len(rows)
+    scored = population - len(samples)
     served = [r for r in rows if outcome_of(r) in SERVED]
     partial = [r for r in rows if outcome_of(r) in PARTIAL]
 
@@ -189,13 +225,15 @@ def summarise(name, document, cap_bytes):
         "language": (registry.TARGETS.get(name) or {}).get("language", "?"),
         "verified": document.get("verified"),
         "population": population,
+        "scored": scored,
         "measured": len(rows),
         "served": len(served),
         "partial": len(partial),
-        "coverage_pct": round(100.0 * len(served) / population, 1) if population else None,
+        "sample": len(samples),
+        "coverage_pct": round(100.0 * len(served) / scored, 1) if scored else None,
         "median_served_c2b_s": median(c2b),
         "n_c2b": len(c2b),
-        "median_population_c2b_s": censored_median(c2b, population),
+        "median_population_c2b_s": censored_median(c2b, scored),
         "median_stream_list_s": median(lists),
         "median_resolve_s": median(resolve),
         "median_ttfb_s": median(ttfb),
@@ -413,8 +451,8 @@ def render_against(summaries, round_name, other_round, cap_bytes, out):
         moved = build_label(then)
         out.append(
             f"| {name} | {moved} → {build_label(now_builds.get(name))} "
-            f"| {was['served'] if was else '-'}/{was['population'] if was else '-'}"
-            f" → {summary['served']}/{summary['population']} "
+            f"| {was['served'] if was else '-'}/{was.get('scored', was['population']) if was else '-'}"
+            f" → {summary['served']}/{summary['scored']} "
             f"| {was['coverage_pct'] if was else '-'}% → {summary['coverage_pct']}% "
             f"| {seconds(was['median_population_c2b_s']) if was else '-'}"
             f" → {seconds(summary['median_population_c2b_s'])} "
@@ -601,7 +639,7 @@ def render(documents, round_name, client=None, noise_documents=None, against=Non
     out.append("| Target | Lang | Served | Coverage | median c2b (population) | median c2b (served) | n |")
     out.append("|---|---|---|---|---|---|---|")
     for s in summaries:
-        out.append(f"| {s['target']} | {s['language']} | {s['served']}/{s['population']} "
+        out.append(f"| {s['target']} | {s['language']} | {s['served']}/{s['scored']} "
                    f"| {s['coverage_pct']}% "
                    f"| {seconds(s['median_population_c2b_s']) if s['median_population_c2b_s'] is not None else '>budget'} "
                    f"| {seconds(s['median_served_c2b_s'])} | {s['n_c2b']} |")
@@ -622,7 +660,7 @@ def render(documents, round_name, client=None, noise_documents=None, against=Non
     for s in summaries:
         out.append(f"| {s['target']} | {seconds(s['median_stream_list_s'])} "
                    f"| {seconds(s['median_resolve_s'])} | {seconds(s['median_ttfb_s'])} "
-                   f"| {seconds(s['median_served_c2b_s'])} | {s['served']}/{s['population']} |")
+                   f"| {seconds(s['median_served_c2b_s'])} | {s['served']}/{s['scored']} |")
     out.append("")
 
     out.append("## Reading, once it is playing")
@@ -638,7 +676,7 @@ def render(documents, round_name, client=None, noise_documents=None, against=Non
         mb = "-" if s["median_throughput_mb_s"] is None else f"{s['median_throughput_mb_s']:.2f}"
         p05 = "-" if s["median_p05_window_mb_s"] is None else f"{s['median_p05_window_mb_s']:.2f}"
         out.append(f"| {s['target']} | {mb} | {p05} | {s['sustain_25mbps_n']}/{s['served']} "
-                   f"| {s['served']}/{s['population']} |")
+                   f"| {s['served']}/{s['scored']} |")
     out.append("")
 
     out.append("## Did it do the right thing")
@@ -648,12 +686,46 @@ def render(documents, round_name, client=None, noise_documents=None, against=Non
                "fabrication; one is an id whose indexer answers with an unrelated "
                "feed, where the question is whether the addon forwards it.")
     out.append("")
+    out.append("A row that served the release's sample instead of its feature is "
+               "not judged here at all; it is set aside and counted in its own "
+               "section below.")
+    out.append("")
     keys = ["correct", "partial", "missed", "fabricated", "forwarded-garbage", "unclassified"]
     out.append("| Target | " + " | ".join(keys) + " |")
     out.append("|---|" + "---|" * len(keys))
     for s in summaries:
         out.append(f"| {s['target']} | " + " | ".join(str(s["verdicts"].get(k, 0)) for k in keys) + " |")
     out.append("")
+
+    samples = sum(s["outcomes"].get("sample", 0) for s in summaries)
+    if samples:
+        out.append("## The sample, and why it is not scored")
+        out.append("")
+        out.append(f"**{samples} {'row' if samples == 1 else 'rows'} across the field "
+                   f"served the sample rather than "
+                   f"the film.** A scene release ships one inside the same archive as "
+                   f"the feature, so an addon has to choose between two real videos, "
+                   f"and the one it opens is a product decision -- the same class of "
+                   f"choice as a size cap or a ranking rule. What arrives is whole, "
+                   f"valid and from the release the viewer asked for. It is simply not "
+                   f"the film, and it ends long before a read window closes, which is "
+                   f"why this reads as a truncation until it is named.")
+        out.append("")
+        out.append("So these rows score neither way: out of the served count, out of "
+                   "every speed median, out of the correctness tiers, and out of the "
+                   "population the rest are measured against. A target is told what it "
+                   "did, and no target gains or loses a point for it. Measured as a "
+                   "body at or under "
+                   f"{SAMPLE_MAX_RELEASE_FRACTION:.0%} of the release the target itself "
+                   "advertised; real samples run near one per cent.")
+        out.append("")
+        out.append("| Target | samples served | scored population |")
+        out.append("|---|---|---|")
+        for s in summaries:
+            n = s["outcomes"].get("sample", 0)
+            if n:
+                out.append(f"| {s['target']} | {n} | {s['scored']} |")
+        out.append("")
 
     placeholders = sum(s["outcomes"].get("placeholder", 0) for s in summaries)
     if placeholders:

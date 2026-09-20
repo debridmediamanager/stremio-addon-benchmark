@@ -90,6 +90,7 @@ OUTCOMES = (
     "resolve-failed",   # the chosen stream never reached something serving bytes
     "zero-bytes",       # a success status over a body that is entirely zeros
     "placeholder",      # a complete file far too small to be the film
+    "sample",           # a whole, real video from the release -- but not the film
     "truncated",        # the body started and stopped short of what was declared
     "timeout",          # the title exhausted its budget
     "error",            # the target failed in a way none of the above describes
@@ -103,8 +104,41 @@ OUTCOMES = (
 # length is under this is an error clip, and saying so is the finding.
 PLACEHOLDER_MAX_BYTES = 1024 * 1024
 
+# A scene release ships a sample beside the feature, inside the same archive,
+# and an addon has to choose between them. A target that opens the sample
+# serves a whole, valid, real video from the release the viewer asked for --
+# it is simply the wrong one, and it runs out long before a read window
+# closes, which is why this used to be recorded as `truncated`.
+#
+# That reading is wrong in both directions. It is not a truncation: nothing
+# stopped short, the file ended because it ended. And it is not a defect of
+# the reader at all -- which file to open is a product decision, the same
+# class of difference as a size cap or a ranking rule, and this field makes
+# it differently on purpose. So it is named, set aside and reported, and it
+# scores neither for a target nor against one.
+#
+# Measured, not inferred: a body whose declared length is this share or less
+# of the release the target itself advertised. Real samples run near 1% --
+# 0.37%, 0.72% and 2.96% on the three this rule was written from -- so five
+# per cent separates them from a feature without reaching any real one.
+SAMPLE_MAX_RELEASE_FRACTION = 0.05
 
-def classify(read_bytes, total_bytes, ended_early, sample, status):
+
+def looks_like_a_sample(total_bytes, release_bytes):
+    """Is this body a sample or extra rather than the film?
+
+    Shared with the report so a round measured before this rule existed is
+    read under it. Both numbers are on the row already: what the target
+    served, and what it said the release was.
+    """
+    if not total_bytes or not release_bytes:
+        return False
+    if total_bytes <= PLACEHOLDER_MAX_BYTES:
+        return False
+    return total_bytes <= release_bytes * SAMPLE_MAX_RELEASE_FRACTION
+
+
+def classify(read_bytes, total_bytes, ended_early, sample, status, release_bytes=None):
     """The outcome of a body that started. Shared so a round and a report agree.
 
     Kept as a function, and applied by the report as well as at write time, so
@@ -118,6 +152,11 @@ def classify(read_bytes, total_bytes, ended_early, sample, status):
             f"http {status} served a complete {total_bytes}-byte file, which is an error "
             f"clip rather than the film. The status, the content type and the "
             f"Content-Range are all well formed")
+    if looks_like_a_sample(total_bytes, release_bytes):
+        return "sample", (
+            f"http {status} served a whole {total_bytes}-byte video out of a "
+            f"{release_bytes}-byte release, which is the sample beside the film "
+            f"rather than the film. Reported, and scored neither way")
     if ended_early and total_bytes and read_bytes < total_bytes:
         return "truncated", "the body stopped before the read window closed"
     if ended_early:
@@ -644,8 +683,10 @@ def measure_title(target, base, title, read_s, cap_bytes, do_seeks=True):
             row["sustain_25mbps"] = False
         # design trap 7 and its second half: the status line is already sent,
         # the length agrees with itself, and the body is still not the film
+        chosen = row.get("chosen") or {}
         row["outcome"], detail = classify(read_bytes, row["content_bytes_total"],
-                                          ended_early, sample, response.status)
+                                          ended_early, sample, response.status,
+                                          chosen.get("size_bytes"))
         if detail:
             row["detail"] = detail
     finally:
@@ -654,7 +695,7 @@ def measure_title(target, base, title, read_s, cap_bytes, do_seeks=True):
         except Exception:
             pass
 
-    if do_seeks and row["content_bytes_total"] and row["outcome"] in ("served", "truncated"):
+    if do_seeks and row["content_bytes_total"] and row["outcome"] in ("served", "truncated", "sample"):
         row["seek_profile"] = seek_profile(resolution.final_url, row["content_bytes_total"], deadline)
     return row
 
