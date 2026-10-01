@@ -185,8 +185,11 @@ def build():
         else:
             match = "ok"
 
-        parity_errors = [label for label in counts_for_type
-                         if rows.get(label, {}).get("error")]
+        parity_errors = [
+            label for label in counts_for_type
+            if rows.get(label, {}).get("error")
+            or not isinstance(rows.get(label, {}).get("total"), int)
+        ]
         tier = tier_for(reachable)
         complete = not parity_errors
         if not counts_for_type:
@@ -194,12 +197,10 @@ def build():
             # the entry says something about the indexer fleet and nothing
             # about any addon
             tier = NO_CAPABLE_INDEXER
-        if parity_errors and reachable == 0:
-            # nothing came back and one of the two that could have answered
-            # never got asked properly
-            tier = INCOMPLETE
         if match == "MISMATCH" and reachable > 0:
             tier = POISONED if distinct_works(kept_all) >= FEED_DISTINCT else ID_SUSPECT
+        if parity_errors:
+            tier = INCOMPLETE
         entry = {
             "id": candidate["id"],
             "type": candidate["type"],
@@ -259,9 +260,9 @@ def build():
             "expected_outcome no-unrelated-streams marks an entry whose indexer "
             "answers an unfiltered feed instead of nothing. The addon is judged "
             "on whether it passes that through to the player.",
-            "tier incomplete means a parity indexer errored on this entry and it "
-            "has not been measured. Re-run census.py --retry-failed. A failed "
-            "call is not a zero.",
+            "tier incomplete means a parity indexer failed or has no measurement "
+            "for this entry. Re-run census.py --retry-failed. Missing and failed "
+            "calls are not zero-result answers.",
             "tier no-capable-indexer means no indexer in the parity set honours "
             "this kind of search. The entry is excluded because it would measure "
             "the indexer fleet and not the addon.",
