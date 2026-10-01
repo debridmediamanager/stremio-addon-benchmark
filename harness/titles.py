@@ -17,16 +17,14 @@ whole population with `n`, and coverage as its own column.
 import json
 import os
 import re
-import subprocess
 import sys
 from datetime import datetime, timezone
 
+from census import load_census
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CANDIDATES = os.path.join(ROOT, "corpus", "candidates.json")
-AVAILABILITY = os.path.join(ROOT, "corpus", "availability.json")
 CAPABILITIES = os.path.join(ROOT, "corpus", "indexer-capabilities.json")
-ARCHIVE = os.path.join(ROOT, "corpus", "availability.7z")
-ARCHIVE_PASSWORD = "dmmbench"
 OUT = os.path.join(ROOT, "corpus", "titles.json")
 
 # Indexers every target in the field can actually reach, taken from the
@@ -46,9 +44,7 @@ OUT = os.path.join(ROOT, "corpus", "titles.json")
 CAPABILITY_FOR = {"movie": "movie_imdbid", "series": "tv_imdbid"}
 NO_CAPABLE_INDEXER = "no-capable-indexer"
 
-# a release the desktop player will direct-play. Above this every top result
-# for a popular title is a 2160p remux and the addons are being compared on
-# whose size filter is configured loosest, not on speed
+# Benchmark parity cap for desktop direct playback, not an addon product default.
 PLAYABLE_CAP_BYTES = 6 * 1024**3
 MIN_FEATURE_BYTES = 200 * 1024**2
 
@@ -98,12 +94,11 @@ def distinct_works(items):
     return len({" ".join(normalise(item.get("name")).split()[:4]) for item in items})
 
 
-def size_band(items):
-    sizes = [i["size"] for i in items if i.get("size")]
+def size_band(sizes):
+    """Classify positive release sizes from the returned parity-indexer pages."""
     if not sizes:
         return "unknown"
-    playable = [s for s in sizes if MIN_FEATURE_BYTES <= s <= PLAYABLE_CAP_BYTES]
-    if playable:
+    if any(MIN_FEATURE_BYTES <= size <= PLAYABLE_CAP_BYTES for size in sizes):
         return "has-playable"
     if min(sizes) > PLAYABLE_CAP_BYTES:
         return "oversize-only"
@@ -142,37 +137,12 @@ def counting_indexers(capabilities, parity=None):
     return table
 
 
-def unpack_census():
-    """A fresh clone has the archive and not the json. Extract it once.
-
-    The password is published in the README. It keeps several hundred release
-    names out of search indexes, which is the only thing it is for.
-    """
-    if os.path.exists(AVAILABILITY):
-        return
-    if not os.path.exists(ARCHIVE):
-        raise SystemExit(f"no census: neither {AVAILABILITY} nor {ARCHIVE} exists. "
-                         "Run harness/census.py first.")
-    # basenames, from the corpus directory: see the matching note in census.py
-    directory = os.path.dirname(ARCHIVE)
-    result = subprocess.run(
-        ["7z", "x", f"-p{ARCHIVE_PASSWORD}", "-y", os.path.basename(ARCHIVE)],
-        cwd=directory, capture_output=True, text=True)
-    if not os.path.exists(AVAILABILITY):
-        raise SystemExit(f"7z reported success but {AVAILABILITY} is not there. "
-                         "The archive probably stores a nested path; re-cut it "
-                         "with harness/census.py.")
-    if result.returncode != 0:
-        raise SystemExit(f"could not extract {ARCHIVE}:\n{result.stdout[-400:]}")
-    print(f"extracted {os.path.basename(AVAILABILITY)} from the published archive")
-
-
 def build():
-    unpack_census()
+    census = load_census()
+    if not census:
+        raise SystemExit("no census: run harness/census.py first")
     with open(CANDIDATES) as handle:
         candidates = json.load(handle)["candidates"]
-    with open(AVAILABILITY) as handle:
-        census = json.load(handle)
     results = census["results"]
     with open(CAPABILITIES) as handle:
         capabilities = json.load(handle)
@@ -187,6 +157,7 @@ def build():
         counts_for_type = countable.get(candidate["type"], [])
         per_indexer = {}
         kept_all = []
+        sizes_all = []
         reachable = 0
         for label, row in rows.items():
             total = row.get("total")
@@ -199,6 +170,8 @@ def build():
                 reachable += total
             if label in counts_for_type:
                 kept_all.extend(row.get("kept", []))
+                sizes_all.extend(size for size in row.get("sizes", [])
+                                 if size is not None and size > 0)
 
         tokens = title_tokens(candidate)
         names = [normalise(item.get("name")) for item in kept_all]
@@ -236,7 +209,8 @@ def build():
             "measured_tier": tier,
             "reachable_results": reachable,
             "per_indexer": per_indexer,
-            "size_band": size_band(kept_all),
+            "size_band": size_band(sizes_all),
+            "size_band_from": len(sizes_all),
             "title_match": match,
             "census_complete": complete,
             "parity_errors": parity_errors,
@@ -277,6 +251,9 @@ def build():
             "measured_tier comes from the parity indexers only. A title the "
             "excluded indexer holds is still absent for the round if the parity "
             "pair does not have it.",
+            "size_band uses positive sizes from the returned parity-indexer "
+            "pages, counted in size_band_from. Missing page-size measurements "
+            "are not inferred from the newest kept names.",
             "expected_outcome empty-list means an empty stream list is the "
             "correct answer. An error, a hang or a fabricated stream is not.",
             "expected_outcome no-unrelated-streams marks an entry whose indexer "

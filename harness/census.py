@@ -19,6 +19,7 @@ Two publishing rules are enforced here rather than left to a reviewer:
     values are a fully authenticated download URL. They are never stored: an
     item keeps its name, size, category and date, and the guid only as a
     truncated sha1 so the same posting can be recognised across indexers.
+    Names are capped, but every positive size on the returned page is kept.
   * **Indexer identity is not published.** Two of the three here are private
     trackers whose operators did not ask to be named in a benchmark. The
     committed census carries `indexer-a/b/c` plus each one's kind; the mapping
@@ -51,9 +52,7 @@ OUT = os.path.join(ROOT, "corpus", "availability.json")
 ARCHIVE = os.path.join(ROOT, "corpus", "availability.7z")
 ARCHIVE_PASSWORD = "dmmbench"
 
-# how many results to keep per (title, indexer). Enough to see what a ranker
-# would have to choose between; not so many that the file becomes a mirror of
-# the indexer
+# Cap names, not sizes: the newest releases are not a representative sample.
 KEEP = 8
 TIMEOUT = 45
 # The census identifies itself as what it is: a measuring tool reading an
@@ -239,6 +238,25 @@ def scrub(text, secrets):
     return text
 
 
+def load_census():
+    """Read the working census, restoring the published archive on a fresh clone."""
+    if not os.path.exists(OUT) and os.path.exists(ARCHIVE):
+        directory = os.path.dirname(ARCHIVE)
+        result = subprocess.run(
+            ["7z", "x", f"-p{ARCHIVE_PASSWORD}", "-y", os.path.basename(ARCHIVE),
+             os.path.basename(OUT)],
+            cwd=directory, capture_output=True, text=True)
+        if result.returncode != 0:
+            raise SystemExit(f"could not extract {ARCHIVE}:\n{result.stdout[-400:]}")
+        if not os.path.exists(OUT):
+            raise SystemExit(f"{ARCHIVE} does not contain {os.path.basename(OUT)}")
+        print(f"extracted {os.path.basename(OUT)} from the published archive")
+    if not os.path.exists(OUT):
+        return {}
+    with open(OUT) as handle:
+        return json.load(handle)
+
+
 def archive():
     """Re-cut the published archive so it can never lag the census."""
     if os.path.exists(ARCHIVE):
@@ -299,33 +317,29 @@ def main():
         candidates = candidates[: args.limit]
 
     exhausted = {}
-    skip = None
+    # Partial runs replace queried pairs and preserve every other measurement.
+    previous_document = load_census()
+    previous = previous_document.get("results", {})
     if args.retry_failed:
-        if not os.path.exists(OUT):
+        if not previous:
             raise SystemExit(f"--retry-failed needs an existing {OUT}")
-        with open(OUT) as handle:
-            skip = json.load(handle)["results"]
-        outstanding = sum(1 for rows in skip.values() for row in rows.values() if row.get("error"))
+        outstanding = sum(1 for rows in previous.values() for row in rows.values() if row.get("error"))
         print(f"retrying {outstanding} failed (title, indexer) pair(s)")
 
     os.makedirs(RAW_DIR, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     raw_path = os.path.join(RAW_DIR, f"census-{stamp}.json")
 
-    census = {}
+    census = dict(previous)
     raw = {}
     last_call = {}
     for position, candidate in enumerate(candidates, 1):
-        # seed from what is already known so a run narrowed to one indexer
-        # updates that indexer instead of deleting the others
-        rows = dict(skip.get(candidate["id"], {})) if skip else {}
+        rows = dict(previous.get(candidate["id"], {}))
         for indexer in indexers:
             label = indexer["label"]
-            known = (skip or {}).get(candidate["id"], {}).get(label)
-            # reuse only a row that exists AND succeeded. An indexer added to
-            # the config after the first census has no row at all and must be
-            # queried, not skipped as already-done
-            if known is not None and not known.get("error"):
+            known = previous.get(candidate["id"], {}).get(label)
+            # A newly configured indexer has no row yet, so retries query it too.
+            if args.retry_failed and known is not None and not known.get("error"):
                 rows[label] = known
                 continue
             pace = indexer.get("pace_s", args.pace)
@@ -349,6 +363,9 @@ def main():
                     total, items = parse_items(body)
                     row["total"] = total
                     row["kept"] = items[:KEEP]
+                    row["sizes"] = [
+                        item["size"] for item in items
+                        if item.get("size") is not None and item["size"] > 0]
             except Exception as problem:  # an indexer failing is data, not a crash
                 last_call[label] = time.monotonic()
                 row["error"] = scrub(f"{type(problem).__name__}: {problem}", secrets)
@@ -374,13 +391,17 @@ def main():
     with open(raw_path, "w") as handle:
         json.dump(raw, handle, indent=1)
 
+    indexer_metadata = {i["label"]: i for i in previous_document.get("indexers", [])}
+    indexer_metadata.update({
+        i["label"]: {"label": i["label"], "kind": i["kind"],
+                     "api_path": i.get("api_path", "/api")}
+        for i in all_indexers
+    })
     document = {
         "measured_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "indexers": [
-            {"label": i["label"], "kind": i["kind"], "api_path": i.get("api_path", "/api")}
-            for i in indexers
-        ],
+        "indexers": list(indexer_metadata.values()),
         "keep_per_indexer": KEEP,
+        "sizes_per_indexer": "every positive stated size on the first returned page (limit=100)",
         "user_agent": USER_AGENT,
         "note": ("Indexer identity is deliberately reduced to a label and a kind; the "
                  "mapping lives in the gitignored config. Download links and raw guids "
