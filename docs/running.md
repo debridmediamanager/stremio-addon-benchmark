@@ -47,6 +47,7 @@ account, so they can be run from a laptop. Steps 5 onward need the bench host.
 - A Usenet account with at least the round's connection budget (10 in round 3).
 - Python 3.10 or newer. The harness imports only the standard library, so there
   is nothing to install and no virtualenv to create.
+- 7-Zip (`7z`) for publishing and restoring the encrypted census archive.
 - Docker, plus the Go and Node toolchains, for building the targets.
 - Newznab api keys. Three indexers is the minimum that makes a parity set
   meaningful.
@@ -121,10 +122,14 @@ is gitignored. `corpus/availability.7z` is the published one, re-cut on every
 run so it cannot lag, encrypted headers, password `dmmbench`, which keeps
 several hundred release names out of search indexes and is not access control.
 
-`--retry-failed` merges into the existing `corpus/availability.json` and only
-re-queries the pairs that errored, so a rate limited indexer is resumable rather
-than a reason to spend the whole quota again. It also picks up an indexer added
-to the config after the first run.
+Every run merges into the saved census, restoring the archive first when only
+the published copy exists. `--indexer` and `--limit` replace queried pairs
+without deleting other indexers or candidates. Indexer metadata is retained
+even when a quota wall removes an indexer from the active query loop.
+
+`--retry-failed` only re-queries failed or missing pairs. Successful pairs stay
+unchanged, including successful empty results. It also picks up an indexer
+added to the config after the first run.
 
 An indexer that exhausts its backoff twice in a row is dropped from the run and
 left for a later retry. Grinding through the rest of the set at four minutes a
@@ -139,6 +144,17 @@ python3 harness/titles.py show
 
 On a fresh clone there is no `availability.json`, only the archive. `build`
 extracts it first and says so. Nothing has to be unpacked by hand.
+
+The census keeps at most eight release names per indexer, but records every
+positive size on the first returned page (requested limit 100). `size_band`
+uses those sizes from capable parity indexers only; `size_band_from` counts
+the measurements it used. This describes returned pages, not every release
+in the catalogue.
+
+Older archives without page sizes build with `unknown` size bands rather than
+inferring availability from the newest eight names. To refresh the bands, run
+`census.py` normally, then `titles.py build`; `--retry-failed` deliberately does
+not refresh successful old rows. Historical round artifacts are not rewritten.
 
 Read the table before going further. Four tiers mean stop and fix something
 rather than continue:
@@ -364,6 +380,15 @@ published artifact without anybody writing it down.
 The scanner reads what to look for out of `config/indexers.json` and the
 `NNTP_*` environment, so it never carries a copy of a secret itself. Exit status
 1 means do not push.
+
+Run the standard-library regression suite as well:
+
+```bash
+python3 -m unittest discover -s harness -p 'test_*.py' -v
+```
+
+Census archive tests use real encrypted 7-Zip files in temporary directories;
+they are skipped when `7z` is unavailable. No tests contact live indexers.
 
 ## When something looks wrong
 
