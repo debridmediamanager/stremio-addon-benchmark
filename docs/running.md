@@ -159,10 +159,10 @@ not refresh successful old rows. Historical round artifacts are not rewritten.
 Read the table before going further. Four tiers mean stop and fix something
 rather than continue:
 
-- `incomplete` — a parity indexer errored on that entry, so it has not been
-  measured. Re-run `--retry-failed`. **A failed call is not a zero**, and the
-  first title set built here marked eight series entries `absent` on the
-  strength of an HTTP 429.
+- `incomplete` — a capable parity indexer failed or has no measurement for this
+  entry. The title stays out of the round even when another indexer returned
+  results. Re-run `--retry-failed`. **Missing and failed calls are not zero
+  results**; only a successful empty response supports an `absent` verdict.
 - `id-suspect` — the results are coherent and they are not this film, so the
   IMDb id is probably wrong. A wrong id fails identically on every target and
   reads as a hard title.

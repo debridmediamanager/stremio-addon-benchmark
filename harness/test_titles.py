@@ -99,6 +99,54 @@ class TitleBuildTests(unittest.TestCase):
         self.assertEqual(entry["size_band"], "unknown")
         self.assertEqual(entry["size_band_from"], 0)
 
+    def test_missing_or_failed_parity_row_excludes_partial_measurement(self):
+        for row in (None, {"total": None, "error": "http 429", "kept": []},
+                    {"total": None, "error": None, "kept": []}):
+            with self.subTest(row=row):
+                if row is None:
+                    self.rows.pop("indexer-b", None)
+                else:
+                    self.rows["indexer-b"] = row
+                entry = self.build_entry()
+                self.assertEqual(entry["measured_tier"], "incomplete")
+                self.assertFalse(entry["census_complete"])
+                self.assertFalse(entry["in_round"])
+                self.assertIsNone(entry["expected_outcome"])
+                self.assertEqual(entry["parity_errors"], ["indexer-b"])
+
+    def test_unmeasured_title_is_not_absent(self):
+        self.rows = {}
+        entry = self.build_entry()
+        self.assertEqual(entry["measured_tier"], "incomplete")
+        self.assertFalse(entry["in_round"])
+        self.assertEqual(entry["parity_errors"], ["indexer-a", "indexer-b"])
+
+    def test_complete_zero_results_are_absent(self):
+        self.rows["indexer-a"] = {"total": 0, "error": None, "kept": [], "sizes": []}
+        entry = self.build_entry()
+        self.assertEqual(entry["measured_tier"], "absent")
+        self.assertTrue(entry["census_complete"])
+        self.assertTrue(entry["in_round"])
+        self.assertEqual(entry["expected_outcome"], "empty-list")
+
+    def test_no_capable_indexer_is_not_an_incomplete_title(self):
+        for indexer in self.capabilities["indexers"].values():
+            indexer["movie_imdbid"]["state"] = "unsupported"
+        self.write("capabilities.json", self.capabilities)
+        self.rows = {}
+        entry = self.build_entry()
+        self.assertEqual(entry["measured_tier"], "no-capable-indexer")
+        self.assertFalse(entry["in_round"])
+        self.assertEqual(entry["parity_errors"], [])
+
+    def test_incomplete_measurement_precedes_mismatch_classification(self):
+        self.rows["indexer-a"]["kept"] = [{"name": "Unrelated.film"}]
+        self.rows.pop("indexer-b")
+        entry = self.build_entry()
+        self.assertEqual(entry["title_match"], "MISMATCH")
+        self.assertEqual(entry["measured_tier"], "incomplete")
+        self.assertFalse(entry["in_round"])
+
 
 class SizeBandTests(unittest.TestCase):
     def test_playable_bounds_are_inclusive(self):
